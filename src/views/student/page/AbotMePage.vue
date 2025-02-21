@@ -102,7 +102,7 @@ const handleSubmit = async () => {
 const animation = () => {
   gsap.from('.author-card', {
     x: -1000,
-    duration: 2,
+    duration: 1,
     scrollTrigger: {
       trigger: '.author-card',
       ease: 'power4.inOut',
@@ -378,7 +378,7 @@ const animation = () => {
               </button>
 
               <button
-                class="btn btn-primary btn-outline"
+                class="btn btn-primary btn-outline hidden sm:flex "
                 @click="scrollToBottom"
               >
                 <svg
@@ -403,7 +403,7 @@ const animation = () => {
       </div>
       <!-- 开发团队 -->
       <div
-        class="min-h-screen w-full"
+        class="min-h-screen w-full hidden sm:flex"
         style="
           background-image: url(https://cdn.pixabay.com/photo/2019/11/13/12/18/king-4623497_1280.jpg);
         "

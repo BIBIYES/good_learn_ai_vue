@@ -1,46 +1,71 @@
 <script setup>
-import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { onMounted } from 'vue'
+import FastGPT from '@/utils/FastGPT';
+import { ref } from 'vue';
 
-// 正确注册 ScrollTrigger 插件
-gsap.registerPlugin(ScrollTrigger)
+// API密钥
+const API_KEY = 'fastgpt-pTgTvZRsHGLFNGQDZeLyH1y8NKc0ApQNunyOqjKxcqqC7XuRUdDXoAuNjJ77' // 请替换为您的实际API密钥
 
-onMounted(() => {
-  gsap.from('.img-box', {
-    x: -1000,
-    duration: 1,
-    ease: 'power1.inOut',
-    scrollTrigger: {
-      trigger: '.img-box',
-      start: 'top center',
-      end: 'top center',
-      // markers: true,
-      toggleActions: 'play none reverse none', // 关键配置
-    },
-  })
-  gsap.to('.qiu', {
-    x: '300',
-    duration: 2,
-    // 缓动效果（可选）
-    ease: 'power1.out',
-  })
-})
+// 实例化
+const fastgpt = new FastGPT(API_KEY)
+
+// 用于存储对话内容
+const response = ref('');
+const isLoading = ref(false);
+
+const send = async () => {
+  await fastgpt.chat('电影《铃芽之旅》的导演是谁？', 1, (event, data) => {
+    const meassag = JSON.parse(data);
+    console.log(meassag.choices[0].finish_reason);
+
+    switch (event) {
+      case 'flowNodeStatus':
+        console.log(meassag);
+        break;
+
+      case 'answer':
+        console.log(meassag);
+        break;
+
+      case 'flowResponses':
+        console.log(meassag);
+        break;
+
+      default:
+        console.warn(meassag);
+    }
+
+  });
+}
+
+// 打印回调函数的数字
+const printNumber = (num) => {
+  console.log(num);
+}
+const send2 = async () => {
+
+  await fastgpt.reNumber(printNumber);
+}
+
 </script>
 <template>
-  <div class="app bg-red-500 h-screen w-full">
-    <div class="box1 h-screen w-full bg-yellow-200">
-      <div class="qiu w-50 h-50 bg-sky-300 rounded-full"></div>
+  <div class="container p-4">
+    <div class="btn btn-primary mb-4" @click="send()">发送请求</div>
+    <div class="btn btn-primary mb-4" @click="send2()">测试回调函数</div>
+
+    <!-- 加载状态显示 -->
+    <div v-if="isLoading" class="mb-4">
+      正在加载响应...
     </div>
-    <div
-      class="box2 h-screen w-full bg-sky-200 flex justify-center items-center"
-    >
-      <div class="img-box grid grid-cols-4 gap-4 bg-amber-700">
-        <img src="../../../assets/author/ckl.png" alt="" />
-        <img src="../../../assets/author/lh.png" alt="" />
-        <img src="../../../assets/author/lzh.png" alt="" />
-        <img src="../../../assets/author/zzx.png" alt="" />
-      </div>
+
+    <!-- 响应内容显示区域 -->
+    <div v-if="response" class="p-4 border rounded bg-gray-100">
+      <pre class="whitespace-pre-wrap">{{ response }}</pre>
     </div>
   </div>
 </template>
+<style>
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+</style>
