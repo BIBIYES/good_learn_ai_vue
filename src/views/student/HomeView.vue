@@ -1,7 +1,11 @@
 <script setup>
 import SiderBarMenu from '@/components/common/SiderBarMenu .vue'
 import { RouterView } from 'vue-router'
-import {Attention, Github} from '@icon-park/vue-next'
+import { Attention, Github } from '@icon-park/vue-next'
+import { useSidebarStore } from '@/stores/sidebar'
+
+const sidebarStore = useSidebarStore()
+
 // 跳转github
 const goGithub = () => {
   window.open('https://github.com/BIBIYES') // 你的github地址
@@ -11,33 +15,48 @@ const goGithub = () => {
 <template>
   <div class="app flex h-screen overflow-hidden">
     <!-- 侧边栏 -->
-    <div class="sidebar p-4  flex-col justify-between items-center hidden sm:flex">
+    <div
+      class="sidebar p-4 flex-col justify-between items-center hidden overflow-hidden sm:flex transition-all duration-300"
+      :class="{ 'w-0': sidebarStore.isOpen, 'w-75': !sidebarStore.isOpen }"
+    >
       <nav class="flex flex-col items-center space-y-4">
         <div class="my-logo">
-          <MyLogo />
+          <MyLogo></MyLogo>
         </div>
         <div>
           <SiderBarMenu />
         </div>
       </nav>
       <!-- 底部 -->
-      <footer class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig">
-
-
-        <button class="btn btn-md w-30" @click="goGithub()"><Github theme="outline" size="18" />Github</button>
+      <footer
+        class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig"
+      >
+        <button class="btn btn-md w-30" @click="goGithub()">
+          <Github theme="outline" size="18" />Github
+        </button>
         <router-link to="/abot">
-            <button class="btn btn-md w-30"><attention theme="outline" size="18" />关于我们</button>
+          <button class="btn btn-md w-30">
+            <attention theme="outline" size="18" />关于我们
+          </button>
         </router-link>
       </footer>
     </div>
 
     <!-- 主内容区域 -->
     <div class="flex-1 bg-gray-100">
-        <RouterView />
+      <RouterView />
     </div>
   </div>
 </template>
 
-
 <style scoped>
+.sidebar {
+  border-right: 1px solid #e5e7eb;
+  background-color: white;
+}
+
+.w-0 {
+  padding: 0 !important;
+  margin: 0 !important;
+}
 </style>

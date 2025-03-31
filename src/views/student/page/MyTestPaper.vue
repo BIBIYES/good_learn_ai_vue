@@ -1,23 +1,26 @@
 <script setup>
+import TitleBar from '@/components/common/TitleBar.vue'
+import TestPaperBox from '@/components/common/TestPaperBox.vue'
 import { DocumentFolder } from '@icon-park/vue-next'
 </script>
 <template>
   <div class="app flex flex-col h-full p-4">
     <TitleBar>
-      <template v-slot:title
-        ><document-folder theme="outline" size="38" /><span
-          >我的试卷</span
-        ></template
-      >
-      <template v-slot:module
-        ><div class="tooltip tooltip-bottom" data-tip="向老师索要教室编号">
-          <input
-            class="input input-bordered join-item"
-            placeholder="输入试卷来添加试卷"
-          />
+      <template v-slot:title>
+        <document-folder theme="outline" size="38" />
+        <span>我的试卷</span>
+      </template>
+      <template v-slot:module>
+        <div class="join">
+          <div class="tooltip tooltip-bottom" data-tip="输入试卷编号">
+            <input
+              class="input input-bordered join-item w-full max-w-xs"
+              placeholder="输入试卷编号来添加试卷"
+            />
+          </div>
+          <button class="btn btn-primary join-item">添加试卷</button>
         </div>
-        <button class="btn join-item rounded-r-full">添加试卷</button></template
-      >
+      </template>
     </TitleBar>
     <!-- 试卷 -->
     <div

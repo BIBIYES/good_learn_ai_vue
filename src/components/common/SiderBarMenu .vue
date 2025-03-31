@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import {Home ,Lightning,DocumentFolder,School} from '@icon-park/vue-next';
+import { Home, Lightning, DocumentFolder, School } from '@icon-park/vue-next'
 const route = useRoute()
 </script>
 
@@ -12,7 +12,7 @@ const route = useRoute()
           to="/s/home"
           :class="{ 'menu-active': route.name === 'home-page' }"
         >
-        <home theme="outline" size="24"/>
+          <home theme="outline" size="24" />
           <a href="#">首页</a>
         </router-link>
       </li>
@@ -24,21 +24,20 @@ const route = useRoute()
       </li>
       <li>
         <router-link
-          to="/s/my-test-paper"
-          :class="{ 'menu-active': route.name === 'my-test-paper' }"
-        >
-        <document-folder theme="outline" size="24" />
-          <a href="#">我的试卷</a>
-        </router-link>
-      </li>
-
-      <li>
-        <router-link
           to="/s/my-class"
           :class="{ 'menu-active': route.name === 'my-class' }"
         >
-        <school theme="outline" size="24" />
-          <a href="#">加入的教室</a>
+          <school theme="outline" size="24" />
+          <a href="#">我的班级</a>
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          to="/s/my-test-paper"
+          :class="{ 'menu-active': route.name === 'my-test-paper' }"
+        >
+          <document-folder theme="outline" size="24" />
+          <a href="#">我的试卷</a>
         </router-link>
       </li>
     </ul>

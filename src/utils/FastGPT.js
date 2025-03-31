@@ -42,39 +42,52 @@ class FastGPT {
       const reader = response.body.getReader()
       const decoder = new TextDecoder()
       let buffer = ''
+      let lastEventType = ''
+      let lastEventData = ''
 
-      while (true) {
-        const { value, done } = await reader.read()
-        if (done) break
+      const processBuffer = (chunk) => {
+        const lines = chunk.split('\n')
+        let i = 0
 
-        buffer += decoder.decode(value, { stream: true })
-        const lines = buffer.split('\n')
-        buffer = lines.pop() || ''
-
-        for (const line of lines) {
+        while (i < lines.length) {
+          const line = lines[i].trim()
           if (line.startsWith('event: ')) {
-            // 提取事件类型
-            const eventType = line.slice(7).trim()
-            const nextLine = lines[lines.indexOf(line) + 1] // 下一行是 data
-            if (nextLine && nextLine.startsWith('data: ')) {
-              const eventData = nextLine.slice(6).trim() // 提取数据
-              onEvent(eventType, eventData) // 将 event 和 data 传递到外部
+            lastEventType = line.slice(7).trim()
+            i++
+            if (i < lines.length && lines[i].startsWith('data: ')) {
+              lastEventData = lines[i].slice(6).trim()
+              if (lastEventData) {
+                try {
+                  onEvent(lastEventType, lastEventData)
+                } catch (error) {
+                  console.error('事件处理错误:', error)
+                }
+              }
             }
           }
+          i++
         }
+
+        return lines[lines.length - 1] || ''
       }
 
-      // 处理剩余的数据
-      if (buffer) {
-        const line = buffer.trim()
-        if (line.startsWith('event: ')) {
-          const eventType = line.slice(7).trim()
-          const dataLine = line[line.indexOf(line) + 1] // 下一行是 data
-          if (dataLine && dataLine.startsWith('data: ')) {
-            const eventData = dataLine.slice(6).trim()
-            onEvent(eventType, eventData) // 将 event 和 data 传递到外部
-          }
+      try {
+        while (true) {
+          const { value, done } = await reader.read()
+          if (done) break
+
+          buffer += decoder.decode(value, { stream: true })
+          buffer = processBuffer(buffer)
         }
+
+        if (buffer) {
+          processBuffer(buffer + '\n')
+        }
+      } catch (error) {
+        console.error('数据流处理错误:', error)
+        throw new Error('数据流处理失败')
+      } finally {
+        reader.releaseLock()
       }
     } catch (error) {
       console.error('请求出错:', error)
@@ -84,8 +97,7 @@ class FastGPT {
 
   reNumber(onNumber) {
     for (let i = 1; i < 100; i++) {
-      setTimeout(() => {}, 1000)
-      onNumber(i)
+      setTimeout(() => onNumber(i), i * 1000)
     }
   }
 }

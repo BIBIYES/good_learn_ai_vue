@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <div class="navbar bg-base-100">
-      <div class="flex">
+      <div class="flex" @click="sidebarStore.toggleSidebar()">
         <a class="btn btn-ghost text-3xl"
           ><span class="outlined-text-black">AI</span>好助学</a
         >
@@ -18,7 +18,7 @@
         </div>
         <ul
           tabindex="0"
-          class="dropdown-content menu bg-base-100 rounded-box z-1 w-35 p-2 shadow-sm"
+          class="dropdown-content menu bg-base-100 rounded-box z-50 w-35 p-2 shadow-sm"
         >
           <li>
             <a
@@ -63,3 +63,9 @@
     </div>
   </div>
 </template>
+
+<script setup>
+import { useSidebarStore } from '@/stores/sidebar'
+
+const sidebarStore = useSidebarStore()
+</script>
