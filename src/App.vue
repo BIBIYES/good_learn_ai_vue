@@ -1,6 +1,6 @@
 <script setup></script>
 <template>
-  <div class="app">
+  <div class="app w-full h-screen overflow-hidden">
     <router-view v-slot="{ Component }">
       <keep-alive>
         <component :is="Component" />

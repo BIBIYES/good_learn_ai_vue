@@ -15,6 +15,7 @@
     "@icon-park/vue-next": "^1.4.2",
     "@tailwindcss/vite": "^4.0.3",
     "animate.css": "^4.1.1",
+    "axios": "^1.8.4",
     "dompurify": "^3.2.4",
     "github-markdown-css": "^5.8.1",
     "gsap": "^3.12.7",
@@ -22,7 +23,9 @@
     "marked": "^15.0.7",
     "marked-highlight": "^2.2.1",
     "pinia": "^2.3.1",
+    "pinia-plugin-persistedstate": "^4.2.0",
     "tailwindcss": "^4.0.3",
+    "typed.js": "^2.1.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.0"
   },

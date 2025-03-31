@@ -1,14 +1,26 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/student/HomeView.vue'
-
+import HomeView from '../views/HomeView.vue'
+import { userStore } from '@/stores/user'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/login',
-      name: 'login',
-      component: () => import('../views/student/page/LoginPage.vue'),
-      meta: { requiresAuth: false }
+      name: 'login-parent',
+      component: () => import('../views/LoginPage.vue'),
+      meta: { requiresAuth: false },
+      children: [
+        {
+          path: '',
+          name: 'login',
+          component: () => import('@/components/form/LoginForm.vue'),
+        },
+        {
+          path: '/register',
+          name: 'register',
+          component: () => import('@/components/form/RegisterForm.vue'),
+        },
+      ],
     },
     {
       path: '/',
@@ -58,20 +70,28 @@ const router = createRouter({
 
 // 全局前置守卫
 router.beforeEach((to, from, next) => {
-  // 检查路由是否需要认证
-  const requiresAuth = to.matched.some(record => record.meta.requiresAuth !== false)
-  const isAuthenticated = localStorage.getItem('user') // 这里假设用户信息存储在 localStorage 中
+  const user = userStore()
 
-  if (requiresAuth && !isAuthenticated) {
-    // 如果需要认证但用户未登录，重定向到登录页面
-    next({ name: 'login' })
-  } else if (to.name === 'login' && isAuthenticated) {
-    // 如果用户已登录但试图访问登录页面，重定向到首页
-    next({ name: 'home-s' })
-  } else {
-    // 其他情况正常通过
-    next()
+  // 1. 定义不需要认证的白名单路由
+  const allowList = ['login', 'register', 'forgot-password'] // 根据需要添加
+
+  // 4. 已登录用户访问登录页 → 跳首页
+  if (to.name === 'login' && user.userInfo.value) {
+    return next({ name: 'home-s' })
   }
-})
 
+  // 2. 如果目标路由在白名单中，直接放行
+  if (allowList.includes(to.name)) {
+    return next() // 注意这里要用 return
+  }
+
+  // 3. 检查用户是否认证
+  if (!user.userInfo.value) {
+    // 未登录且访问的是需要认证的路由 → 跳登录页
+    return next({ name: 'login' })
+  }
+
+  // 5. 其他情况正常放行
+  next()
+})
 export default router
