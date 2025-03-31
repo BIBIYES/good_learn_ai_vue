@@ -2,9 +2,6 @@
 import SiderBarMenu from '@/components/common/SiderBarMenu .vue'
 import { RouterView } from 'vue-router'
 import { Attention, Github } from '@icon-park/vue-next'
-import { useSidebarStore } from '@/stores/sidebar'
-
-const sidebarStore = useSidebarStore()
 
 // 跳转github
 const goGithub = () => {
@@ -16,8 +13,7 @@ const goGithub = () => {
   <div class="app flex h-screen overflow-hidden">
     <!-- 侧边栏 -->
     <div
-      class="sidebar p-4 flex-col justify-between items-center hidden overflow-hidden sm:flex transition-all duration-300"
-      :class="{ 'w-0': sidebarStore.isOpen, 'w-75': !sidebarStore.isOpen }"
+      class="sidebar p-4 flex-col justify-between items-center hidden sm:flex transition-all duration-300 w-75"
     >
       <nav class="flex flex-col items-center space-y-4">
         <div class="my-logo">

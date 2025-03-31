@@ -64,8 +64,4 @@
   </div>
 </template>
 
-<script setup>
-import { useSidebarStore } from '@/stores/sidebar'
-
-const sidebarStore = useSidebarStore()
-</script>
+<script setup></script>
