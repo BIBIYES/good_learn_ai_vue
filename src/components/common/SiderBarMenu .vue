@@ -28,7 +28,7 @@ const route = useRoute()
           :class="{ 'menu-active': route.name === 'my-course' }"
         >
           <school theme="outline" size="24" />
-          <a href="#">我的班级</a>
+          <a href="#">我的课程</a>
         </router-link>
       </li>
       <li>

@@ -1,6 +1,20 @@
 <script setup>
 import TitleBar from '@/components/common/TitleBar.vue'
 import { School } from '@icon-park/vue-next'
+import { ref } from 'vue'
+import { addCourse } from '@/api/course'
+import message from '@/plugin/message'
+const courseId = ref('')
+
+// 添加课程
+const handleAddCouser = async () => {
+  const res = await addCourse({
+    courseId: courseId.value,
+  })
+  if (res.code == 200) {
+    message.success(res.message)
+  }
+}
 </script>
 <template>
   <div class="app flex flex-col h-full p-4">
@@ -11,10 +25,11 @@ import { School } from '@icon-park/vue-next'
       </template>
       <template v-slot:module>
         <div class="join">
-          <div class="tooltip tooltip-bottom" data-tip="向老师索要教室编号">
+          <div class="tooltip tooltip-bottom" data-tip="向老师索要课程编号">
             <input
               class="input input-bordered join-item w-full max-w-xs"
-              placeholder="输入教室编号来加入教室"
+              placeholder="输入课程来加入课程"
+              v-model="courseId"
             />
           </div>
           <button class="btn btn-primary join-item" @click="handleAddCouser()">
