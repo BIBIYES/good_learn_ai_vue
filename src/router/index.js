@@ -44,9 +44,9 @@ const router = createRouter({
           component: () => import('../views/student/page/MyTestPaper.vue'),
         },
         {
-          path: 'my-class',
-          name: 'my-class',
-          component: () => import('../views/student/page/MyClassPage.vue'),
+          path: 'my-course',
+          name: 'my-course',
+          component: () => import('../views/student/page/MyCoursePage.vue'),
         },
         {
           path: 'AI',
@@ -56,9 +56,9 @@ const router = createRouter({
       ],
     },
     {
-      path: '/abot',
-      name: 'abot',
-      component: () => import('../views/student/page/AbotMePage.vue'),
+      path: '/about',
+      name: 'about',
+      component: () => import('../views/AboutMePage.vue'),
     },
     {
       path: '/test',
@@ -67,31 +67,27 @@ const router = createRouter({
     },
   ],
 })
-
-// 全局前置守卫
+// 前置路由守卫
 router.beforeEach((to, from, next) => {
-  const user = userStore()
+  const store = userStore()
+  const isLoggedIn = store.userInfo && store.userInfo.jwtToken
 
-  // 1. 定义不需要认证的白名单路由
-  const allowList = ['login', 'register', 'forgot-password'] // 根据需要添加
+  // 登录相关页面路径
+  const authRoutes = ['/login', '/register']
 
-  // 4. 已登录用户访问登录页 → 跳首页
-  if (to.name === 'login' && user.userInfo.value) {
-    return next({ name: 'home-s' })
+  // 已登录用户访问登录页面时重定向到首页
+  if (isLoggedIn && authRoutes.includes(to.path)) {
+    next('/')
+    return
   }
 
-  // 2. 如果目标路由在白名单中，直接放行
-  if (allowList.includes(to.name)) {
-    return next() // 注意这里要用 return
+  // 未登录用户只能访问登录相关页面
+  if (!isLoggedIn && !authRoutes.includes(to.path)) {
+    next('/login')
+    return
   }
 
-  // 3. 检查用户是否认证
-  if (!user.userInfo.value) {
-    // 未登录且访问的是需要认证的路由 → 跳登录页
-    return next({ name: 'login' })
-  }
-
-  // 5. 其他情况正常放行
+  // 正常放行
   next()
 })
 export default router

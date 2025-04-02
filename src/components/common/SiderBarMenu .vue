@@ -24,8 +24,8 @@ const route = useRoute()
       </li>
       <li>
         <router-link
-          to="/s/my-class"
-          :class="{ 'menu-active': route.name === 'my-class' }"
+          to="/s/my-course"
+          :class="{ 'menu-active': route.name === 'my-course' }"
         >
           <school theme="outline" size="24" />
           <a href="#">我的班级</a>

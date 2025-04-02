@@ -1,6 +1,6 @@
 <script setup>
 import TitleBar from '@/components/common/TitleBar.vue'
-import TestPaperBox from '@/components/common/TestPaperBox.vue'
+
 import { DocumentFolder } from '@icon-park/vue-next'
 </script>
 <template>
@@ -25,18 +25,6 @@ import { DocumentFolder } from '@icon-park/vue-next'
     <!-- 试卷 -->
     <div
       class="grid grid-cols-1 rounded-2xl pr-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-10 justify-content-start h-full overflow-y-auto"
-    >
-      <TestPaperBox v-for="i in 20" :key="i">
-        <template #title>
-          <div>数学模拟一卷子</div>
-        </template>
-        <template #author>
-          <div>傅顺</div>
-        </template>
-        <template #date>
-          <div>2024-2-3</div>
-        </template>
-      </TestPaperBox>
-    </div>
+    ></div>
   </div>
 </template>

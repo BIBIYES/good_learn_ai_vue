@@ -1,3 +1,96 @@
+<script setup>
+import { getSchools } from '@/api/schools'
+import { getVerificationCodes, register } from '@/api/user'
+import message from '@/plugin/message'
+import { onMounted, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+const router = useRouter()
+const registerForm = ref({
+  username: '',
+  email: '',
+  schoolId: '',
+  schoolNumber: '',
+  password: '',
+  confirmPassword: '',
+  code: '',
+  role: 'student',
+})
+
+const handleRegister = async () => {
+  // 验证码检查
+  if (!registerForm.value.code) {
+    message.error('请输入验证码')
+    return
+  }
+
+  // 密码一致性验证
+  if (registerForm.value.password !== registerForm.value.confirmPassword) {
+    message.error('两次输入的密码不一致')
+    return
+  }
+
+  // 密码复杂度验证
+  if (registerForm.value.password.length > 6) {
+    message.error('密码必须包含至少6个字符')
+    return
+  }
+
+  try {
+    console.log('注册信息:', registerForm.value)
+    // TODO: 这里应该调用注册API
+    const res = await register(registerForm.value)
+    if (res.code == 200) {
+      message.success(res.message)
+      router.push('/login')
+    }
+  } catch (error) {
+    console.error('注册失败:', error)
+    message.error('注册失败，请稍后重试')
+  }
+}
+
+const schools = ref({})
+const isCodeSent = ref(false)
+const countdown = ref(0)
+const isLoading = ref(false)
+
+const sendVerificationCode = async () => {
+  if (countdown.value > 0 || !registerForm.value.email) return
+  isLoading.value = true
+  const res = await getVerificationCodes({
+    email: registerForm.value.email,
+    purpose: '注册',
+  })
+  isLoading.value = false
+  console.log('验证码发送结果:', res)
+  if (res.code == 200) {
+    message.success('验证码发送成功，如果没有请检查垃圾箱')
+    isCodeSent.value = true
+    countdown.value = 60
+    const timer = setInterval(() => {
+      countdown.value--
+      if (countdown.value <= 0) {
+        clearInterval(timer)
+      }
+    }, 1000)
+  }
+}
+
+// 加载学校
+const handleGetSchools = async () => {
+  const form = {
+    email: registerForm.value.email,
+  }
+  const res = await getSchools(form)
+  schools.value = res.data
+  console.log(res)
+}
+
+onMounted(() => {
+  handleGetSchools()
+})
+</script>
 <template>
   <form @submit.prevent="handleRegister" class="space-y-6">
     <h2 class="text-2xl font-bold text-center mb-6">创建账号</h2>
@@ -8,7 +101,7 @@
         <span class="label-text font-medium">姓名</span>
       </label>
       <label
-        class="input input-bordered validator flex items-center gap-2 hover:border-primary focus-within:border-primary transition-all"
+        class="input input-bordered validator flex items-center gap-2 hover:border-primary"
       >
         <svg
           class="h-5 w-5 opacity-70"
@@ -28,7 +121,7 @@
           type="text"
           placeholder="请输入真实姓名"
           class="grow"
-          v-model="name"
+          v-model="registerForm.username"
           required
         />
       </label>
@@ -40,7 +133,7 @@
         <span class="label-text font-medium">邮箱</span>
       </label>
       <label
-        class="input input-bordered validator flex items-center gap-2 hover:border-primary focus-within:border-primary transition-all"
+        class="input input-bordered validator flex items-center gap-2 hover:border-primary"
       >
         <svg
           class="h-5 w-5 opacity-70"
@@ -60,10 +153,52 @@
           type="email"
           placeholder="your@email.com"
           class="grow"
-          v-model="email"
+          v-model="registerForm.email"
           required
         />
       </label>
+    </div>
+    <!-- 验证码 -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium">验证码</span>
+      </label>
+      <div class="flex gap-2">
+        <label
+          class="input input-bordered validator flex items-center gap-2 flex-1"
+        >
+          <svg
+            class="h-5 w-5 opacity-70"
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          >
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+            <path d="M9 9h6v6H9z"></path>
+          </svg>
+          <input
+            type="text"
+            placeholder="请输入验证码"
+            class="grow"
+            v-model="registerForm.code"
+            required
+          />
+        </label>
+        <button
+          class="btn btn-outline"
+          type="button"
+          :disabled="countdown > 0"
+          @click="sendVerificationCode"
+        >
+          <span class="loading loading-spinner" v-if="isLoading"></span>
+          <span v-if="countdown <= 0 && !isLoading">获取验证码</span>
+          <span v-else-if="countdown > 0">{{ countdown }}秒后重试</span>
+        </button>
+      </div>
     </div>
 
     <!-- 学校选择 -->
@@ -71,9 +206,7 @@
       <label class="label">
         <span class="label-text font-medium">学校</span>
       </label>
-      <label
-        class="input input-bordered validator flex items-center gap-2 hover:border-primary focus-within:border-primary transition-all"
-      >
+      <label class="input input-bordered validator flex items-center gap-2">
         <svg
           class="h-5 w-5 opacity-70"
           xmlns="http://www.w3.org/2000/svg"
@@ -90,17 +223,50 @@
         </svg>
         <select
           class="grow bg-transparent outline-none"
-          v-model="school"
+          v-model="registerForm.schoolId"
           required
         >
           <option disabled value="">请选择学校</option>
-          <option>清华大学</option>
-          <option>北京大学</option>
-          <option>复旦大学</option>
-          <option>上海交通大学</option>
-          <option>浙江大学</option>
-          <option>其他</option>
+          <option
+            v-for="(item, index) in schools"
+            v-bind:key="index"
+            :value="item.schoolId"
+          >
+            {{ item.schoolName }}
+          </option>
         </select>
+      </label>
+    </div>
+    <!-- 学号输入 -->
+    <div class="form-control">
+      <label class="label">
+        <span class="label-text font-medium">学号</span>
+      </label>
+      <label class="input input-bordered validator flex items-center gap-2">
+        <svg
+          class="h-5 w-5 opacity-70"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path
+            d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
+          ></path>
+        </svg>
+        <input
+          type="text"
+          placeholder="请输入学号"
+          class="grow"
+          v-model="registerForm.schoolNumber"
+          required
+          pattern="\d+"
+          title="请输入有效的学号"
+        />
       </label>
     </div>
 
@@ -109,9 +275,7 @@
       <label class="label">
         <span class="label-text font-medium">密码</span>
       </label>
-      <label
-        class="input input-bordered validator flex items-center gap-2 hover:border-primary focus-within:border-primary transition-all"
-      >
+      <label class="input input-bordered validator flex items-center gap-2">
         <svg
           class="h-5 w-5 opacity-70"
           xmlns="http://www.w3.org/2000/svg"
@@ -134,11 +298,10 @@
           type="password"
           placeholder="至少8位字符"
           class="grow"
-          v-model="password"
+          v-model="registerForm.password"
           required
-          minlength="8"
-          pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
-          title="密码必须包含至少8个字符，包括数字、小写字母和大写字母"
+          minlength="6"
+          title="密码必须包含至少6个字符"
         />
       </label>
     </div>
@@ -148,9 +311,7 @@
       <label class="label">
         <span class="label-text font-medium">确认密码</span>
       </label>
-      <label
-        class="input input-bordered validator flex items-center gap-2 hover:border-primary focus-within:border-primary transition-all"
-      >
+      <label class="input input-bordered validator flex items-center gap-2">
         <svg
           class="h-5 w-5 opacity-70"
           xmlns="http://www.w3.org/2000/svg"
@@ -169,9 +330,9 @@
           type="password"
           placeholder="再次输入密码"
           class="grow"
-          v-model="confirmPassword"
+          v-model="registerForm.confirmPassword"
           required
-          minlength="8"
+          minlength="6"
         />
       </label>
     </div>
@@ -200,35 +361,6 @@
   </form>
 </template>
 
-<script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-
-const router = useRouter()
-const name = ref('')
-const email = ref('')
-const school = ref('')
-const password = ref('')
-const confirmPassword = ref('')
-
-const handleRegister = () => {
-  // 密码一致性验证
-  if (password.value !== confirmPassword.value) {
-    alert('两次输入的密码不一致')
-    return
-  }
-
-  console.log('注册信息:', {
-    name: name.value,
-    email: email.value,
-    school: school.value,
-    password: password.value,
-  })
-
-  // 注册成功后跳转
-  router.push('/login')
-}
-</script>
 <style scoped>
 select {
   border: none;

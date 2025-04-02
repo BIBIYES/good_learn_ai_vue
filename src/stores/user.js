@@ -1,17 +1,22 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
+
 export const userStore = defineStore(
   'userInfo',
   () => {
+    // 初始化为空对象而非空字符串
     const userInfo = ref({})
+
     // 设置用户对象
     const setUserInfo = (e) => {
       userInfo.value = e
     }
-    // 清楚登录
+
+    // 清除登录（修正拼写错误）
     const logout = () => {
-      userInfo.value = null
+      userInfo.value = {}
     }
+
     return { userInfo, setUserInfo, logout }
   },
   {

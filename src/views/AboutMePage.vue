@@ -422,7 +422,7 @@ const animation = () => {
               <figure>
                 <img
                   class="w-full"
-                  src="../../../assets/author/lzh.png"
+                  src="../assets/author/lzh.png"
                   alt="Shoes"
                 />
               </figure>
@@ -438,7 +438,7 @@ const animation = () => {
             </div>
             <div class="card bg-base-100 shadow-sm">
               <figure>
-                <img src="../../../assets/author/lh.png" alt="Shoes" />
+                <img src="../assets/author/lh.png" alt="Shoes" />
               </figure>
               <div class="card-body">
                 <h2 class="card-title">李豪</h2>
@@ -452,7 +452,7 @@ const animation = () => {
             </div>
             <div class="card bg-base-100 shadow-sm">
               <figure>
-                <img src="../../../assets/author/ckl.png" alt="Shoes" />
+                <img src="../assets/author/ckl.png" alt="Shoes" />
               </figure>
               <div class="card-body">
                 <h2 class="card-title">陈克岚</h2>
@@ -466,7 +466,7 @@ const animation = () => {
             </div>
             <div class="card bg-base-100 shadow-sm">
               <figure>
-                <img src="../../../assets/author/zzx.png" alt="Shoes" />
+                <img src="../assets/author/zzx.png" alt="Shoes" />
               </figure>
               <div class="card-body">
                 <h2 class="card-title">曾志翔</h2>

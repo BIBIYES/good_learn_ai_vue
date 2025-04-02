@@ -6,7 +6,7 @@ const message = {
    * @param {number} duration - 显示时间(毫秒)，默认 3000 毫秒
    *
    */
-  create(message, type = 'info', duration = 3000) {
+  create(message, type, duration = 3000) {
     // 消息位置容器
     const messageContainer = document.createElement('div')
     messageContainer.className = `toast toast-top toast-center z-50 w-100`

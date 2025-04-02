@@ -40,7 +40,7 @@
             >
           </li>
           <li>
-            <a class="text-red-500"
+            <a class="text-red-500" @click="logout()"
               ><svg
                 xmlns="http://www.w3.org/2000/svg"
                 fill="none"
@@ -64,4 +64,12 @@
   </div>
 </template>
 
-<script setup></script>
+<script setup>
+import router from '@/router'
+import { userStore } from '@/stores/user'
+const user = userStore()
+const logout = () => {
+  user.logout()
+  router.push('/login')
+}
+</script>

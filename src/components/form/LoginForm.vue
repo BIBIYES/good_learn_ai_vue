@@ -3,6 +3,7 @@ import { ref } from 'vue'
 import { login } from '@/api/user'
 import { userStore } from '@/stores/user'
 import message from '@/plugin/message'
+import router from '@/router'
 const user = userStore()
 const loginInfo = ref({
   email: '',
@@ -14,6 +15,12 @@ const handleLogin = async () => {
     console.log('登录成功')
     message.success(res.message)
     user.setUserInfo(res.data)
+
+    if (res.data.role == 'student') {
+      console.log('学生登录')
+
+      router.push('/s/home')
+    }
   }
   console.log(res)
 }
@@ -27,9 +34,20 @@ const handleLogin = async () => {
       <label class="label">
         <span class="label-text font-medium">邮箱</span>
       </label>
-      <label class="input input-bordered validator flex items-center gap-2 hover:border-primary focus-within:border-primary transition-all">
-        <svg class="h-5 w-5 opacity-70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+      <label class="input input-bordered validator flex items-center gap-2">
+        <svg
+          class="h-5 w-5 opacity-70"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path
+            d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+          />
         </svg>
         <input
           type="email"
@@ -49,15 +67,32 @@ const handleLogin = async () => {
           >忘记密码?</a
         >
       </label>
-      <label class="input input-bordered validator flex items-center gap-2 hover:border-primary focus-within:border-primary transition-all">
-        <svg class="h-5 w-5 opacity-70" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><g stroke-linejoin="round" stroke-linecap="round" stroke-width="2" fill="none" stroke="currentColor"><path d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"></path><circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle></g></svg>
+      <label class="input input-bordered validator flex items-center gap-2">
+        <svg
+          class="h-5 w-5 opacity-70"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24"
+        >
+          <g
+            stroke-linejoin="round"
+            stroke-linecap="round"
+            stroke-width="2"
+            fill="none"
+            stroke="currentColor"
+          >
+            <path
+              d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
+            ></path>
+            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+          </g>
+        </svg>
         <input
           type="password"
           placeholder="********"
           class="grow"
           v-model="loginInfo.password"
           required
-          minlength="8"
+          minlength="6"
         />
       </label>
     </div>

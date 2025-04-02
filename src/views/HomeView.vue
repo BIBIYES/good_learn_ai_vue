@@ -30,7 +30,7 @@ const goGithub = () => {
         <button class="btn btn-md w-30" @click="goGithub()">
           <Github theme="outline" size="18" />Github
         </button>
-        <router-link to="/abot">
+        <router-link to="/about">
           <button class="btn btn-md w-30">
             <attention theme="outline" size="18" />关于我们
           </button>
@@ -39,7 +39,7 @@ const goGithub = () => {
     </div>
 
     <!-- 主内容区域 -->
-    <div class="flex-1 bg-gray-100">
+    <div class="flex-1 bg-gray-100 rounded-r-md">
       <RouterView />
     </div>
   </div>
