@@ -4,6 +4,7 @@ import { School } from '@icon-park/vue-next'
 import { ref } from 'vue'
 import { addCourse } from '@/api/course'
 import message from '@/plugin/message'
+import CourseCard from '@/components/common/CourseCard.vue'
 const courseId = ref('')
 
 // 添加课程
@@ -21,7 +22,7 @@ const handleAddCouser = async () => {
     <TitleBar>
       <template v-slot:title>
         <school theme="outline" size="38" />
-        <span>我的班级</span>
+        <span>我的课程</span>
       </template>
       <template v-slot:module>
         <div class="join">
@@ -39,6 +40,8 @@ const handleAddCouser = async () => {
       </template>
     </TitleBar>
     <!-- 课程 -->
-    <div class="overflow-y-auto"></div>
+    <div class="overflow-y-auto">
+      <CourseCard></CourseCard>
+    </div>
   </div>
 </template>
