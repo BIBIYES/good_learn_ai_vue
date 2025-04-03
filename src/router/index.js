@@ -5,6 +5,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      redirect: '/login', // 重定向到 /s
+    },
+    {
       path: '/login',
       name: 'login-parent',
       component: () => import('../views/LoginPage.vue'),
@@ -22,11 +26,21 @@ const router = createRouter({
         },
       ],
     },
+    // 老师路由
     {
-      path: '/',
-      name: 'home',
-      redirect: '/s', // 重定向到 /s
+      path: '/t',
+      name: 'home-t',
+      component: HomeView,
+      redirect: '/t/home',
+      children: [
+        {
+          path: 'home',
+          name: 'home-page-t',
+          component: () => import('../views/teacher/page/HomePage.vue'),
+        },
+      ],
     },
+    // 学生
     {
       path: '/s',
       name: 'home-s',
@@ -35,7 +49,7 @@ const router = createRouter({
       children: [
         {
           path: 'home',
-          name: 'home-page',
+          name: 'home-page-s',
           component: () => import('../views/student/page/HomePage.vue'),
         },
         {

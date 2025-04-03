@@ -10,7 +10,7 @@ import { Home } from '@icon-park/vue-next'
         <template v-slot:title>
           <Home theme="outline" size="38" />
           <span>首页</span>
-          <p>你好同学欢迎你</p>
+          <p>你好老师欢迎你</p>
         </template>
       </TitleBar>
     </div>

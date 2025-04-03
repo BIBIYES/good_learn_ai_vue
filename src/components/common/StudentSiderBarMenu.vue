@@ -10,7 +10,7 @@ const route = useRoute()
       <li class="">
         <router-link
           to="/s/home"
-          :class="{ 'menu-active': route.name === 'home-page' }"
+          :class="{ 'menu-active': route.name === 'home-page-s' }"
         >
           <home theme="outline" size="24" />
           <a href="#">首页</a>

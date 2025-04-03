@@ -1,3 +1,13 @@
+<script setup>
+import router from '@/router'
+import { userStore } from '@/stores/user'
+const user = userStore()
+const logout = () => {
+  user.logout()
+  router.push('/login')
+}
+</script>
+
 <template>
   <div class="app">
     <div class="navbar bg-base-100">
@@ -63,13 +73,3 @@
     </div>
   </div>
 </template>
-
-<script setup>
-import router from '@/router'
-import { userStore } from '@/stores/user'
-const user = userStore()
-const logout = () => {
-  user.logout()
-  router.push('/login')
-}
-</script>

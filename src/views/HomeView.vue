@@ -1,8 +1,9 @@
 <script setup>
-import SiderBarMenu from '@/components/common/SiderBarMenu .vue'
+import StudentSiderBarMenu from '@/components/common/StudentSiderBarMenu.vue'
 import { RouterView } from 'vue-router'
 import { Attention, Github } from '@icon-park/vue-next'
-
+import { userStore } from '@/stores/user'
+const user = userStore()
 // 跳转github
 const goGithub = () => {
   window.open('https://github.com/BIBIYES') // 你的github地址
@@ -19,8 +20,11 @@ const goGithub = () => {
         <div class="my-logo">
           <MyLogo></MyLogo>
         </div>
-        <div>
-          <SiderBarMenu />
+        <div v-if="user.userInfo.role == 'student'">
+          <StudentSiderBarMenu />
+        </div>
+        <div v-else-if="user.userInfo.role == 'teacher'">
+          <TeacherSiderBarMenu />
         </div>
       </nav>
       <!-- 底部 -->
