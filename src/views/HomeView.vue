@@ -1,7 +1,7 @@
 <script setup>
 import StudentSiderBarMenu from '@/components/student/StudentSiderBarMenu.vue'
 import { RouterView } from 'vue-router'
-import { Attention, Github, SlidingHorizontal } from '@icon-park/vue-next'
+import { Attention, Github } from '@icon-park/vue-next'
 import { userStore } from '@/stores/user'
 const user = userStore()
 // 跳转github
@@ -42,16 +42,7 @@ const goGithub = () => {
       </footer>
     </div>
     <!-- 拖动 -->
-    <div
-      class="divider lg:divider-horizontal opacity-0 hidden hover:opacity-100"
-    >
-      <sliding-horizontal
-        theme="outline"
-        size="18"
-        fill="#333"
-        strokeLinejoin="miter"
-      />
-    </div>
+    <div class="divider lg:divider-horizontal"></div>
     <!-- 主内容区域 -->
     <div class="flex-1 bg-base-100 rounded-r-md">
       <RouterView />
