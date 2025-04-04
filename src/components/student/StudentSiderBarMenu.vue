@@ -6,14 +6,14 @@ const route = useRoute()
 
 <template>
   <div class="app animate__animated animate__fadeInLeft">
-    <ul class="menu rounded-box w-56 menu-lg gap-4">
+    <ul class="menu bg-base-200 rounded-box w-56 menu-lg gap-4">
       <li class="">
         <router-link
           to="/s/home"
           :class="{ 'menu-active': route.name === 'home-page-s' }"
         >
           <home theme="outline" size="24" />
-          <a href="#">首页</a>
+          <a href="#" class="">首页</a>
         </router-link>
       </li>
       <li>

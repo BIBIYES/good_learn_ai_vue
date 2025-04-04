@@ -43,20 +43,10 @@ const goGithub = () => {
     </div>
 
     <!-- 主内容区域 -->
-    <div class="flex-1 bg-gray-100 rounded-r-md">
+    <div class="flex-1 bg-base-100 rounded-r-md">
       <RouterView />
     </div>
   </div>
 </template>
 
-<style scoped>
-.sidebar {
-  border-right: 1px solid #e5e7eb;
-  background-color: white;
-}
-
-.w-0 {
-  padding: 0 !important;
-  margin: 0 !important;
-}
-</style>
+<style scoped></style>

@@ -1,7 +1,7 @@
 <template>
   <div class="course-card-container">
     <div
-      class="bg-base-100 hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden border border-base-200 cursor-pointer"
+      class="hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden border border-base-200 cursor-pointer"
     >
       <!-- 顶部彩色条 -->
       <div class="h-2 bg-gradient-to-r from-primary to-secondary"></div>

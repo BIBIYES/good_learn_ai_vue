@@ -10,7 +10,7 @@ const logout = () => {
 
 <template>
   <div class="app">
-    <div class="navbar bg-base-100">
+    <div class="navbar bg-base-100 rounded-2xl">
       <div class="flex" @click="sidebarStore.toggleSidebar()">
         <a class="btn btn-ghost text-3xl"
           ><span class="outlined-text-black">AI</span>好助学</a

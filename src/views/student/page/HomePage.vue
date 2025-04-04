@@ -75,7 +75,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app p-4 glass w-full h-screen">
+  <div class="app p-4 w-full h-screen">
     <div class="nav-bar flex justify-between h-20 items-center">
       <TitleBar>
         <template v-slot:title>
@@ -207,21 +207,3 @@ onMounted(() => {
     </div>
   </div>
 </template>
-
-<style scoped>
-.stats-container .stat {
-  border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.welcome-card {
-  background-image: linear-gradient(
-    to right,
-    rgba(99, 102, 241, 0.05),
-    transparent
-  );
-}
-
-.recommendation-card {
-  background-image: linear-gradient(to bottom, white, rgba(243, 244, 246, 0.5));
-}
-</style>
