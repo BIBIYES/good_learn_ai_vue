@@ -5,6 +5,10 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      redirect: '/login', // 重定向到 /s
+    },
+    {
       path: '/login',
       name: 'login-parent',
       component: () => import('../views/LoginPage.vue'),
@@ -22,11 +26,21 @@ const router = createRouter({
         },
       ],
     },
+    // 老师路由
     {
-      path: '/',
-      name: 'home',
-      redirect: '/s', // 重定向到 /s
+      path: '/t',
+      name: 'home-t',
+      component: HomeView,
+      redirect: '/t/home',
+      children: [
+        {
+          path: 'home',
+          name: 'home-page-t',
+          component: () => import('../views/teacher/page/HomePage.vue'),
+        },
+      ],
     },
+    // 学生
     {
       path: '/s',
       name: 'home-s',
@@ -35,7 +49,7 @@ const router = createRouter({
       children: [
         {
           path: 'home',
-          name: 'home-page',
+          name: 'home-page-s',
           component: () => import('../views/student/page/HomePage.vue'),
         },
         {
@@ -75,9 +89,20 @@ router.beforeEach((to, from, next) => {
   // 登录相关页面路径
   const authRoutes = ['/login', '/register']
 
+  // 公开页面
+  const openRoutes = ['/about']
+  if (openRoutes.includes(to.path)) {
+    next()
+    return
+  }
+
   // 已登录用户访问登录页面时重定向到首页
   if (isLoggedIn && authRoutes.includes(to.path)) {
-    next('/')
+    if (store.userInfo.role === 'teacher') {
+      next('/t/home')
+    } else {
+      next('/s/home')
+    }
     return
   }
 
@@ -85,6 +110,22 @@ router.beforeEach((to, from, next) => {
   if (!isLoggedIn && !authRoutes.includes(to.path)) {
     next('/login')
     return
+  }
+
+  // 角色权限检查
+  if (isLoggedIn) {
+    const isTeacherPath = to.path.startsWith('/t')
+    const isStudentPath = to.path.startsWith('/s')
+
+    if (store.userInfo.role === 'teacher' && !isTeacherPath) {
+      next('/t/home')
+      return
+    }
+
+    if (store.userInfo.role === 'student' && !isStudentPath) {
+      next('/s/home')
+      return
+    }
   }
 
   // 正常放行

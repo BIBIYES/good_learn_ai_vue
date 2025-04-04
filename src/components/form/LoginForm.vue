@@ -20,6 +20,10 @@ const handleLogin = async () => {
       console.log('学生登录')
 
       router.push('/s/home')
+    } else if (res.data.role == 'teacher') {
+      console.log('老师登录')
+
+      router.push('/t/home')
     }
   }
   console.log(res)

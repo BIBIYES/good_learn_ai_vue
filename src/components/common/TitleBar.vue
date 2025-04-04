@@ -16,9 +16,7 @@ defineProps({
 <template>
   <div class="app w-full">
     <div class="nav-bar flex justify-between items-center h-20 gap-4">
-      <h1
-        class="text-3xl font-bold text-gray-800 drop-shadow-lg truncate flex-shrink-0"
-      >
+      <h1 class="text-3xl font-bold drop-shadow-lg truncate flex-shrink-0">
         <div class="flex items-end gap-3">
           <!-- 触发开启关闭侧边栏 -->
 
