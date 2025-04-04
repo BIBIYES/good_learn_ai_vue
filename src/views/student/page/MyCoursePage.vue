@@ -7,6 +7,10 @@ import message from '@/plugin/message'
 import CourseCard from '@/components/student/CourseCard.vue'
 const courseId = ref('')
 
+// 页面加载的loading
+
+const loading = ref(true)
+
 // 添加课程
 const handleAddCouser = async () => {
   const res = await addCourse({
@@ -25,6 +29,7 @@ const handleGetCourse = async () => {
   if (res.code == 200) {
     console.log(res.data)
     courses.value = res.data
+    loading.value = false
   }
 }
 onMounted(() => {
@@ -53,8 +58,17 @@ onMounted(() => {
         </div>
       </template>
     </TitleBar>
+    <div
+      class="w-full h-screen flex justify-center items-center animate__animated animate__fadeIn"
+      v-if="loading"
+    >
+      <span class="loading loading-spinner loading-xl"></span>
+    </div>
     <!-- 课程 -->
-    <div class="overflow-y-auto space-y-5">
+    <div
+      class="overflow-y-auto space-y-5 animate__animated animate__fadeIn"
+      v-else
+    >
       <CourseCard
         v-for="(item, index) in courses"
         v-bind:key="index"

@@ -1,124 +1,95 @@
 <template>
-  <div class="app">
+  <div class="course-card-container">
     <div
-      class="flex flex-col space-y-3 bg-base-100 hover:bg-base-200 transition-colors duration-300 p-5 rounded-lg shadow-md border border-base-300 cursor-pointer relative overflow-hidden"
+      class="bg-base-100 hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden border border-base-200 cursor-pointer"
     >
-      <div class="flex items-center space-x-4">
-        <!-- 左侧图标盒子 -->
-        <div
-          class="bg-primary w-16 h-16 rounded-lg text-4xl flex justify-center items-center shadow-sm flex-shrink-0"
-        >
-          <p class="text-primary-content">{{ firstChar }}</p>
-        </div>
+      <!-- 顶部彩色条 -->
+      <div class="h-2 bg-gradient-to-r from-primary to-secondary"></div>
 
-        <!-- 中央内容区域 -->
-        <div class="flex-1 min-w-0">
-          <div class="flex justify-between items-start">
-            <!-- 标题和教师信息 -->
-            <div>
-              <h3 class="text-xl font-bold text-base-content truncate">
-                {{ title }}
-              </h3>
-
-              <!-- 教师信息 -->
-              <div class="flex items-center gap-2 mt-1">
-                <div class="avatar">
-                  <div class="w-6 h-6 rounded-full">
-                    <img
-                      :src="teacherAvatar || '/api/placeholder/24/24'"
-                      alt="Teacher"
-                    />
-                  </div>
-                </div>
-                <span class="text-sm font-medium">{{ teacherName }}</span>
-
-                <!-- 成员数量 -->
-                <div
-                  class="badge badge-primary badge-outline badge-sm gap-1 ml-2"
-                >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="12"
-                    height="12"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                  {{ memberCount }}
-                </div>
-              </div>
-            </div>
-
-            <!-- 学分显示 -->
+      <div class="p-5">
+        <!-- 头部区域：标题和学分 -->
+        <div class="flex justify-between items-center mb-4">
+          <!-- 左侧标题 -->
+          <div class="flex items-center gap-3">
+            <!-- 课程首字母图标 -->
             <div
-              class="flex items-center gap-1 bg-base-200 px-2 py-1 rounded-md"
+              class="bg-primary/10 w-12 h-12 rounded-lg flex justify-center items-center text-primary text-2xl font-bold"
             >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                width="16"
-                height="16"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              <span class="font-medium">{{ credits }}</span>
-              <span class="text-xs text-base-content/60">学分</span>
+              {{ firstChar }}
             </div>
+
+            <h3
+              class="text-lg font-bold text-base-content truncate max-w-[180px]"
+            >
+              {{ title }}
+            </h3>
+          </div>
+
+          <!-- 右侧学分 -->
+          <div
+            class="flex items-center gap-1 bg-base-100 px-3 py-1.5 rounded-full shadow-sm border border-base-200"
+          >
+            <Trophy theme="outline" size="16" class="text-primary" />
+            <span class="font-medium text-primary">{{ credits }}</span>
+            <span class="text-xs text-base-content/70">学分</span>
           </div>
         </div>
-      </div>
 
-      <!-- 描述 -->
-      <p class="text-sm text-base-content/70 line-clamp-2 pl-20">
-        {{ description }}
-      </p>
+        <!-- 教师信息和成员数量 -->
+        <div class="flex items-center justify-between mb-3">
+          <!-- 教师信息 -->
+          <div class="flex items-center gap-2">
+            <div class="avatar">
+              <div
+                class="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1"
+              >
+                <img
+                  :src="teacherAvatar || '/api/placeholder/24/24'"
+                  alt="Teacher"
+                />
+              </div>
+            </div>
+            <div>
+              <span class="text-sm font-medium block">{{ teacherName }}</span>
+              <span class="text-xs text-base-content/60">讲师</span>
+            </div>
+          </div>
 
-      <!-- 底部状态栏 -->
-      <div class="flex justify-between items-center mt-1 pl-20">
-        <!-- 课程状态和加入时间 -->
-        <div class="flex items-center gap-2">
-          <span class="badge badge-sm" :class="statusClass">{{
-            statusText
-          }}</span>
-          <span class="text-xs text-base-content/60"
-            >加入时间: {{ formatDate(joinTime) }}</span
-          >
+          <!-- 成员数量 -->
+          <div class="badge badge-primary badge-outline gap-1 px-3 py-3">
+            <Peoples theme="outline" size="14" />
+            <span>{{ memberCount }}</span>
+            <span class="text-xs">学员</span>
+          </div>
         </div>
 
-        <!-- 班长信息 -->
-        <div v-if="monitorName" class="flex items-center gap-1">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="14"
-            height="14"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            class="text-warning"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
-            />
-          </svg>
-          <span class="text-xs font-medium text-warning"
-            >班长: {{ monitorName }}</span
+        <!-- 底部状态栏 -->
+        <div
+          class="flex justify-between items-center pt-3 border-t border-base-200"
+        >
+          <!-- 课程状态 -->
+          <div class="flex items-center gap-2">
+            <!-- 开启的状态 -->
+            <div class="flex items-center space-x-3" v-if="status === 1">
+              <div class="inline-grid *:[grid-area:1/1]">
+                <div class="status status-success animate-ping"></div>
+                <div class="status status-success"></div>
+              </div>
+              <p class="text-xs">该课程正常开放</p>
+            </div>
+            <!-- 关闭的状态 -->
+            <div class="flex items-center space-x-3" v-else>
+              <div class="inline-grid *:[grid-area:1/1]">
+                <div class="status status-error animate-ping"></div>
+                <div class="status status-error"></div>
+              </div>
+              <p class="text-xs">该课程已被关闭</p>
+            </div>
+          </div>
+
+          <!-- 加入时间 -->
+          <span class="text-xs text-base-content/60"
+            >加入时间: {{ formatDate(joinTime) }}</span
           >
         </div>
       </div>
@@ -127,8 +98,14 @@
 </template>
 
 <script>
+import { Trophy, Peoples } from '@icon-park/vue-next'
+
 export default {
   name: 'CourseCard',
+  components: {
+    Trophy,
+    Peoples,
+  },
   props: {
     courseInfo: {
       type: Object,
