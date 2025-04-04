@@ -89,6 +89,13 @@ router.beforeEach((to, from, next) => {
   // 登录相关页面路径
   const authRoutes = ['/login', '/register']
 
+  // 公开页面
+  const openRoutes = ['/about']
+  if (openRoutes.includes(to.path)) {
+    next()
+    return
+  }
+
   // 已登录用户访问登录页面时重定向到首页
   if (isLoggedIn && authRoutes.includes(to.path)) {
     if (store.userInfo.role === 'teacher') {
