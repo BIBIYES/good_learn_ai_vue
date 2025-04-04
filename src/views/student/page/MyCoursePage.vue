@@ -1,8 +1,8 @@
 <script setup>
 import TitleBar from '@/components/common/TitleBar.vue'
 import { School } from '@icon-park/vue-next'
-import { ref } from 'vue'
-import { addCourse } from '@/api/course'
+import { onMounted, ref } from 'vue'
+import { addCourse, getCourse } from '@/api/course'
 import message from '@/plugin/message'
 import CourseCard from '@/components/student/CourseCard.vue'
 const courseId = ref('')
@@ -16,6 +16,20 @@ const handleAddCouser = async () => {
     message.success(res.message)
   }
 }
+
+// 获取课程
+const courses = ref([])
+
+const handleGetCourse = async () => {
+  const res = await getCourse()
+  if (res.code == 200) {
+    console.log(res.data)
+    courses.value = res.data
+  }
+}
+onMounted(() => {
+  handleGetCourse()
+})
 </script>
 <template>
   <div class="app flex flex-col h-full p-4">
@@ -40,8 +54,12 @@ const handleAddCouser = async () => {
       </template>
     </TitleBar>
     <!-- 课程 -->
-    <div class="overflow-y-auto">
-      <CourseCard></CourseCard>
+    <div class="overflow-y-auto space-y-5">
+      <CourseCard
+        v-for="(item, index) in courses"
+        v-bind:key="index"
+        :courseInfo="item"
+      ></CourseCard>
     </div>
   </div>
 </template>

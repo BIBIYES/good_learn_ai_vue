@@ -91,11 +91,7 @@ router.beforeEach((to, from, next) => {
 
   // 已登录用户访问登录页面时重定向到首页
   if (isLoggedIn && authRoutes.includes(to.path)) {
-    if (store.userInfo.role === 'teacher') {
-      next('/t/home')
-    } else {
-      next('/s/home')
-    }
+    next('/')
     return
   }
 
@@ -103,22 +99,6 @@ router.beforeEach((to, from, next) => {
   if (!isLoggedIn && !authRoutes.includes(to.path)) {
     next('/login')
     return
-  }
-
-  // 角色权限检查
-  if (isLoggedIn) {
-    const isTeacherPath = to.path.startsWith('/t')
-    const isStudentPath = to.path.startsWith('/s')
-    
-    if (store.userInfo.role === 'teacher' && !isTeacherPath) {
-      next('/t/home')
-      return
-    }
-    
-    if (store.userInfo.role === 'student' && !isStudentPath) {
-      next('/s/home')
-      return
-    }
   }
 
   // 正常放行

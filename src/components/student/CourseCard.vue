@@ -89,13 +89,36 @@
 
       <!-- 底部状态栏 -->
       <div class="flex justify-between items-center mt-1 pl-20">
-        <!-- 课程状态 -->
-        <div class="flex items-center">
+        <!-- 课程状态和加入时间 -->
+        <div class="flex items-center gap-2">
           <span class="badge badge-sm" :class="statusClass">{{
             statusText
           }}</span>
-          <span class="text-xs text-base-content/60 ml-2"
+          <span class="text-xs text-base-content/60"
             >加入时间: {{ formatDate(joinTime) }}</span
+          >
+        </div>
+
+        <!-- 班长信息 -->
+        <div v-if="monitorName" class="flex items-center gap-1">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="14"
+            height="14"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            class="text-warning"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"
+            />
+          </svg>
+          <span class="text-xs font-medium text-warning"
+            >班长: {{ monitorName }}</span
           >
         </div>
       </div>
@@ -107,48 +130,56 @@
 export default {
   name: 'CourseCard',
   props: {
-    title: {
-      type: String,
-      default: '计算机网络',
-    },
-    description: {
-      type: String,
-      default: "自己啊实打实的打撒大叔大婶啊大叔大婶大a's'd's啊实打实的藐视",
-    },
-    teacherName: {
-      type: String,
-      default: '张教授',
-    },
-    teacherAvatar: {
-      type: String,
-      default: '',
-    },
-    memberCount: {
-      type: Number,
-      default: 42,
-    },
-    joinTime: {
-      type: String,
-      default: new Date().toISOString(),
-    },
-    credits: {
-      type: Number,
-      default: 3,
-    },
-    status: {
-      type: Number,
-      default: 1,
+    courseInfo: {
+      type: Object,
+      required: true,
     },
   },
   computed: {
     firstChar() {
-      return this.title.charAt(0)
+      return this.courseInfo.className.charAt(0)
+    },
+    title() {
+      return this.courseInfo.className
+    },
+    description() {
+      return this.courseInfo.description
+    },
+    teacherName() {
+      return this.courseInfo.teacherName
+    },
+    teacherAvatar() {
+      if (this.courseInfo.teacherAvatar) {
+        return this.courseInfo.teacherAvatar
+      } else if (
+        this.courseInfo.teacherEmail &&
+        this.courseInfo.teacherEmail.includes('@qq.com')
+      ) {
+        const qqNumber = this.courseInfo.teacherEmail.split('@')[0]
+        return `http://q1.qlogo.cn/g?b=qq&nk=${qqNumber}&s=100`
+      }
+      return null
+    },
+    memberCount() {
+      return this.courseInfo.memberCount
+    },
+    credits() {
+      return this.courseInfo.credits
+    },
+    joinTime() {
+      return this.courseInfo.joinTime
+    },
+    status() {
+      return this.courseInfo.courseStatus ? 1 : 0
     },
     statusText() {
       return this.status === 1 ? '正常' : '禁用'
     },
     statusClass() {
       return this.status === 1 ? 'badge-success' : 'badge-error'
+    },
+    monitorName() {
+      return this.courseInfo.monitorName
     },
   },
   methods: {
