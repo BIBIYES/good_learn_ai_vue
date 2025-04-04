@@ -4,7 +4,7 @@ import { School } from '@icon-park/vue-next'
 import { ref } from 'vue'
 import { addCourse } from '@/api/course'
 import message from '@/plugin/message'
-import CourseCard from '@/components/common/CourseCard.vue'
+import CourseCard from '@/components/student/CourseCard.vue'
 const courseId = ref('')
 
 // 添加课程
