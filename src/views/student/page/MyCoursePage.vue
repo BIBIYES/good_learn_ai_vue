@@ -10,14 +10,26 @@ const courseId = ref('')
 // 页面加载的loading
 
 const loading = ref(true)
+const addCourseLoading = ref(false)
 
 // 添加课程
 const handleAddCouser = async () => {
-  const res = await addCourse({
-    courseId: courseId.value,
-  })
-  if (res.code == 200) {
-    message.success(res.message)
+  addCourseLoading.value = true
+  try {
+    const res = await addCourse({
+      courseId: courseId.value,
+    })
+
+    if (res.code == 200) {
+      message.success(res.message)
+      handleGetCourse()
+      addCourseLoading.value = false
+    }
+  } catch (err) {
+    message.error(err.message)
+    addCourseLoading.value = false
+  } finally {
+    addCourseLoading.value = false
   }
 }
 
@@ -25,10 +37,17 @@ const handleAddCouser = async () => {
 const courses = ref([])
 
 const handleGetCourse = async () => {
-  const res = await getCourse()
-  if (res.code == 200) {
-    console.log(res.data)
-    courses.value = res.data
+  loading.value = true
+  try {
+    const res = await getCourse()
+    if (res.code == 200) {
+      console.log(res.data)
+      courses.value = res.data.reverse()
+      loading.value = false
+    }
+  } catch (err) {
+    console.log(err)
+  } finally {
     loading.value = false
   }
 }
@@ -53,6 +72,10 @@ onMounted(() => {
             />
           </div>
           <button class="btn btn-primary join-item" @click="handleAddCouser()">
+            <span
+              class="loading loading-spinner loading-md"
+              v-show="addCourseLoading"
+            ></span>
             加入课程
           </button>
         </div>
@@ -65,11 +88,9 @@ onMounted(() => {
       <span class="loading loading-spinner loading-xl"></span>
     </div>
     <!-- 课程 -->
-    <div
-      class="overflow-y-auto space-y-5 animate__animated animate__fadeIn"
-      v-else
-    >
+    <div class="overflow-y-auto space-y-5" v-else>
       <CourseCard
+        class="animate__animated animate__slideInUp"
         v-for="(item, index) in courses"
         v-bind:key="index"
         :courseInfo="item"
