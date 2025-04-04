@@ -75,7 +75,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app p-4">
+  <div class="app p-4 glass w-full h-screen">
     <div class="nav-bar flex justify-between h-20 items-center">
       <TitleBar>
         <template v-slot:title>

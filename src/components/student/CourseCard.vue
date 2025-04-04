@@ -75,7 +75,7 @@
                 <div class="status status-success animate-ping"></div>
                 <div class="status status-success"></div>
               </div>
-              <p class="text-xs">该课程正常开放</p>
+              <p class="text-xs text-base-content/60">该课程正常开放</p>
             </div>
             <!-- 关闭的状态 -->
             <div class="flex items-center space-x-3" v-else>
@@ -83,7 +83,7 @@
                 <div class="status status-error animate-ping"></div>
                 <div class="status status-error"></div>
               </div>
-              <p class="text-xs">该课程已被关闭</p>
+              <p class="text-xs text-base-content/60">该课程已被关闭</p>
             </div>
           </div>
 
