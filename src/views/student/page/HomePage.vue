@@ -3,7 +3,6 @@ import TitleBar from '@/components/common/TitleBar.vue'
 import StudentStatsCharts from '@/components/charts/StudentStatsCharts.vue'
 import { Home, Book, Time, CheckOne, Trophy } from '@icon-park/vue-next'
 import { userStore } from '@/stores/user'
-import { onMounted, ref } from 'vue'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
