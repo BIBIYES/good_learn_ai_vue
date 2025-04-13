@@ -12,7 +12,10 @@ const route = useRoute()
           to="/t/home"
           :class="{ 'menu-active': route.name === 'home-page-t' }"
         >
-          <home theme="outline" size="24" />
+          <home
+            theme="outline"
+            size="24"
+          />
           <a href="#">首页</a>
         </router-link>
       </li>

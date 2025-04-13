@@ -1,6 +1,6 @@
 <script setup>
-import StudentSiderBarMenu from '@/components/student/StudentSiderBarMenu.vue'
-import { RouterView } from 'vue-router'
+
+
 import { Attention, Github } from '@icon-park/vue-next'
 import { userStore } from '@/stores/user'
 const user = userStore()
@@ -18,7 +18,7 @@ const goGithub = () => {
     >
       <nav class="flex flex-col items-center space-y-4">
         <div class="my-logo">
-          <MyLogo></MyLogo>
+          <MyLogo />
         </div>
         <div v-if="user.userInfo.role == 'student'">
           <StudentSiderBarMenu />
@@ -31,18 +31,27 @@ const goGithub = () => {
       <footer
         class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig"
       >
-        <button class="btn btn-md w-30" @click="goGithub()">
-          <Github theme="outline" size="18" />Github
+        <button
+          class="btn btn-md w-30"
+          @click="goGithub()"
+        >
+          <Github
+            theme="outline"
+            size="18"
+          />Github
         </button>
         <router-link to="/about">
           <button class="btn btn-md w-30">
-            <attention theme="outline" size="18" />关于我们
+            <attention
+              theme="outline"
+              size="18"
+            />关于我们
           </button>
         </router-link>
       </footer>
     </div>
     <!-- 拖动 -->
-    <div class="divider lg:divider-horizontal"></div>
+    <!-- <div class="divider lg:divider-horizontal"></div> -->
     <!-- 主内容区域 -->
     <div class="flex-1 bg-base-100 rounded-r-md">
       <RouterView />

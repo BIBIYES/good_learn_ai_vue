@@ -2,8 +2,6 @@
 import { getSchools } from '@/api/schools'
 import { getVerificationCodes, register } from '@/api/user'
 import message from '@/plugin/message'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const registerForm = ref({
@@ -14,7 +12,7 @@ const registerForm = ref({
   password: '',
   confirmPassword: '',
   code: '',
-  role: 'student',
+  role: 'student'
 })
 
 const handleRegister = async () => {
@@ -60,7 +58,7 @@ const sendVerificationCode = async () => {
   isLoading.value = true
   const res = await getVerificationCodes({
     email: registerForm.value.email,
-    purpose: '注册',
+    purpose: '注册'
   })
   isLoading.value = false
   console.log('验证码发送结果:', res)
@@ -80,7 +78,7 @@ const sendVerificationCode = async () => {
 // 加载学校
 const handleGetSchools = async () => {
   const form = {
-    email: registerForm.value.email,
+    email: registerForm.value.email
   }
   const res = await getSchools(form)
   schools.value = res.data
@@ -92,8 +90,13 @@ onMounted(() => {
 })
 </script>
 <template>
-  <form @submit.prevent="handleRegister" class="space-y-6">
-    <h2 class="text-2xl font-bold text-center mb-6">创建账号</h2>
+  <form
+    class="space-y-6"
+    @submit.prevent="handleRegister"
+  >
+    <h2 class="text-2xl font-bold text-center mb-6">
+      创建账号
+    </h2>
 
     <!-- 姓名输入 -->
     <div class="form-control">
@@ -118,12 +121,12 @@ onMounted(() => {
           />
         </svg>
         <input
+          v-model="registerForm.username"
           type="text"
           placeholder="请输入真实姓名"
           class="grow"
-          v-model="registerForm.username"
           required
-        />
+        >
       </label>
     </div>
 
@@ -150,12 +153,12 @@ onMounted(() => {
           />
         </svg>
         <input
+          v-model="registerForm.email"
           type="email"
           placeholder="your@email.com"
           class="grow"
-          v-model="registerForm.email"
           required
-        />
+        >
       </label>
     </div>
     <!-- 验证码 -->
@@ -177,16 +180,23 @@ onMounted(() => {
             stroke-linecap="round"
             stroke-linejoin="round"
           >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-            <path d="M9 9h6v6H9z"></path>
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="2"
+              ry="2"
+            />
+            <path d="M9 9h6v6H9z" />
           </svg>
           <input
+            v-model="registerForm.code"
             type="text"
             placeholder="请输入验证码"
             class="grow"
-            v-model="registerForm.code"
             required
-          />
+          >
         </label>
         <button
           class="btn btn-outline"
@@ -194,7 +204,10 @@ onMounted(() => {
           :disabled="countdown > 0"
           @click="sendVerificationCode"
         >
-          <span class="loading loading-spinner" v-if="isLoading"></span>
+          <span
+            v-if="isLoading"
+            class="loading loading-spinner"
+          />
           <span v-if="countdown <= 0 && !isLoading">获取验证码</span>
           <span v-else-if="countdown > 0">{{ countdown }}秒后重试</span>
         </button>
@@ -222,14 +235,17 @@ onMounted(() => {
           />
         </svg>
         <select
-          class="grow bg-transparent outline-none"
           v-model="registerForm.schoolId"
+          class="grow bg-transparent outline-none"
           required
         >
-          <option disabled value="">请选择学校</option>
+          <option
+            disabled
+            value=""
+          >请选择学校</option>
           <option
             v-for="(item, index) in schools"
-            v-bind:key="index"
+            :key="index"
             :value="item.schoolId"
           >
             {{ item.schoolName }}
@@ -253,20 +269,20 @@ onMounted(() => {
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+          <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" />
           <path
             d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"
-          ></path>
+          />
         </svg>
         <input
+          v-model="registerForm.schoolNumber"
           type="text"
           placeholder="请输入学号"
           class="grow"
-          v-model="registerForm.schoolNumber"
           required
           pattern="\d+"
           title="请输入有效的学号"
-        />
+        >
       </label>
     </div>
 
@@ -290,19 +306,24 @@ onMounted(() => {
           >
             <path
               d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
-            ></path>
-            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor"></circle>
+            />
+            <circle
+              cx="16.5"
+              cy="7.5"
+              r=".5"
+              fill="currentColor"
+            />
           </g>
         </svg>
         <input
+          v-model="registerForm.password"
           type="password"
           placeholder="至少8位字符"
           class="grow"
-          v-model="registerForm.password"
           required
           minlength="6"
           title="密码必须包含至少6个字符"
-        />
+        >
       </label>
     </div>
 
@@ -327,13 +348,13 @@ onMounted(() => {
           />
         </svg>
         <input
+          v-model="registerForm.confirmPassword"
           type="password"
           placeholder="再次输入密码"
           class="grow"
-          v-model="registerForm.confirmPassword"
           required
           minlength="6"
-        />
+        >
       </label>
     </div>
 

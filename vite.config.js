@@ -14,9 +14,18 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
     AutoImport({
-      imports: ['vue', 'vue-router'],
+      imports: ['vue', 'vue-router', 'pinia'],
+      dts: 'src/types/auto-imports.d.ts',
+      eslintrc: {
+        enabled: true,
+        filepath: './.eslintrc-auto-import.json', // 生成 ESLint 兼容的全局变量配置文件
+        globalsPropValue: true // 将自动导入的 API 作为全局变量
+      }
     }),
-    Components({}),
+    Components({
+      dts: 'src/types/components.d.ts', // 指定类型声明文件的路径
+      dirs: ['src/components']
+    })
   ],
   // 自动导入组件
   server: {
@@ -25,13 +34,13 @@ export default defineConfig({
     proxy: {
       '/api': {
         target: 'http://127.0.0.1:8080',
-        changeOrigin: true,
-      },
-    },
+        changeOrigin: true
+      }
+    }
   },
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  }
 })
