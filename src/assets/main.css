@@ -1,6 +1,6 @@
 @import 'tailwindcss';
 @plugin "daisyui" {
-  themes: emerald --default;
+  themes: light --default, dark --prefersdark, emerald;
 }
 html {
   scroll-behavior: smooth; /* 实现平滑滚动 */

@@ -7,12 +7,17 @@
       <div class="chat-container h-full">
         <!-- 这里可以放置聊天消息内容 -->
         <div class="flex justify-center items-center h-full">
-          <div class="text-center text-gray-500">
+          <div class="text-center text-gray-800">
             <h2 class="text-5xl font-bold mb-2">
-              GOODAI
+              GOODLEARNAI
             </h2>
-            <p class="text-sm">
-              输入任何问题，开始对话
+            <p class="text-sm flex justify-center items-center">
+              <span>好助学由&nbsp;&nbsp;</span>
+              <img
+                class="w-20"
+                src="@\assets\icon\deepseek_logo.png"
+              >
+              <span>&nbsp;&nbsp;提供引擎支持</span>
             </p>
           </div>
         </div>
