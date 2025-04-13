@@ -1,6 +1,4 @@
-<script setup>
-import ChatInput from './ChatInput.vue'
-</script>
+<script setup></script>
 
 <template>
   <div class="flex flex-col h-full w-full items-center justify-center">

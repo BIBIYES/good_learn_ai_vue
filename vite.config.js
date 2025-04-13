@@ -14,9 +14,12 @@ export default defineConfig({
     vueDevTools(),
     tailwindcss(),
     AutoImport({
-      imports: ['vue', 'vue-router'],
+      imports: ['vue', 'vue-router', 'pinia'],
+      dts: 'src/types/auto-imports.d.ts',
     }),
-    Components({}),
+    Components({
+      dts: 'src/types/components.d.ts', // 指定类型声明文件的路径
+    }),
   ],
   // 自动导入组件
   server: {

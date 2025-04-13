@@ -106,7 +106,7 @@ router.beforeEach((to, from, next) => {
   const authRoutes = ['/login', '/register']
 
   // 公开页面
-  const openRoutes = ['/about']
+  const openRoutes = ['/about', '/test']
   if (openRoutes.includes(to.path)) {
     next()
     return

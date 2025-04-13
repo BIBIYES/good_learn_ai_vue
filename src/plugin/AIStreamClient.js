@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { userStore } from '@/stores/user'
 
 class AIStreamClient {
   constructor(options = {}) {
@@ -29,14 +30,18 @@ class AIStreamClient {
         onStart()
       }
 
+      // 获取最新的token
+      const user = userStore()
+      const token = user.userInfo.jwtToken
+
       const response = await fetch(this.baseUrl, {
         method: 'POST',
         signal,
         headers: {
-          Authorization: this.token,
+          Authorization: token || this.token,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ msg: message }),
+        body: message,
       })
 
       if (!response.ok) {

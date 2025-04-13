@@ -4,6 +4,7 @@ import { aiStore } from '@/stores/ai'
 import { storeToRefs } from 'pinia'
 
 const ai = aiStore()
+const emit = defineEmits(['send'])
 
 // 使用AI Store中的状态
 const { input: textInput, aiLoading: isLodaing } = storeToRefs(ai)
@@ -57,6 +58,17 @@ const handleInput = () => {
   adjustHeight()
 }
 
+// 处理按键事件，按下Enter键发送消息
+const handleKeydown = (event) => {
+  // 如果按下Enter键且没有按住Shift键，则发送消息
+  if (event.key === 'Enter' && !event.shiftKey) {
+    event.preventDefault() // 阻止默认的换行行为
+    if (textInput.trim() !== '' && !isLodaing.value) {
+      emit('send', textInput)
+    }
+  }
+}
+
 // 组件挂载后初始化高度
 onMounted(() => {
   adjustHeight()
@@ -80,6 +92,7 @@ onMounted(() => {
         ref="textareaRef"
         v-model="textInput"
         @input="handleInput"
+        @keydown="handleKeydown"
         rows="1"
         class="w-full resize-none overflow-y-auto border-none outline-none bg-base-200 py-2 px-3"
         :style="{
@@ -94,6 +107,7 @@ onMounted(() => {
       ></textarea>
       <div
         class="w-8 p-1 h-8 bg-white rounded-full flex items-center justify-center ml-2 cursor-pointer hover:bg-base-100 transition-colors flex-shrink-0"
+        @click="emit('send', textInput)"
       >
         <img
           src="@/assets/icon/send.svg"
