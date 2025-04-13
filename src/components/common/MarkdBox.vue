@@ -1,5 +1,6 @@
 <script setup>
   import { Marked } from 'marked'
+  import { computed } from 'vue'
   import { markedHighlight } from 'marked-highlight'
   import hljs from 'highlight.js'
   import 'highlight.js/styles/github.css'
