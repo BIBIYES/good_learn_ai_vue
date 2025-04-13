@@ -8,10 +8,13 @@ const route = useRoute()
 
 const chatHistory = ref([])
 
+const isLodaing = ref(true)
+
 const handleGetSession = async () => {
   const res = await getSession()
   if (res.code == 200) {
     chatHistory.value = res.data
+    isLodaing.value = false
   }
 }
 
@@ -73,6 +76,9 @@ const formatDate = (dateString) => {
 <template>
   <div class="app w-full h-full">
     <ul class="menu bg-base-200 rounded-box w-full h-[calc(100vh-100px)]">
+      <div class="flex justify-center items-center p-4" v-if="isLodaing">
+        <span class="loading loading-spinner"></span>
+      </div>
       <!-- 今天 -->
       <li v-if="groupedChats.today.length > 0">
         <h2 class="menu-title">今天</h2>

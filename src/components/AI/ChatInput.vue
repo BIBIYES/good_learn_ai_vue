@@ -93,7 +93,7 @@ onMounted(() => {
         }"
       ></textarea>
       <div
-        class="w-8 p-1 h-8 bg-base-300 rounded-full flex items-center justify-center ml-2 cursor-pointer hover:bg-base-100 transition-colors flex-shrink-0"
+        class="w-8 p-1 h-8 bg-white rounded-full flex items-center justify-center ml-2 cursor-pointer hover:bg-base-100 transition-colors flex-shrink-0"
       >
         <img
           src="@/assets/icon/send.svg"
