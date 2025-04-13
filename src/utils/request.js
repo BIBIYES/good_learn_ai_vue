@@ -1,22 +1,22 @@
 import axios from 'axios'
 import message from '@/plugin/message'
 import { userStore } from '@/stores/user'
-const user = userStore()
-
-const token = user.userInfo.jwtToken
+import router from '@/router'
 
 const request = axios.create({
   baseURL: '/api/v1',
   timeout: 50000,
-  headers: {
-    Authorization: `${token}`,
-  },
 })
 
 // 添加请求拦截器
 request.interceptors.request.use(
   function (config) {
-    // 在发送请求之前做些什么
+    // 在发送请求之前获取最新的token
+    const user = userStore()
+    const token = user.userInfo.jwtToken
+    if (token) {
+      config.headers.Authorization = `${token}`
+    }
     return config
   },
   function (error) {
@@ -32,6 +32,10 @@ request.interceptors.response.use(
     // 对响应数据做点什么
     if (response.data.code != 200) {
       message.error(response.data.message)
+    }
+    if (response.data.code == 401) {
+      console.log('令牌出错')
+      router.push('/login')
     }
     return response.data
   },

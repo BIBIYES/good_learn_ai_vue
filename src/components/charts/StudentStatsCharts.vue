@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as echarts from 'echarts'
 import { Time, Book, Trophy } from '@icon-park/vue-next'
 
@@ -36,7 +36,7 @@ const subjectChartRef = ref(null)
 // 初始化周学习时间图表
 const initWeeklyChart = () => {
   const chartDom = weeklyChartRef.value
-  if (!chartDom) return
+  if (!chartDom) return null
 
   const myChart = echarts.init(chartDom)
   const option = {
@@ -80,16 +80,13 @@ const initWeeklyChart = () => {
   }
   myChart.setOption(option)
 
-  // 响应窗口大小变化
-  window.addEventListener('resize', () => {
-    myChart.resize()
-  })
+  return myChart
 }
 
 // 初始化课程完成率图表
 const initCourseChart = () => {
   const chartDom = courseChartRef.value
-  if (!chartDom) return
+  if (!chartDom) return null
 
   const myChart = echarts.init(chartDom)
   const option = {
@@ -135,16 +132,13 @@ const initCourseChart = () => {
   }
   myChart.setOption(option)
 
-  // 响应窗口大小变化
-  window.addEventListener('resize', () => {
-    myChart.resize()
-  })
+  return myChart
 }
 
 // 初始化学科成绩雷达图
 const initSubjectChart = () => {
   const chartDom = subjectChartRef.value
-  if (!chartDom) return
+  if (!chartDom) return null
 
   const myChart = echarts.init(chartDom)
 
@@ -190,17 +184,81 @@ const initSubjectChart = () => {
 
   myChart.setOption(option)
 
-  // 响应窗口大小变化
-  window.addEventListener('resize', () => {
-    myChart.resize()
+  return myChart
+}
+
+// 图表实例存储
+const chartInstances = ref([])
+
+// 初始化所有图表
+const initAllCharts = () => {
+  // 清除之前的图表实例
+  chartInstances.value.forEach((chart) => {
+    if (chart && !chart.isDisposed()) {
+      chart.dispose()
+    }
   })
+  chartInstances.value = []
+
+  // 初始化各个图表
+  const weeklyChart = initWeeklyChart()
+  const courseChart = initCourseChart()
+  const subjectChart = initSubjectChart()
+
+  // 存储图表实例以便后续清理
+  if (weeklyChart) chartInstances.value.push(weeklyChart)
+  if (courseChart) chartInstances.value.push(courseChart)
+  if (subjectChart) chartInstances.value.push(subjectChart)
 }
 
 // 组件挂载后初始化图表
 onMounted(() => {
-  initWeeklyChart()
-  initCourseChart()
-  initSubjectChart()
+  // 使用较长的延迟确保DOM已经完全渲染并可见
+  setTimeout(() => {
+    // 检查DOM元素是否可见且有宽高
+    const checkAndInitCharts = () => {
+      const weeklyDom = weeklyChartRef.value
+      const courseDom = courseChartRef.value
+      const subjectDom = subjectChartRef.value
+
+      if (
+        weeklyDom &&
+        courseDom &&
+        subjectDom &&
+        weeklyDom.clientWidth > 0 &&
+        weeklyDom.clientHeight > 0 &&
+        courseDom.clientWidth > 0 &&
+        courseDom.clientHeight > 0 &&
+        subjectDom.clientWidth > 0 &&
+        subjectDom.clientHeight > 0
+      ) {
+        // DOM元素已可见且有宽高，初始化图表
+        initAllCharts()
+
+        // 添加resize事件监听
+        window.addEventListener('resize', initAllCharts)
+      } else {
+        // DOM元素尚未完全可见，继续等待
+        setTimeout(checkAndInitCharts, 100)
+      }
+    }
+
+    checkAndInitCharts()
+  }, 500)
+})
+
+// 组件卸载前清理
+onBeforeUnmount(() => {
+  // 清除事件监听
+  window.removeEventListener('resize', initAllCharts)
+
+  // 销毁图表实例
+  chartInstances.value.forEach((chart) => {
+    if (chart && !chart.isDisposed()) {
+      chart.dispose()
+    }
+  })
+  chartInstances.value = []
 })
 </script>
 

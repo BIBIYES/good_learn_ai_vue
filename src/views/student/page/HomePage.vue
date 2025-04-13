@@ -35,19 +35,6 @@ const subjectScores = ref([
 ])
 
 const animation = () => {
-  // 移除对不存在元素的动画
-  // gsap.from('.author-card', {
-  //   x: -1000,
-  //   duration: 1,
-  //   scrollTrigger: {
-  //     trigger: '.author-card',
-  //     ease: 'power4.inOut',
-  //     start: 'top center',
-  //     end: 'top center',
-  //     // markers: true,
-  //     toggleActions: 'play none reverse none', // 关键配置
-  //   },
-  // })
   gsap.fromTo(
     '.lightning',
     {
@@ -127,7 +114,7 @@ onMounted(() => {
 
       <!-- 最近考试成绩 -->
       <div
-        class="stat bg-base-100 shadow rounded-lg hover:shadow-md transition-all"
+        class="stat bg-base-100 shadow rounded-lg overflow-hidden hover:shadow-md transition-all"
       >
         <div class="stat-figure text-secondary">
           <Trophy theme="outline" size="32" />

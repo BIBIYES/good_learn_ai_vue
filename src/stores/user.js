@@ -14,6 +14,7 @@ export const userStore = defineStore(
 
     // 清除登录（修正拼写错误）
     const logout = () => {
+      console.log("退出登录");
       userInfo.value = {}
     }
 
