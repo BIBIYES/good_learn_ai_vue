@@ -8,9 +8,7 @@ export const aiStore = defineStore(
     const input = ref('')
     // 加载事件
     const aiLoading = ref(false)
-    return { input, aiLoading }
-  },
-  {
-    persist: true
+    const chatSessionHistory = ref([])
+    return { input, aiLoading,chatSessionHistory }
   }
 )

@@ -1,30 +1,41 @@
 <script setup>
-import { ref, onMounted, computed } from 'vue'
-import { getSession } from '@/api/chat'
-import { useRoute } from 'vue-router'
-import { History } from '@icon-park/vue-next'
-import router from '@/router'
-import { Edit, DeleteFive, More } from '@icon-park/vue-next'
 
+// 路由相关
+import { useRoute } from 'vue-router'
+import router from '@/router'
+// 图标组件
+import { History, Edit, DeleteFive, More } from '@icon-park/vue-next'
+// API和Store
+import { getSession } from '@/api/chat'
+import { aiStore } from '@/stores/ai'
+
+// Store和路由实例
+const ai = aiStore()
 const route = useRoute()
 
-const chatHistory = ref([])
+// 响应式状态
+const isLoading = ref(true)
 
-const isLodaing = ref(true)
-
+/**
+ * 获取聊天会话历史记录
+ */
 const handleGetSession = async () => {
   const res = await getSession()
-  if (res.code == 200) {
-    chatHistory.value = res.data
-    isLodaing.value = false
+  if (res.code === 200) {
+    ai.chatSessionHistory = res.data
+    isLoading.value = false
   }
 }
 
+// 生命周期钩子
 onMounted(() => {
   handleGetSession()
 })
 
-// 根据时间分组会话
+/**
+ * 根据时间分组会话历史
+ * 将聊天记录分为今天、昨天、三天前、七天前和更早的分组 
+ */
 const groupedChats = computed(() => {
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -46,7 +57,7 @@ const groupedChats = computed(() => {
     older: []
   }
 
-  chatHistory.value.forEach((chat) => {
+  ai.chatSessionHistory.forEach((chat) => {
     const chatDate = new Date(chat.createTime)
     chatDate.setHours(0, 0, 0, 0)
 
@@ -66,7 +77,11 @@ const groupedChats = computed(() => {
   return groups
 })
 
-// 格式化日期显示
+/**
+ * 格式化日期为小时:分钟格式
+ * @param {string} dateString - ISO格式的时间字符串
+ * @returns {string} 格式化后的时间字符串 (HH:MM)
+ */
 const formatDate = (dateString) => {
   const date = new Date(dateString)
   const hours = date.getHours().toString().padStart(2, '0')
@@ -87,7 +102,7 @@ const formatDate = (dateString) => {
         <span class="text-md font-bold">历史消息</span>
       </div>
       <div
-        v-if="isLodaing"
+        v-if="isLoading"
         class="flex justify-center items-center p-4"
       >
         <span class="loading loading-spinner" />

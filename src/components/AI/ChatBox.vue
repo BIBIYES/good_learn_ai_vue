@@ -1,6 +1,4 @@
 <script setup>
-// Vue核心API
-import { ref, nextTick, onMounted, watch } from 'vue'
 // 第三方库
 import { useRoute } from 'vue-router'
 import { Down, Edit, DeleteFive } from '@icon-park/vue-next'

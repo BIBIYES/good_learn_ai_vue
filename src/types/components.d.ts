@@ -13,7 +13,6 @@ declare module 'vue' {
     ChatInput: typeof import('./../components/AI/ChatInput.vue')['default']
     CourseCard: typeof import('./../components/student/CourseCard.vue')['default']
     HistoryCard: typeof import('./../components/AI/HistoryCard.vue')['default']
-    Loading: typeof import('../components/common/LoadingState.vue')['default']
     LoadingState: typeof import('./../components/common/LoadingState.vue')['default']
     LoginForm: typeof import('./../components/form/LoginForm.vue')['default']
     MarkdBox: typeof import('./../components/common/MarkdBox.vue')['default']
