@@ -114,8 +114,11 @@ onMounted(() => {
           src="@/assets/icon/send.svg"
           alt=""
           class="w-full h-full"
+        >
+        <span
+          v-else
+          class="loading loading-spinner"
         />
-        <span v-else class="loading loading-spinner" />
       </div>
     </div>
   </div>

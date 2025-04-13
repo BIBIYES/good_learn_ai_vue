@@ -82,7 +82,11 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="markdown-body" :class="theme" v-html="htmlContent" />
+  <div
+    class="markdown-body"
+    :class="theme"
+    v-html="htmlContent"
+  />
 </template>
 <style>
 .code-block-wrapper {

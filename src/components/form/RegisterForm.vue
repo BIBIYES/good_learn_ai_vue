@@ -92,8 +92,13 @@ onMounted(() => {
 })
 </script>
 <template>
-  <form class="space-y-6" @submit.prevent="handleRegister">
-    <h2 class="text-2xl font-bold text-center mb-6">创建账号</h2>
+  <form
+    class="space-y-6"
+    @submit.prevent="handleRegister"
+  >
+    <h2 class="text-2xl font-bold text-center mb-6">
+      创建账号
+    </h2>
 
     <!-- 姓名输入 -->
     <div class="form-control">
@@ -123,7 +128,7 @@ onMounted(() => {
           placeholder="请输入真实姓名"
           class="grow"
           required
-        />
+        >
       </label>
     </div>
 
@@ -155,7 +160,7 @@ onMounted(() => {
           placeholder="your@email.com"
           class="grow"
           required
-        />
+        >
       </label>
     </div>
     <!-- 验证码 -->
@@ -177,7 +182,14 @@ onMounted(() => {
             stroke-linecap="round"
             stroke-linejoin="round"
           >
-            <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+            <rect
+              x="3"
+              y="3"
+              width="18"
+              height="18"
+              rx="2"
+              ry="2"
+            />
             <path d="M9 9h6v6H9z" />
           </svg>
           <input
@@ -186,7 +198,7 @@ onMounted(() => {
             placeholder="请输入验证码"
             class="grow"
             required
-          />
+          >
         </label>
         <button
           class="btn btn-outline"
@@ -194,7 +206,10 @@ onMounted(() => {
           :disabled="countdown > 0"
           @click="sendVerificationCode"
         >
-          <span v-if="isLoading" class="loading loading-spinner" />
+          <span
+            v-if="isLoading"
+            class="loading loading-spinner"
+          />
           <span v-if="countdown <= 0 && !isLoading">获取验证码</span>
           <span v-else-if="countdown > 0">{{ countdown }}秒后重试</span>
         </button>
@@ -226,7 +241,10 @@ onMounted(() => {
           class="grow bg-transparent outline-none"
           required
         >
-          <option disabled value="">请选择学校</option>
+          <option
+            disabled
+            value=""
+          >请选择学校</option>
           <option
             v-for="(item, index) in schools"
             :key="index"
@@ -266,7 +284,7 @@ onMounted(() => {
           required
           pattern="\d+"
           title="请输入有效的学号"
-        />
+        >
       </label>
     </div>
 
@@ -291,7 +309,12 @@ onMounted(() => {
             <path
               d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
             />
-            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />
+            <circle
+              cx="16.5"
+              cy="7.5"
+              r=".5"
+              fill="currentColor"
+            />
           </g>
         </svg>
         <input
@@ -302,7 +325,7 @@ onMounted(() => {
           required
           minlength="6"
           title="密码必须包含至少6个字符"
-        />
+        >
       </label>
     </div>
 
@@ -333,7 +356,7 @@ onMounted(() => {
           class="grow"
           required
           minlength="6"
-        />
+        >
       </label>
     </div>
 
