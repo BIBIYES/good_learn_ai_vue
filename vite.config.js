@@ -16,11 +16,15 @@ export default defineConfig({
     AutoImport({
       imports: ['vue', 'vue-router', 'pinia'],
       dts: 'src/types/auto-imports.d.ts',
+      eslintrc: {
+        enabled: true, // 生成 ESLint 配置
+      },
     }),
     Components({
       dts: 'src/types/components.d.ts', // 指定类型声明文件的路径
+      dirs: ['src/components'],
     }),
-  ],
+  ],  
   // 自动导入组件
   server: {
     host: '0.0.0.0',

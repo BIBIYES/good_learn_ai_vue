@@ -9,7 +9,7 @@ const message = {
   create(message, type, duration = 3000) {
     // 消息位置容器
     const messageContainer = document.createElement('div')
-    messageContainer.className = `toast toast-top toast-center z-50 w-100`
+    messageContainer.className = 'toast toast-top toast-center z-50 w-100'
 
     // SVG 图标（不同类型对应不同图标）
     const icons = {

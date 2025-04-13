@@ -105,13 +105,20 @@ onMounted(() => {
 <template>
   <div class="app flex flex-col w-full h-screen pb-9">
     <div class="flex-1 overflow-y-auto pt-10 p-4 py-2 space-y-3 pl-50 pr-50">
-      <div v-for="item in chatList" :key="item.historyId" class="flex flex-col">
+      <div
+        v-for="item in chatList"
+        :key="item.historyId"
+        class="flex flex-col"
+      >
         <div
           :class="item.role === 'user' ? 'chat chat-end' : 'chat chat-start'"
         >
           <div class="chat-image avatar">
             <div class="w-10 rounded-full p-1">
-              <img alt="avatar" src="@/assets/img/avatar.jpg" />
+              <img
+                alt="avatar"
+                src="@/assets/img/avatar.jpg"
+              >
             </div>
           </div>
           <div class="chat-header">
@@ -120,7 +127,9 @@ onMounted(() => {
               formatTime(item.createTime)
             }}</time>
           </div>
-          <div class="chat-bubble">{{ item.content }}</div>
+          <div class="chat-bubble">
+            {{ item.content }}
+          </div>
         </div>
       </div>
     </div>

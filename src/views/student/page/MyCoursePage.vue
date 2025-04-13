@@ -58,43 +58,55 @@ onMounted(() => {
 <template>
   <div class="app flex flex-col h-full p-4">
     <TitleBar>
-      <template v-slot:title>
-        <school theme="outline" size="38" />
+      <template #title>
+        <school
+          theme="outline"
+          size="38"
+        />
         <span>我的课程</span>
       </template>
-      <template v-slot:module>
+      <template #module>
         <div class="join">
-          <div class="tooltip tooltip-bottom" data-tip="向老师索要课程编号">
+          <div
+            class="tooltip tooltip-bottom"
+            data-tip="向老师索要课程编号"
+          >
             <input
+              v-model="courseId"
               class="input input-bordered join-item w-full max-w-xs"
               placeholder="输入课程来加入课程"
-              v-model="courseId"
-            />
+            >
           </div>
-          <button class="btn btn-primary join-item" @click="handleAddCouser()">
+          <button
+            class="btn btn-primary join-item"
+            @click="handleAddCouser()"
+          >
             <span
-              class="loading loading-spinner loading-md"
               v-show="addCourseLoading"
-            ></span>
+              class="loading loading-spinner loading-md"
+            />
             加入课程
           </button>
         </div>
       </template>
     </TitleBar>
     <div
-      class="w-full h-screen flex justify-center items-center animate__animated animate__fadeIn"
       v-if="loading"
+      class="w-full h-screen flex justify-center items-center animate__animated animate__fadeIn"
     >
-      <span class="loading loading-spinner loading-xl"></span>
+      <span class="loading loading-spinner loading-xl" />
     </div>
     <!-- 课程 -->
-    <div class="overflow-y-auto space-y-5" v-else>
+    <div
+      v-else
+      class="overflow-y-auto space-y-5"
+    >
       <CourseCard
-        class="animate__animated animate__slideInUp"
         v-for="(item, index) in courses"
-        v-bind:key="index"
-        :courseInfo="item"
-      ></CourseCard>
+        :key="index"
+        class="animate__animated animate__slideInUp"
+        :course-info="item"
+      />
     </div>
   </div>
 </template>

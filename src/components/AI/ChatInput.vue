@@ -90,8 +90,6 @@
       <textarea
         ref="textareaRef"
         v-model="textInput"
-        @input="handleInput"
-        @keydown="handleKeydown"
         rows="1"
         class="w-full resize-none overflow-y-auto border-none outline-none bg-base-200 py-2 px-3"
         :style="{
@@ -103,13 +101,23 @@
         :class="{
           skeleton: isLodaing
         }"
-      ></textarea>
+        @input="handleInput"
+        @keydown="handleKeydown"
+      />
       <div
         class="w-8 p-1 h-8 bg-white rounded-full flex items-center justify-center ml-2 cursor-pointer hover:bg-base-100 transition-colors flex-shrink-0"
         @click="emit('send', textInput)"
       >
-        <img src="@/assets/icon/send.svg" alt="" class="w-full h-full" v-if="!isLodaing" />
-        <span class="loading loading-spinner" v-else></span>
+        <img
+          v-if="!isLodaing"
+          src="@/assets/icon/send.svg"
+          alt=""
+          class="w-full h-full"
+        >
+        <span
+          v-else
+          class="loading loading-spinner"
+        />
       </div>
     </div>
   </div>

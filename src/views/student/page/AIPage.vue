@@ -4,10 +4,10 @@ import SiderBarMenu from '@/components/AI/SiderBarMenu.vue'
 <template>
   <div class="app flex h-screen">
     <div class="border-base-200 w-60">
-      <SiderBarMenu></SiderBarMenu>
+      <SiderBarMenu />
     </div>
     <div class="flex-1 overflow-hidden">
-      <RouterView></RouterView>
+      <RouterView />
     </div>
   </div>
 </template>
