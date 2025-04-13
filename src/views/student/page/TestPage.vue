@@ -1,8 +1,7 @@
 <script setup>
 import AIStreamClient from '@/plugin/AIStreamClient'
 const sendMessage = () => {
-  const client = AIStreamClient()
-  client.sendMessage(
+  AIStreamClient.send(
     JSON.stringify({
       msg: '你好我叫骆子豪你叫什么呢？',
       sessionId: '8ed7df36-3df8-4c61-ad85-f70c9c43beb2',

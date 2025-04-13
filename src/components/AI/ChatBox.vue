@@ -84,11 +84,31 @@ const handleUploadBotChat = async (data) => {
  * @param {string} message - 用户输入的消息内容
  */
 const handleSendMessage = async (message) => {
+  // 如果已经有正在进行的请求，则终止它
+  if (ai.aiLoading) {
+    AIStreamClient.abort()
+    ai.aiLoading = false 
+    console.log('终止流')
+
+    // 更新最后一条AI消息，添加终止提示
+    if (chatList.value.length > 0) {
+      const lastMessage = chatList.value[chatList.value.length - 1]
+      if (lastMessage.role === 'system') {
+        lastMessage.content += '\n\n*请求已被用户终止*'
+      }
+    }
+    return
+  }
+
+  
   // 验证消息内容
   if (!message || message.trim() === '') return
   if (!chatList.value) {
     chatList.value = []
   }
+
+  
+  
 
   // 添加用户消息到聊天列表
   const userMessage = {
@@ -101,9 +121,8 @@ const handleSendMessage = async (message) => {
     chatList.value.push(userMessage)
   }
 
-  // 清空输入框并更新状态
+  // 清空输入框
   ai.input = ''
-  ai.aiLoading = true
 
   // 添加AI消息占位
   const aiMessage = {
@@ -114,24 +133,7 @@ const handleSendMessage = async (message) => {
   }
   chatList.value.push(aiMessage)
   scrollToBottom()
-  // 创建AI流式客户端并准备发送数据
-  // 获取AI流客户端
-  const aiClient = AIStreamClient()
 
-  // 如果已经有正在进行的请求，则终止它
-  if (ai.aiLoading && aiClient.getController()) {
-    aiClient.abort()
-    ai.aiLoading = false
-
-    // 更新最后一条AI消息，添加终止提示
-    if (chatList.value.length > 0) {
-      const lastMessage = chatList.value[chatList.value.length - 1]
-      if (lastMessage.role === 'system') {
-        lastMessage.content += '\n\n*请求已被用户终止*'
-      }
-    }
-    return
-  }
   const sendData = {
     content: message,
     sessionId,
@@ -140,10 +142,11 @@ const handleSendMessage = async (message) => {
   }
 
   // 发送消息并处理流式响应
-  aiClient.sendMessage(JSON.stringify(sendData), {
+  AIStreamClient.send(JSON.stringify(sendData), {
     // 开始请求时的处理
     onStart: () => {
       console.log('AI响应开始')
+      ai.aiLoading = true
     },
 
     // 接收到数据时更新AI消息内容

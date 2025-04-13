@@ -35,15 +35,21 @@ request.interceptors.response.use(
     if (response.data.code != 200) {
       message.error(response.data.message)
     }
-    if (response.status == 401) {
-      console.log('令牌出错')
-      router.push('/login')
-    }
+    
     return response.data
   },
   function (error) {
     // 超出 2xx 范围的状态码都会触发该函数。
     // 对响应错误做点什么
+    console.log('请求出错',error)
+    
+    if (error.response && error.response.status === 401) {
+      console.log('令牌出错')
+      const user = userStore()
+      message.info('登录已经过期，请重新登录')
+      user.logout()
+      router.push('/login')
+    }
     return Promise.reject(error)
   }
 )

@@ -82,6 +82,8 @@ const handleKeydown = (event) => {
 const handleSend = () => {
   // 如果正在加载中，则发送空消息表示需要终止流
   if (isLodaing.value) {
+    
+
     emit('send', '')
     return
   }
@@ -137,7 +139,7 @@ onMounted(() => {
           v-if="!isLodaing"
           src="@/assets/icon/send.svg"
           alt=""
-          class="w-full h-full"
+          class="w-full h-full" 
         >
         <span
           v-else
