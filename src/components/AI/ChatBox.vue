@@ -25,6 +25,7 @@ let sessionId = route.params.id
 // 响应式状态
 const chatList = ref([])
 const chatContainer = ref(null)
+const sessionName = ref('')
 
 /**
  * 滚动到聊天窗口底部
@@ -88,7 +89,7 @@ const handleSendMessage = async (message) => {
   if (!chatList.value) {
     chatList.value = []
   }
-  scrollToBottom()
+  
   // 添加用户消息到聊天列表
   const userMessage = {
     role: 'user',
@@ -98,7 +99,7 @@ const handleSendMessage = async (message) => {
   }
   if (Array.isArray(chatList.value)) {
     chatList.value.push(userMessage)
-    scrollToBottom()
+    
   }
 
   // 清空输入框并更新状态
@@ -113,7 +114,7 @@ const handleSendMessage = async (message) => {
     sessionId
   }
   chatList.value.push(aiMessage)
-
+  scrollToBottom()
   // 创建AI流式客户端并准备发送数据
   const client = new AIStreamClient()
   const sendData = {
@@ -140,7 +141,7 @@ const handleSendMessage = async (message) => {
         const lastMessage = chatList.value[chatList.value.length - 1]
         if (lastMessage.role === 'system') {
           lastMessage.content += content
-          scrollToBottom()
+          
         }
       }
     },
@@ -187,6 +188,11 @@ watch(
     if (newId !== oldId) {
       // 更新当前sessionId
       sessionId = newId
+      // 从piniapi获取sessionName
+      sessionName.value = ai.chatSessionHistory.find(
+        (item) => item.sessionId === sessionId
+      )?.sessionName
+      
       // 清空聊天列表
       chatList.value = []
       // 重新获取消息
@@ -207,7 +213,7 @@ watch(
         role="button"
         class="btn m-1 bg-base-100"
       >
-        <span>你好我是好助学</span>
+        <span>{{ sessionName }}</span>
         <Down
           theme="outline"
           size="20"
