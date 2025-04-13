@@ -333,7 +333,7 @@ const animation = () => {
                 v-if="isSubmitting"
                 class="loading loading-spinner"
               />
-              {{ isSubmitting ? '提交中...' : '投递申请' }}
+              {{ isSubmitting ? "提交中..." : "投递申请" }}
             </button>
 
             <div class="divider divider-horizontal">
@@ -432,7 +432,7 @@ const animation = () => {
               </button>
 
               <button
-                class="btn btn-primary btn-outline hidden sm:flex "
+                class="btn btn-primary btn-outline hidden sm:flex"
                 @click="scrollToBottom"
               >
                 <svg

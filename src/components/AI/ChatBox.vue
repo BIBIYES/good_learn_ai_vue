@@ -122,7 +122,7 @@ onMounted(() => {
             </div>
           </div>
           <div class="chat-header">
-            {{ item.role === 'user' ? user.userInfo.username : '好助学' }}
+            {{ item.role === "user" ? user.userInfo.username : "好助学" }}
             <time class="text-xs opacity-50 ml-1">{{
               formatTime(item.createTime)
             }}</time>

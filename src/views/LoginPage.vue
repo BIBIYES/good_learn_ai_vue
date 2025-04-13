@@ -116,12 +116,12 @@ onMounted(() => {
 <style scoped>
 /* 保持原有字体样式 */
 @font-face {
-  font-family: 'Fusion';
-  src: url('@/assets/font/fusion.otf') format('opentype');
+  font-family: "Fusion";
+  src: url("@/assets/font/fusion.otf") format("opentype");
   font-display: swap;
 }
 
 * {
-  font-family: 'Fusion', sans-serif;
+  font-family: "Fusion", sans-serif;
 }
 </style>
