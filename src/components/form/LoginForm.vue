@@ -3,7 +3,8 @@ import { ref } from 'vue'
 import { login } from '@/api/user'
 import { userStore } from '@/stores/user'
 import message from '@/plugin/message'
-import router from '@/router'
+
+const router = useRouter()
 const user = userStore()
 const loginInfo = ref({
   email: '',

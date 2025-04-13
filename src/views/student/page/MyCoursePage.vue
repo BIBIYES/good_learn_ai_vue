@@ -1,10 +1,10 @@
 <script setup>
-import TitleBar from '@/components/common/TitleBar.vue'
+
 import { School } from '@icon-park/vue-next'
-import { onMounted, ref } from 'vue'
+
 import { addCourse, getCourse } from '@/api/course'
 import message from '@/plugin/message'
-import CourseCard from '@/components/student/CourseCard.vue'
+
 const courseId = ref('')
 
 // 页面加载的loading

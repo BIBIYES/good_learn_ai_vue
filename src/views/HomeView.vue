@@ -1,6 +1,6 @@
 <script setup>
-import StudentSiderBarMenu from '@/components/student/StudentSiderBarMenu.vue'
-import { RouterView } from 'vue-router'
+
+
 import { Attention, Github } from '@icon-park/vue-next'
 import { userStore } from '@/stores/user'
 const user = userStore()

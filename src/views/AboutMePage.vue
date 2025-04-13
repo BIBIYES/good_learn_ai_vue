@@ -1,9 +1,9 @@
 <script setup>
-import router from '@/router'
+
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
-import { onMounted, ref } from 'vue'
+
 
 const isloading = ref(true)
 

@@ -1,5 +1,5 @@
 <script setup>
-import SiderBarMenu from '@/components/AI/SiderBarMenu.vue'
+
 </script>
 <template>
   <div class="app flex h-screen">

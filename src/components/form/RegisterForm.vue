@@ -2,8 +2,6 @@
 import { getSchools } from '@/api/schools'
 import { getVerificationCodes, register } from '@/api/user'
 import message from '@/plugin/message'
-import { onMounted, ref } from 'vue'
-import { useRouter } from 'vue-router'
 
 const router = useRouter()
 const registerForm = ref({

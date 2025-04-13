@@ -1,5 +1,4 @@
 <script setup>
-import { useRoute } from 'vue-router'
 import { Home, Lightning, DocumentFolder, School } from '@icon-park/vue-next'
 const route = useRoute()
 </script>

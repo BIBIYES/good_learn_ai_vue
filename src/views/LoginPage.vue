@@ -1,7 +1,6 @@
 <script setup>
-import { onMounted, ref } from 'vue'
+
 import { gsap } from 'gsap'
-import router from '@/router'
 
 const texts = ref([
   { value: '', final: '欢迎使用好助学!😄' },

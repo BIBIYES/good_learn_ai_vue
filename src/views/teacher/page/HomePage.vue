@@ -1,5 +1,5 @@
-<script setup lang="ts">
-import TitleBar from '@/components/common/TitleBar.vue'
+<script setup>
+
 import { Home } from '@icon-park/vue-next'
 </script>
 
