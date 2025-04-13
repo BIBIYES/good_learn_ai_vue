@@ -57,22 +57,24 @@ const groupedChats = computed(() => {
     older: []
   }
 
-  ai.chatSessionHistory.forEach((chat) => {
-    const chatDate = new Date(chat.createTime)
-    chatDate.setHours(0, 0, 0, 0)
+  if (ai.chatSessionHistory) {
+    ai.chatSessionHistory.forEach((chat) => {
+      const chatDate = new Date(chat.createTime)
+      chatDate.setHours(0, 0, 0, 0)
 
-    if (chatDate.getTime() === today.getTime()) {
-      groups.today.push(chat)
-    } else if (chatDate.getTime() === yesterday.getTime()) {
-      groups.yesterday.push(chat)
-    } else if (chatDate >= threeDaysAgo && chatDate < yesterday) {
-      groups.threeDaysAgo.push(chat)
-    } else if (chatDate >= sevenDaysAgo && chatDate < threeDaysAgo) {
-      groups.sevenDaysAgo.push(chat)
-    } else {
-      groups.older.push(chat)
-    }
-  })
+      if (chatDate.getTime() === today.getTime()) {
+        groups.today.push(chat)
+      } else if (chatDate.getTime() === yesterday.getTime()) {
+        groups.yesterday.push(chat)
+      } else if (chatDate >= threeDaysAgo && chatDate < yesterday) {
+        groups.threeDaysAgo.push(chat)
+      } else if (chatDate >= sevenDaysAgo && chatDate < threeDaysAgo) {
+        groups.sevenDaysAgo.push(chat)
+      } else {
+        groups.older.push(chat)
+      }
+    })
+  }
 
   return groups
 })
@@ -91,8 +93,8 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <div class="app w-full h-full">
-    <ul class="menu rounded-box w-full h-[calc(100vh-100px)]">
+  <div class="app w-full h-full overflow-y-auto">
+    <ul class="menu rounded-box w-full h-full">
       <div class="flex items-center space-x-2">
         <History
           theme="outline"

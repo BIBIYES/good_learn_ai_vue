@@ -1,6 +1,4 @@
 <script setup>
-// 第三方库
-import { useRoute } from 'vue-router'
 import { Down, Edit, DeleteFive } from '@icon-park/vue-next'
 // API和工具
 import { getChat, uploadBotChat } from '@/api/chat'
@@ -20,12 +18,62 @@ const ai = aiStore()
 
 // 路由相关
 const route = useRoute()
+const router = useRouter()
 let sessionId = route.params.id
 
 // 响应式状态
 const chatList = ref([])
 const chatContainer = ref(null)
 const sessionName = ref('')
+const isFirstLoad = ref(false) // 添加标志位控制首次加载
+
+// 检查路由中是否有消息
+const checkRoute = () => {
+  if (route.query.msg) {
+    // 是第一次加载，则返回true
+    isFirstLoad.value = true
+    const msg = route.query.msg
+    handleSendMessage(msg)
+    router.replace({ path: route.path, query: {} })
+  }
+
+}
+
+// 创建监听器
+const unWatch = () => {
+  watch(
+    () => route.params.id,
+    (newId, oldId) => {
+      if (newId !== oldId) {
+        // 更新当前sessionId
+        sessionId = newId
+        // 从pinia获取sessionName
+        sessionName.value = ai.chatSessionHistory.find(
+          (item) => item.sessionId === sessionId
+        )?.sessionName
+
+        if(isFirstLoad.value) {
+          // 是第一次加载，则返回true
+          isFirstLoad.value = false
+          console.log('首次不获取数据')
+         return
+        }
+        // 清空聊天列表
+        chatList.value = []
+        // 重新获取消息
+        handleGetChat()
+      }
+    },
+    { immediate: true }
+  )
+}
+
+// 生命周期钩子
+onMounted(async () => {
+  checkRoute()
+  unWatch()
+})
+
 
 /**
  * 滚动到聊天窗口底部
@@ -138,6 +186,7 @@ const handleSendMessage = async (message) => {
     createTime: new Date().toISOString(),
     sessionId
   }
+  
   chatList.value.push(aiMessage)
   scrollToBottom()
 
@@ -198,31 +247,13 @@ const handleSendMessage = async (message) => {
   })
 }
 
-// 生命周期钩子
-onMounted(() => {})
 
-/**
- * 监听路由参数变化，当sessionId变化时重新获取消息
- */
-watch(
-  () => route.params.id,
-  (newId, oldId) => {
-    if (newId !== oldId) {
-      // 更新当前sessionId
-      sessionId = newId
-      // 从piniapi获取sessionName
-      sessionName.value = ai.chatSessionHistory.find(
-        (item) => item.sessionId === sessionId
-      )?.sessionName
 
-      // 清空聊天列表
-      chatList.value = []
-      // 重新获取消息
-      handleGetChat()
-    }
-  },
-  { immediate: true }
-)
+
+
+
+
+
 </script>
 
 <template>

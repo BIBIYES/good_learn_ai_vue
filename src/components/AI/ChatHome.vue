@@ -1,6 +1,7 @@
 <script setup>
 import { v4 as uuidv4 } from 'uuid'
 import {aiStore} from '@/stores/ai'
+import router from '@/router'
 const ai = aiStore()
 
 const handeleSendMessage = () => {
@@ -10,8 +11,14 @@ const handeleSendMessage = () => {
     msg: ai.input,
     sessionId: uuid,
     sessionName: ai.input,
+    createTime: new Date().toISOString(),
     role: 'user'
   }
+  if (!ai.chatSessionHistory) {
+    ai.chatSessionHistory = []
+  }
+  ai.chatSessionHistory.unshift(payload)
+  router.push({ path: `/s/ai/chat/${uuid}`, query: { msg: payload.msg } })
   console.log(payload)
   
 }
