@@ -42,7 +42,7 @@ const goGithub = () => {
       </footer>
     </div>
     <!-- 拖动 -->
-    <div class="divider lg:divider-horizontal"></div>
+    <!-- <div class="divider lg:divider-horizontal"></div> -->
     <!-- 主内容区域 -->
     <div class="flex-1 bg-base-100 rounded-r-md">
       <RouterView />

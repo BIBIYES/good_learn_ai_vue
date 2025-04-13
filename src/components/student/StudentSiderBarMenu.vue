@@ -17,7 +17,7 @@ const route = useRoute()
         </router-link>
       </li>
       <li>
-        <router-link to="/s/ai" :class="{ 'menu-active': route.name === 'AI' }">
+        <router-link to="/s/ai" :class="{ 'menu-active': route.path.startsWith('/s/ai') }">
           <lightning theme="outline" size="24" />
           <a href="#">智识顾问</a>
         </router-link>

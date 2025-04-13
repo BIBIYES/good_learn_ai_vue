@@ -63,9 +63,25 @@ const router = createRouter({
           component: () => import('../views/student/page/MyCoursePage.vue'),
         },
         {
-          path: 'AI',
-          name: 'AI',
+          path: 'ai',
           component: () => import('../views/student/page/AIPage.vue'),
+          children: [
+            {
+              path: '',
+              name: 'AI',
+              redirect: '/s/ai/home',
+            },
+            {
+              path: 'home',
+              name: 'ai-home',
+              component: () => import('@/components/AI/ChatHome.vue'),
+            },
+            {
+              path: 'chat/:id',
+              name: 'ai-chat',
+              component: () => import('@/components/AI/ChatBox.vue'),
+            },
+          ],
         },
       ],
     },
