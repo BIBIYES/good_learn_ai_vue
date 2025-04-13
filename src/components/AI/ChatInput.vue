@@ -63,9 +63,33 @@ const handleKeydown = (event) => {
   // 如果按下Enter键且没有按住Shift键，则发送消息
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault() // 阻止默认的换行行为
-    if (textInput.trim() !== '' && !isLodaing.value) {
-      emit('send', textInput)
+
+    // 如果正在加载中，则发送空消息表示需要终止流
+    if (isLodaing.value) {
+      emit('send', '')
+      return
     }
+
+    // 正常发送消息
+    if (textInput.value.trim() !== '') {
+      emit('send', textInput.value)
+      adjustHeight()
+    }
+  }
+}
+
+// 点击发送事件
+const handleSend = () => {
+  // 如果正在加载中，则发送空消息表示需要终止流
+  if (isLodaing.value) {
+    emit('send', '')
+    return
+  }
+
+  // 正常发送消息
+  if (textInput.value.trim() !== '') {
+    emit('send', textInput.value)
+    adjustHeight()
   }
 }
 
@@ -76,7 +100,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app flex items-center justify-center ">
+  <div class="app flex items-center justify-center">
     <div
       ref="containerRef"
       class="bg-base-200 w-full max-w-3xl flex items-center px-4 transition-all mx-auto"
@@ -107,7 +131,7 @@ onMounted(() => {
       />
       <div
         class="w-8 p-1 h-8 bg-white rounded-full flex items-center justify-center ml-2 cursor-pointer hover:bg-base-100 transition-colors flex-shrink-0"
-        @click="emit('send', textInput)"
+        @click="handleSend()"
       >
         <img
           v-if="!isLodaing"

@@ -35,7 +35,7 @@ request.interceptors.response.use(
     if (response.data.code != 200) {
       message.error(response.data.message)
     }
-    if (response.data.code == 401) {
+    if (response.status == 401) {
       console.log('令牌出错')
       router.push('/login')
     }

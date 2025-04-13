@@ -89,7 +89,7 @@ const handleSendMessage = async (message) => {
   if (!chatList.value) {
     chatList.value = []
   }
-  
+
   // 添加用户消息到聊天列表
   const userMessage = {
     role: 'user',
@@ -99,7 +99,6 @@ const handleSendMessage = async (message) => {
   }
   if (Array.isArray(chatList.value)) {
     chatList.value.push(userMessage)
-    
   }
 
   // 清空输入框并更新状态
@@ -116,7 +115,23 @@ const handleSendMessage = async (message) => {
   chatList.value.push(aiMessage)
   scrollToBottom()
   // 创建AI流式客户端并准备发送数据
-  const client = new AIStreamClient()
+  // 获取AI流客户端
+  const aiClient = AIStreamClient()
+
+  // 如果已经有正在进行的请求，则终止它
+  if (ai.aiLoading && aiClient.getController()) {
+    aiClient.abort()
+    ai.aiLoading = false
+
+    // 更新最后一条AI消息，添加终止提示
+    if (chatList.value.length > 0) {
+      const lastMessage = chatList.value[chatList.value.length - 1]
+      if (lastMessage.role === 'system') {
+        lastMessage.content += '\n\n*请求已被用户终止*'
+      }
+    }
+    return
+  }
   const sendData = {
     content: message,
     sessionId,
@@ -125,7 +140,7 @@ const handleSendMessage = async (message) => {
   }
 
   // 发送消息并处理流式响应
-  client.sendMessage(JSON.stringify(sendData), {
+  aiClient.sendMessage(JSON.stringify(sendData), {
     // 开始请求时的处理
     onStart: () => {
       console.log('AI响应开始')
@@ -141,7 +156,6 @@ const handleSendMessage = async (message) => {
         const lastMessage = chatList.value[chatList.value.length - 1]
         if (lastMessage.role === 'system') {
           lastMessage.content += content
-          
         }
       }
     },
@@ -175,9 +189,7 @@ const handleSendMessage = async (message) => {
 }
 
 // 生命周期钩子
-onMounted(() => {
-  
-})
+onMounted(() => {})
 
 /**
  * 监听路由参数变化，当sessionId变化时重新获取消息
@@ -192,7 +204,7 @@ watch(
       sessionName.value = ai.chatSessionHistory.find(
         (item) => item.sessionId === sessionId
       )?.sessionName
-      
+
       // 清空聊天列表
       chatList.value = []
       // 重新获取消息
@@ -273,8 +285,13 @@ watch(
               }}</time>
             </div>
             <div class="rounded-lg border-2 border-base-200 p-2 chat-box">
-              <!-- {{ item.content }} -->
-              <MarkdBox :content="item.content" />
+              <div v-if="item.role === 'user'">
+                {{ item.content }}
+              </div>
+              <MarkdBox
+                v-else
+                :content="item.content"
+              />
               <LoadingState
                 v-if="
                   item.role === 'system' &&
@@ -298,7 +315,7 @@ watch(
 </template>
 <style scoped>
 .chat-box {
-  max-width: 80%; 
+  max-width: 80%;
 }
 
 .chat-container {
