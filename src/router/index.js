@@ -6,7 +6,7 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login', // 重定向到 /s
+      redirect: '/login' // 重定向到 /s
     },
     {
       path: '/login',
@@ -17,14 +17,14 @@ const router = createRouter({
         {
           path: '',
           name: 'login',
-          component: () => import('@/components/form/LoginForm.vue'),
+          component: () => import('@/components/form/LoginForm.vue')
         },
         {
           path: '/register',
           name: 'register',
-          component: () => import('@/components/form/RegisterForm.vue'),
-        },
-      ],
+          component: () => import('@/components/form/RegisterForm.vue')
+        }
+      ]
     },
     // 老师路由
     {
@@ -36,9 +36,9 @@ const router = createRouter({
         {
           path: 'home',
           name: 'home-page-t',
-          component: () => import('../views/teacher/page/HomePage.vue'),
-        },
-      ],
+          component: () => import('../views/teacher/page/HomePage.vue')
+        }
+      ]
     },
     // 学生
     {
@@ -50,36 +50,52 @@ const router = createRouter({
         {
           path: 'home',
           name: 'home-page-s',
-          component: () => import('../views/student/page/HomePage.vue'),
+          component: () => import('../views/student/page/HomePage.vue')
         },
         {
           path: 'my-test-paper',
           name: 'my-test-paper',
-          component: () => import('../views/student/page/MyTestPaper.vue'),
+          component: () => import('../views/student/page/MyTestPaper.vue')
         },
         {
           path: 'my-course',
           name: 'my-course',
-          component: () => import('../views/student/page/MyCoursePage.vue'),
+          component: () => import('../views/student/page/MyCoursePage.vue')
         },
         {
-          path: 'AI',
-          name: 'AI',
+          path: 'ai',
           component: () => import('../views/student/page/AIPage.vue'),
-        },
-      ],
+          children: [
+            {
+              path: '',
+              name: 'AI',
+              redirect: '/s/ai/home'
+            },
+            {
+              path: 'home',
+              name: 'ai-home',
+              component: () => import('@/components/AI/ChatHome.vue')
+            },
+            {
+              path: 'chat/:id',
+              name: 'ai-chat',
+              component: () => import('@/components/AI/ChatBox.vue')
+            }
+          ]
+        }
+      ]
     },
     {
       path: '/about',
       name: 'about',
-      component: () => import('../views/AboutMePage.vue'),
+      component: () => import('../views/AboutMePage.vue')
     },
     {
       path: '/test',
       name: 'test',
-      component: () => import('../views/student/page/TestPage.vue'),
-    },
-  ],
+      component: () => import('../views/student/page/TestPage.vue')
+    }
+  ]
 })
 // 前置路由守卫
 router.beforeEach((to, from, next) => {
@@ -90,7 +106,7 @@ router.beforeEach((to, from, next) => {
   const authRoutes = ['/login', '/register']
 
   // 公开页面
-  const openRoutes = ['/about']
+  const openRoutes = ['/about', '/test']
   if (openRoutes.includes(to.path)) {
     next()
     return

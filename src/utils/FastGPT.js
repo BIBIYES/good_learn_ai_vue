@@ -2,7 +2,7 @@ class FastGPT {
   constructor(key) {
     if (!key) {
       throw new Error(
-        'FastGPT API密钥是必需的。请在实例化时提供有效的API密钥。',
+        'FastGPT API密钥是必需的。请在实例化时提供有效的API密钥。'
       )
     }
     this.key = key
@@ -14,7 +14,7 @@ class FastGPT {
       method: 'POST',
       headers: {
         Authorization: `Bearer ${this.key}`,
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         chatId,
@@ -23,16 +23,16 @@ class FastGPT {
         messages: [
           {
             content: message,
-            role: 'user',
-          },
-        ],
-      }),
+            role: 'user'
+          }
+        ]
+      })
     }
 
     try {
       const response = await fetch(
         'https://cloud.fastgpt.cn/api/v1/chat/completions',
-        obj,
+        obj
       )
 
       if (!response.ok) {
