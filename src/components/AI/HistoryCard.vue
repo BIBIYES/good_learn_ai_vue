@@ -109,10 +109,47 @@ const formatDate = (dateString) => {
               class="flex justify-between items-center"
               :class="{ 'menu-active': route.params.id === item.sessionId }"
             >
-              <span>{{ item.sessionName }}</span>
-              <span class="text-xs opacity-60">{{
-                formatDate(item.createTime)
-              }}</span>
+              <span class="truncate max-w-[110px]">{{ item.sessionName }}</span>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs opacity-60">{{
+                  formatDate(item.createTime)
+                }}</span>
+                <div class="dropdown dropdown-bottom dropdown-end">
+                  <div
+                    tabindex="0"
+                    role="button"
+                    class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
+                  >
+                    <More
+                      theme="outline"
+                      size="15"
+                      fill="#333"
+                    />
+                  </div>
+                  <ul
+                    tabindex="0"
+                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
+                  >
+                    <li>
+                      <a class="text-black">
+                        <Edit
+                          theme="outline"
+                          size="20"
+                          fill="#333"
+                        />修改名称</a>
+                    </li>
+                    <li>
+                      <a class="text-red-500">
+                        <DeleteFive
+                          theme="outline"
+                          size="20"
+                          fill="#fa1010"
+                        />删除
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </a>
           </li>
         </ul>
@@ -135,10 +172,47 @@ const formatDate = (dateString) => {
               class="flex justify-between items-center"
               :class="{ 'menu-active': route.params.id === item.sessionId }"
             >
-              <span>{{ item.sessionName }}</span>
-              <span class="text-xs opacity-60">{{
-                formatDate(item.createTime)
-              }}</span>
+              <span class="truncate max-w-[110px]">{{ item.sessionName }}</span>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs opacity-60">{{
+                  formatDate(item.createTime)
+                }}</span>
+                <div class="dropdown dropdown-bottom dropdown-end">
+                  <div
+                    tabindex="0"
+                    role="button"
+                    class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
+                  >
+                    <More
+                      theme="outline"
+                      size="15"
+                      fill="#333"
+                    />
+                  </div>
+                  <ul
+                    tabindex="0"
+                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
+                  >
+                    <li>
+                      <a class="text-black">
+                        <Edit
+                          theme="outline"
+                          size="20"
+                          fill="#333"
+                        />修改名称</a>
+                    </li>
+                    <li>
+                      <a class="text-red-500">
+                        <DeleteFive
+                          theme="outline"
+                          size="20"
+                          fill="#fa1010"
+                        />删除
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </a>
           </li>
         </ul>
@@ -161,12 +235,12 @@ const formatDate = (dateString) => {
               class="flex justify-between items-center"
               :class="{ 'menu-active': route.params.id === item.sessionId }"
             >
-              <span>{{ item.sessionName }}</span>
-              <div class="flex items-center justify-center space-x-2.5">
+              <span class="truncate max-w-[110px]">{{ item.sessionName }}</span>
+              <div class="flex items-center space-x-2">
                 <span class="text-xs opacity-60">{{
                   formatDate(item.createTime)
                 }}</span>
-                <div class="dropdown dropdown-bottom">
+                <div class="dropdown dropdown-bottom dropdown-end">
                   <div
                     tabindex="0"
                     role="button"
@@ -175,14 +249,14 @@ const formatDate = (dateString) => {
                     <More
                       theme="outline"
                       size="15"
-                      fill="#FFFFFF"
+                      fill="#333"
                     />
                   </div>
                   <ul
                     tabindex="0"
-                    class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm"
+                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
                   >
-                    <li class="flex">
+                    <li>
                       <a class="text-black">
                         <Edit
                           theme="outline"
@@ -191,16 +265,17 @@ const formatDate = (dateString) => {
                         />修改名称</a>
                     </li>
                     <li>
-                      <a class="text-red-500"><DeleteFive
-                        theme="outline"
-                        size="20"
-                        fill="#fa1010"
-                      />删除</a>
-                    </li> 
+                      <a class="text-red-500">
+                        <DeleteFive
+                          theme="outline"
+                          size="20"
+                          fill="#fa1010"
+                        />删除
+                      </a>
+                    </li>
                   </ul>
                 </div>
               </div>
-              
             </a>
           </li>
         </ul>
@@ -223,10 +298,47 @@ const formatDate = (dateString) => {
               class="flex justify-between items-center"
               :class="{ 'menu-active': route.params.id === item.sessionId }"
             >
-              <span>{{ item.sessionName }}</span>
-              <span class="text-xs opacity-60">{{
-                formatDate(item.createTime)
-              }}</span>
+              <span class="truncate max-w-[110px]">{{ item.sessionName }}</span>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs opacity-60">{{
+                  formatDate(item.createTime)
+                }}</span>
+                <div class="dropdown dropdown-bottom dropdown-end">
+                  <div
+                    tabindex="0"
+                    role="button"
+                    class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
+                  >
+                    <More
+                      theme="outline"
+                      size="15"
+                      fill="#333"
+                    />
+                  </div>
+                  <ul
+                    tabindex="0"
+                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
+                  >
+                    <li>
+                      <a class="text-black">
+                        <Edit
+                          theme="outline"
+                          size="20"
+                          fill="#333"
+                        />修改名称</a>
+                    </li>
+                    <li>
+                      <a class="text-red-500">
+                        <DeleteFive
+                          theme="outline"
+                          size="20"
+                          fill="#fa1010"
+                        />删除
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </a>
           </li>
         </ul>
@@ -249,10 +361,47 @@ const formatDate = (dateString) => {
               class="flex justify-between items-center"
               :class="{ 'menu-active': route.params.id === item.sessionId }"
             >
-              <span>{{ item.sessionName }}</span>
-              <span class="text-xs opacity-60">{{
-                formatDate(item.createTime)
-              }}</span>
+              <span class="truncate max-w-[110px]">{{ item.sessionName }}</span>
+              <div class="flex items-center space-x-2">
+                <span class="text-xs opacity-60">{{
+                  formatDate(item.createTime)
+                }}</span>
+                <div class="dropdown dropdown-bottom dropdown-end">
+                  <div
+                    tabindex="0"
+                    role="button"
+                    class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
+                  >
+                    <More
+                      theme="outline"
+                      size="15"
+                      fill="#333"
+                    />
+                  </div>
+                  <ul
+                    tabindex="0"
+                    class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
+                  >
+                    <li>
+                      <a class="text-black">
+                        <Edit
+                          theme="outline"
+                          size="20"
+                          fill="#333"
+                        />修改名称</a>
+                    </li>
+                    <li>
+                      <a class="text-red-500">
+                        <DeleteFive
+                          theme="outline"
+                          size="20"
+                          fill="#fa1010"
+                        />删除
+                      </a>
+                    </li>
+                  </ul>
+                </div>
+              </div>
             </a>
           </li>
         </ul>

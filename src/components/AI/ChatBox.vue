@@ -1,27 +1,70 @@
 <script setup>
-import { getChat, uploadBotChat } from '@/api/chat'
+// Vue核心API
+import { ref, nextTick, onMounted, watch } from 'vue'
+// 第三方库
 import { useRoute } from 'vue-router'
-import { onMounted, ref } from 'vue'
-import ChatInput from './ChatInput.vue'
+import { Down, Edit, DeleteFive } from '@icon-park/vue-next'
+// API和工具
+import { getChat, uploadBotChat } from '@/api/chat'
+import AIStreamClient from '@/plugin/AIStreamClient'
+import { getAvatarPath } from '@/utils/avatarPath'
+// Store
 import { userStore } from '@/stores/user'
 import { aiStore } from '@/stores/ai'
-import AIStreamClient from '@/plugin/AIStreamClient'
-import { Down,Edit,DeleteFive } from '@icon-park/vue-next'
-import { getAvatarPath } from '@/utils/avatarPath'
+// 组件
+import ChatInput from './ChatInput.vue'
+import MarkdBox from '@/components/common/MarkdBox.vue'
+import LoadingState from '@/components/common/LoadingState.vue'
+
+// Store实例
 const user = userStore()
 const ai = aiStore()
 
+// 路由相关
 const route = useRoute()
-const sessionId = route.params.id
+let sessionId = route.params.id
 
+// 响应式状态
 const chatList = ref([])
+const chatContainer = ref(null)
 
-// 获取历史消息
+/**
+ * 滚动到聊天窗口底部
+ */
+const scrollToBottom = () => {
+  nextTick(() => {
+    if (chatContainer.value) {
+      // 使用scrollIntoView方法实现平滑滚动
+      const lastElement = chatContainer.value.querySelector(
+        '.chat-container > div:last-child'
+      )
+      if (lastElement) {
+        lastElement.scrollIntoView({ behavior: 'smooth', block: 'end' })
+      } else {
+        // 如果没有找到最后一个元素，则使用传统方式但添加平滑效果
+        chatContainer.value.scrollTo({
+          top: chatContainer.value.scrollHeight,
+          behavior: 'smooth'
+        })
+      }
+    }
+  })
+}
+
+/**
+ * 获取历史聊天消息
+ */
 const handleGetChat = async () => {
   const res = await getChat(sessionId)
   chatList.value = res.data
+  scrollToBottom()
 }
 
+/**
+ * 格式化时间为小时:分钟格式
+ * @param {string} timeStr - ISO格式的时间字符串
+ * @returns {string} 格式化后的时间字符串
+ */
 const formatTime = (timeStr) => {
   const date = new Date(timeStr)
   const hours = date.getHours().toString().padStart(2, '0')
@@ -29,36 +72,43 @@ const formatTime = (timeStr) => {
   return `${hours}:${minutes}`
 }
 
-// 在请求结束后上传流消息
-const handleUploadBotChat = async(data) => {
+/**
+ * 在请求结束后上传AI回复消息
+ * @param {Object} data - 包含AI回复内容的数据对象
+ */
+const handleUploadBotChat = async (data) => {
   await uploadBotChat(data)
-  
-  
-} 
+}
 
-// 处理发送消息
+/**
+ * 处理用户发送消息并获取AI回复
+ * @param {string} message - 用户输入的消息内容
+ */
 const handleSendMessage = async (message) => {
+  // 验证消息内容
   if (!message || message.trim() === '') return
-
+  if (!chatList.value) {
+    chatList.value = []
+  }
+  scrollToBottom()
   // 添加用户消息到聊天列表
   const userMessage = {
-    
     role: 'user',
     content: message,
     createTime: new Date().toISOString(),
     sessionId
   }
-  chatList.value.push(userMessage)
+  if (Array.isArray(chatList.value)) {
+    chatList.value.push(userMessage)
+    scrollToBottom()
+  }
 
-  // 清空输入框
+  // 清空输入框并更新状态
   ai.input = ''
-
-  // 设置AI加载状态
   ai.aiLoading = true
 
   // 添加AI消息占位
   const aiMessage = {
-   
     role: 'system',
     content: '',
     createTime: new Date().toISOString(),
@@ -66,41 +116,43 @@ const handleSendMessage = async (message) => {
   }
   chatList.value.push(aiMessage)
 
-  // 创建AI流式客户端
+  // 创建AI流式客户端并准备发送数据
   const client = new AIStreamClient()
-
-  const sendMessage = JSON.stringify({
+  const sendData = {
     content: message,
     sessionId,
     sessionName: message,
     role: 'user'
-  })
+  }
+
   // 发送消息并处理流式响应
-  client.sendMessage(sendMessage, {
+  client.sendMessage(JSON.stringify(sendData), {
+    // 开始请求时的处理
     onStart: () => {
-      // 开始请求时的处理
       console.log('AI响应开始')
     },
+
+    // 接收到数据时更新AI消息内容
     onData: (data) => {
-      // 接收到数据时更新AI消息内容
       console.log(data)
-      
       const content = data.result?.output?.text || ''
-      
-      // 获取最后一条消息（应该是AI消息）
+
+      // 更新最后一条AI消息内容
       if (chatList.value.length > 0) {
         const lastMessage = chatList.value[chatList.value.length - 1]
         if (lastMessage.role === 'system') {
           lastMessage.content += content
+          scrollToBottom()
         }
       }
     },
+
+    // 请求完成时的处理
     onComplete: () => {
-      // 请求完成时的处理
       ai.aiLoading = false
       console.log('AI响应完成')
-      
-      // 获取AI的回复消息（最后一条消息）
+
+      // 获取并上传AI的回复消息
       if (chatList.value.length > 1) {
         const aiMessage = chatList.value[chatList.value.length - 1]
         if (aiMessage.role === 'system') {
@@ -114,22 +166,44 @@ const handleSendMessage = async (message) => {
         }
       }
     },
+
+    // 发生错误时的处理
     onError: (error) => {
-      // 发生错误时的处理
       ai.aiLoading = false
-      message.error('ai响应出现异常',error)
+      message.error('ai响应出现异常', error)
     }
   })
 }
 
+// 生命周期钩子
 onMounted(() => {
-  handleGetChat()
+  
 })
+
+/**
+ * 监听路由参数变化，当sessionId变化时重新获取消息
+ */
+watch(
+  () => route.params.id,
+  (newId, oldId) => {
+    if (newId !== oldId) {
+      // 更新当前sessionId
+      sessionId = newId
+      // 清空聊天列表
+      chatList.value = []
+      // 重新获取消息
+      handleGetChat()
+    }
+  },
+  { immediate: true }
+)
 </script>
 
 <template>
-  <div class="app flex flex-col w-full h-full pb-9 pt-2  bg-base-100 rounded-md">
-    <div class="dropdown ml-5">
+  <div
+    class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md pb-9 pt-2"
+  >
+    <div class="dropdown self-start ml-5">
       <div
         tabindex="0"
         role="button"
@@ -162,44 +236,77 @@ onMounted(() => {
         </li>
       </ul>
     </div>
-    <div class="flex-1 overflow-y-auto pt-10 p-4 py-2 space-y-3 pl-30 pr-45 ">
-      <div
-        v-for="(item,index) in chatList"
-        :key="item.historyId"
-        class="flex flex-col"
-      >
+    <!-- 聊天内容区域 -->
+    <div
+      ref="chatContainer"
+      class="flex-1 overflow-y-auto p-4 w-full"
+    >
+      <div class="chat-container space-y-3 h-full">
         <div
-          :class="item.role === 'user' ? 'chat chat-end' : 'chat chat-start'"
+          v-for="(item, index) in chatList"
+          :key="item.historyId"
+          class="flex flex-col"
         >
-          <div class="chat-image avatar">
-            <div class="w-10 rounded-full p-1">
-              <img
-                alt="avatar"
-                :src="item.role=== 'user' ? getAvatarPath() : 'https://s21.ax1x.com/2025/04/10/pE2GAaj.jpg'"
-              >
+          <div
+            :class="item.role === 'user' ? 'chat chat-end' : 'chat chat-start'"
+          >
+            <div class="chat-image avatar">
+              <div class="w-10 rounded-full p-1">
+                <img
+                  alt="avatar"
+                  :src="
+                    item.role === 'user'
+                      ? getAvatarPath()
+                      : 'https://s21.ax1x.com/2025/04/10/pE2GAaj.jpg'
+                  "
+                >
+              </div>
             </div>
-          </div>
-          <div class="chat-header">
-            {{ item.role === 'user' ? user.userInfo.username : '好助学' }}
-            <time class="text-xs opacity-50 ml-1">{{
-              formatTime(item.createTime)
-            }}</time>
-          </div>
-          <div class="rounded-lg border-2 border-base-200 p-2 chat-box">
-            <!-- {{ item.content }} -->
-            <MarkdBox :content="item.content" />
-            <LoadingState v-if="item.role === 'system' && ai.aiLoading && index === chatList.length - 1" />
+            <div class="chat-header">
+              {{ item.role === 'user' ? user.userInfo.username : '好助学' }}
+              <time class="text-xs opacity-50 ml-1">{{
+                formatTime(item.createTime)
+              }}</time>
+            </div>
+            <div class="rounded-lg border-2 border-base-200 p-2 chat-box">
+              <!-- {{ item.content }} -->
+              <MarkdBox :content="item.content" />
+              <LoadingState
+                v-if="
+                  item.role === 'system' &&
+                    ai.aiLoading &&
+                    index === chatList.length - 1
+                "
+              />
+            </div>
           </div>
         </div>
       </div>
     </div>
-    <div class="px-4 w-full">
-      <ChatInput @send="handleSendMessage" />
+    <!-- 底部输入框 -->
+    <div class="p-4 flex w-full items-center justify-center">
+      <ChatInput
+        class="w-full"
+        @send="handleSendMessage"
+      />
     </div>
   </div>
 </template>
 <style scoped>
 .chat-box {
-  max-width: 80%;
+  max-width: 80%; 
+}
+
+.chat-container {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  scroll-behavior: smooth;
+}
+
+@media (max-width: 640px) {
+  .chat-box {
+    max-width: 90%;
+  }
 }
 </style>
