@@ -48,7 +48,6 @@ const AIStreamClient = {
       if (onStart && typeof onStart === 'function') {
         onStart()
       }
-
       // 获取最新的token
       const user = userStore()
       const currentToken = user.userInfo.jwtToken

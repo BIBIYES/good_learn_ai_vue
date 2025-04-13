@@ -1,7 +1,26 @@
-<script setup></script>
+<script setup>
+import { v4 as uuidv4 } from 'uuid'
+import {aiStore} from '@/stores/ai'
+const ai = aiStore()
 
-<template>
-  <div class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md">
+const handeleSendMessage = () => {
+  const uuid = uuidv4()
+  // 创建消息载荷
+  const payload = {
+    msg: ai.input,
+    sessionId: uuid,
+    sessionName: ai.input,
+    role: 'user'
+  }
+  console.log(payload)
+  
+}
+</script>
+
+<template> 
+  <div
+    class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md"
+  >
     <!-- 聊天内容区域 -->
     <div class="overflow-y-auto p-4">
       <div class="chat-container h-full">
@@ -26,7 +45,10 @@
 
     <!-- 底部输入框 -->
     <div class="p-4 flex w-full items-center justify-center">
-      <ChatInput class="w-full animate__animated animate__fadeInUp" />
+      <ChatInput
+        class="w-full animate__animated animate__fadeInUp"
+        @send="handeleSendMessage()"
+      />
     </div>
   </div>
 </template>

@@ -96,6 +96,13 @@ const handleSendMessage = async (message) => {
       if (lastMessage.role === 'system') {
         lastMessage.content += '\n\n*请求已被用户终止*'
       }
+      const botResponse = {
+            content: lastMessage.content,
+            sessionId,
+            sessionName: lastMessage.content,
+            role: 'system'
+          }
+      handleUploadBotChat(botResponse)
     }
     return
   }
