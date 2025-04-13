@@ -45,7 +45,7 @@ const htmlContent = computed(() => {
   // 为代码块添加复制按钮
   parsed = parsed.replace(
     /<pre><code class="([^"]+)">/g,
-    '<div class="code-block-wrapper"><button class="copy-button">复制</button><pre><code class="$1">'
+    '<div class="code-block-wrapper"><button class="copy-btn btn btn-xs btn-neutral">复制</button><pre><code class="$1">'
   )
   parsed = parsed.replace(/<\/code><\/pre>/g, '</code></pre></div>')
   return parsed
@@ -53,7 +53,7 @@ const htmlContent = computed(() => {
 
 // 添加复制功能
 onMounted(() => {
-  const copyButtons = document.querySelectorAll('.copy-button')
+  const copyButtons = document.querySelectorAll('.copy-btn')
   copyButtons.forEach((button) => {
     button.addEventListener('click', async () => {
       const codeBlock = button.nextElementSibling.querySelector('code')
@@ -62,11 +62,11 @@ onMounted(() => {
       try {
         await navigator.clipboard.writeText(code)
         button.textContent = '已复制'
-        button.classList.add('copied')
+        button.classList.add('btn-primary')
 
         setTimeout(() => {
           button.textContent = '复制'
-          button.classList.remove('copied')
+          button.classList.remove('btn-primary')
         }, 2000)
       } catch (err) {
         console.error('复制失败:', err)
@@ -83,7 +83,7 @@ onMounted(() => {
 
 <template>
   <div
-    class="markdown-body"
+    class="markdown-body w-full max-w-full px-4"
     :class="theme"
     v-html="htmlContent"
   />
@@ -91,43 +91,23 @@ onMounted(() => {
 <style>
 .code-block-wrapper {
   position: relative;
+  margin: 1em 0;
+  max-width: 100%;
+  overflow-x: auto;
 }
-
-.copy-button {
+.copy-btn {
   position: absolute;
-  top: 0.5rem;
   right: 0.5rem;
-  padding: 0.25rem 0.5rem;
-  background-color: #f3f4f6;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.25rem;
-  font-size: 0.75rem;
-  color: #374151;
-  cursor: pointer;
-  transition: all 0.2s;
+  top: 0.5rem;
+  z-index: 10;
+  transition: all 0.2s ease;
+  opacity: 0.7;
 }
-
-.copy-button:hover {
-  background-color: #e5e7eb;
+.copy-btn:hover {
+  opacity: 1;
 }
-
-.copy-button.copied {
-  background-color: #10b981;
-  color: white;
-  border-color: #059669;
-}
-
-.markdown-body {
-  box-sizing: border-box;
-  min-width: 200px;
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 45px;
-}
-
-@media (max-width: 767px) {
-  .markdown-body {
-    padding: 15px;
-  }
+.copy-btn.btn-primary {
+  background-color: #4CAF50;
+  border-color: #4CAF50;
 }
 </style>

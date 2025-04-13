@@ -1,7 +1,7 @@
 <script setup></script>
 
 <template>
-  <div class="flex flex-col h-full w-full items-center justify-center">
+  <div class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md">
     <!-- 聊天内容区域 -->
     <div class="overflow-y-auto p-4">
       <div class="chat-container h-full">

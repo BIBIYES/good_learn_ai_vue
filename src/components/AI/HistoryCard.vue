@@ -2,7 +2,9 @@
 import { ref, onMounted, computed } from 'vue'
 import { getSession } from '@/api/chat'
 import { useRoute } from 'vue-router'
+import { History } from '@icon-park/vue-next'
 import router from '@/router'
+import { Edit, DeleteFive, More } from '@icon-park/vue-next'
 
 const route = useRoute()
 
@@ -75,7 +77,15 @@ const formatDate = (dateString) => {
 
 <template>
   <div class="app w-full h-full">
-    <ul class="menu bg-base-200 rounded-box w-full h-[calc(100vh-100px)]">
+    <ul class="menu rounded-box w-full h-[calc(100vh-100px)]">
+      <div class="flex items-center space-x-2">
+        <History
+          theme="outline"
+          size="20"
+          fill="#333"
+        />
+        <span class="text-md font-bold">历史消息</span>
+      </div>
       <div
         v-if="isLodaing"
         class="flex justify-center items-center p-4"
@@ -152,9 +162,45 @@ const formatDate = (dateString) => {
               :class="{ 'menu-active': route.params.id === item.sessionId }"
             >
               <span>{{ item.sessionName }}</span>
-              <span class="text-xs opacity-60">{{
-                formatDate(item.createTime)
-              }}</span>
+              <div class="flex items-center justify-center space-x-2.5">
+                <span class="text-xs opacity-60">{{
+                  formatDate(item.createTime)
+                }}</span>
+                <div class="dropdown dropdown-bottom">
+                  <div
+                    tabindex="0"
+                    role="button"
+                    class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
+                  >
+                    <More
+                      theme="outline"
+                      size="15"
+                      fill="#FFFFFF"
+                    />
+                  </div>
+                  <ul
+                    tabindex="0"
+                    class="dropdown-content menu bg-base-100 rounded-box z-1 w-40 p-2 shadow-sm"
+                  >
+                    <li class="flex">
+                      <a class="text-black">
+                        <Edit
+                          theme="outline"
+                          size="20"
+                          fill="#333"
+                        />修改名称</a>
+                    </li>
+                    <li>
+                      <a class="text-red-500"><DeleteFive
+                        theme="outline"
+                        size="20"
+                        fill="#fa1010"
+                      />删除</a>
+                    </li> 
+                  </ul>
+                </div>
+              </div>
+              
             </a>
           </li>
         </ul>

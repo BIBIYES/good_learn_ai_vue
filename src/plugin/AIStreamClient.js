@@ -76,7 +76,7 @@ class AIStreamClient {
             const jsonString = line.replace(/^data:/, '')
             try {
               const jsonData = JSON.parse(jsonString)
-              fullContent += jsonData.content || ''
+              fullContent += jsonData.result?.output?.text || ''
               this.content.value = fullContent
 
               // Call onData callback if provided

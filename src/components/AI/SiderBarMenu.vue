@@ -9,7 +9,7 @@ const router = useRouter()
   <div class="app h-screen">
     <div class="sidebar-container h-screen flex flex-col pt-2">
       <div
-        class="btn w-full mb-7"
+        class="btn w-full mb-7 bg-base-100"
         @click="router.push({ name: 'ai-home' })"
       >
         创建会话

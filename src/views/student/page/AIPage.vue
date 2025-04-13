@@ -2,11 +2,11 @@
 
 </script>
 <template>
-  <div class="app flex h-screen">
-    <div class="border-base-200 w-60">
+  <div class="app flex h-screen bg-base-200/50 pl-1.5">
+    <div class="w-60">
       <SiderBarMenu />
     </div>
-    <div class="flex-1 overflow-hidden">
+    <div class="flex-1 overflow-hidden p-1.5">
       <RouterView />
     </div>
   </div>
