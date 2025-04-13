@@ -81,11 +81,11 @@ onMounted(() => {
       ref="containerRef"
       class="bg-base-200 w-200 flex items-center px-4 transition-all"
       :class="{
-        skeleton: isLodaing,
+        skeleton: isLodaing
       }"
       :style="{
         'min-height': '48px',
-        'border-radius': `${borderRadius}px`,
+        'border-radius': `${borderRadius}px`
       }"
     >
       <textarea
@@ -96,11 +96,11 @@ onMounted(() => {
         :style="{
           'min-height': '32px',
           'max-height': '160px',
-          'border-radius': `${borderRadius}px`,
+          'border-radius': `${borderRadius}px`
         }"
         placeholder="输入你的问题..."
         :class="{
-          skeleton: isLodaing,
+          skeleton: isLodaing
         }"
         @input="handleInput"
         @keydown="handleKeydown"
@@ -114,11 +114,8 @@ onMounted(() => {
           src="@/assets/icon/send.svg"
           alt=""
           class="w-full h-full"
-        >
-        <span
-          v-else
-          class="loading loading-spinner"
         />
+        <span v-else class="loading loading-spinner" />
       </div>
     </div>
   </div>

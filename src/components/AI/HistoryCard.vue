@@ -41,7 +41,7 @@ const groupedChats = computed(() => {
     yesterday: [],
     threeDaysAgo: [],
     sevenDaysAgo: [],
-    older: [],
+    older: []
   }
 
   chatHistory.value.forEach((chat) => {
@@ -76,17 +76,12 @@ const formatDate = (dateString) => {
 <template>
   <div class="app w-full h-full">
     <ul class="menu bg-base-200 rounded-box w-full h-[calc(100vh-100px)]">
-      <div
-        v-if="isLodaing"
-        class="flex justify-center items-center p-4"
-      >
+      <div v-if="isLodaing" class="flex justify-center items-center p-4">
         <span class="loading loading-spinner" />
       </div>
       <!-- 今天 -->
       <li v-if="groupedChats.today.length > 0">
-        <h2 class="menu-title">
-          今天
-        </h2>
+        <h2 class="menu-title">今天</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.today"
@@ -110,9 +105,7 @@ const formatDate = (dateString) => {
 
       <!-- 昨天 -->
       <li v-if="groupedChats.yesterday.length > 0">
-        <h2 class="menu-title">
-          昨天
-        </h2>
+        <h2 class="menu-title">昨天</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.yesterday"
@@ -136,9 +129,7 @@ const formatDate = (dateString) => {
 
       <!-- 三天前 -->
       <li v-if="groupedChats.threeDaysAgo.length > 0">
-        <h2 class="menu-title">
-          三天前
-        </h2>
+        <h2 class="menu-title">三天前</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.threeDaysAgo"
@@ -162,9 +153,7 @@ const formatDate = (dateString) => {
 
       <!-- 七天前 -->
       <li v-if="groupedChats.sevenDaysAgo.length > 0">
-        <h2 class="menu-title">
-          七天前
-        </h2>
+        <h2 class="menu-title">七天前</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.sevenDaysAgo"
@@ -188,9 +177,7 @@ const formatDate = (dateString) => {
 
       <!-- 更久之前 -->
       <li v-if="groupedChats.older.length > 0">
-        <h2 class="menu-title">
-          更久之前
-        </h2>
+        <h2 class="menu-title">更久之前</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.older"

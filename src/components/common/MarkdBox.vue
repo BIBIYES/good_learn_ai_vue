@@ -20,12 +20,12 @@ import 'highlight.js/lib/languages/yaml'
 const props = defineProps({
   content: {
     type: String,
-    default: '',
+    default: ''
   },
   theme: {
     type: String,
-    default: 'light',
-  },
+    default: 'light'
+  }
 })
 
 // 创建marked实例并配置
@@ -35,8 +35,8 @@ const marked = new Marked(
     highlight(code, lang) {
       const language = hljs.getLanguage(lang) ? lang : 'plaintext'
       return hljs.highlight(code, { language }).value
-    },
-  }),
+    }
+  })
 )
 
 // 转换markdown并进行XSS防护
@@ -45,7 +45,7 @@ const htmlContent = computed(() => {
   // 为代码块添加复制按钮
   parsed = parsed.replace(
     /<pre><code class="([^"]+)">/g,
-    '<div class="code-block-wrapper"><button class="copy-button">复制</button><pre><code class="$1">',
+    '<div class="code-block-wrapper"><button class="copy-button">复制</button><pre><code class="$1">'
   )
   parsed = parsed.replace(/<\/code><\/pre>/g, '</code></pre></div>')
   return parsed
@@ -82,11 +82,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    class="markdown-body"
-    :class="theme"
-    v-html="htmlContent"
-  />
+  <div class="markdown-body" :class="theme" v-html="htmlContent" />
 </template>
 <style>
 .code-block-wrapper {

@@ -11,6 +11,6 @@ export const aiStore = defineStore(
     return { input, aiLoading }
   },
   {
-    persist: true,
-  },
+    persist: true
+  }
 )

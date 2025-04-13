@@ -12,14 +12,8 @@ const route = useRoute()
           to="/s/home"
           :class="{ 'menu-active': route.name === 'home-page-s' }"
         >
-          <home
-            theme="outline"
-            size="24"
-          />
-          <a
-            href="#"
-            class=""
-          >首页</a>
+          <home theme="outline" size="24" />
+          <a href="#" class="">首页</a>
         </router-link>
       </li>
       <li>
@@ -27,10 +21,7 @@ const route = useRoute()
           to="/s/ai"
           :class="{ 'menu-active': route.path.startsWith('/s/ai') }"
         >
-          <lightning
-            theme="outline"
-            size="24"
-          />
+          <lightning theme="outline" size="24" />
           <a href="#">智识顾问</a>
         </router-link>
       </li>
@@ -39,10 +30,7 @@ const route = useRoute()
           to="/s/my-course"
           :class="{ 'menu-active': route.name === 'my-course' }"
         >
-          <school
-            theme="outline"
-            size="24"
-          />
+          <school theme="outline" size="24" />
           <a href="#">我的课程</a>
         </router-link>
       </li>
@@ -51,10 +39,7 @@ const route = useRoute()
           to="/s/my-test-paper"
           :class="{ 'menu-active': route.name === 'my-test-paper' }"
         >
-          <document-folder
-            theme="outline"
-            size="24"
-          />
+          <document-folder theme="outline" size="24" />
           <a href="#">我的试卷</a>
         </router-link>
       </li>

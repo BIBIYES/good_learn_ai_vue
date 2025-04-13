@@ -1,8 +1,8 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 @plugin "daisyui" {
   themes: emerald --default;
 }
 html {
   scroll-behavior: smooth; /* 实现平滑滚动 */
-  font-family: "Poppins", "Noto Sans SC", sans-serif;
+  font-family: 'Poppins', 'Noto Sans SC', sans-serif;
 }

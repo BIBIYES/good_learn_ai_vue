@@ -9,16 +9,11 @@ export default defineConfig([
   // 排除
   { ignores: ['dist/**', 'node_modules/**'] },
   ...compat.config({
-    extends: ['./.eslintrc-auto-import.json'],
+    extends: ['./.eslintrc-auto-import.json']
   }),
   {
     files: ['**/*.{js,mjs,cjs,vue}'],
-    plugins: { js },
-    extends: ['js/recommended'],
-  },
-  {
-    files: ['**/*.{js,mjs,cjs,vue}'],
-    languageOptions: { globals: globals.browser },
+    languageOptions: { globals: globals.browser }
   },
   {
     files: ['**/*.{js,mjs,cjs,vue}'],
@@ -26,8 +21,9 @@ export default defineConfig([
       // 强制使用单引号
       quotes: ['error', 'single'],
       // 禁止使用分号
-      semi: ['error', 'never'],
-    },
+      semi: ['error', 'never']
+    }
   },
-  pluginVue.configs['flat/recommended'],
+  js.configs.recommended,
+  pluginVue.configs['flat/recommended']
 ])

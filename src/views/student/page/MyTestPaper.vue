@@ -7,26 +7,18 @@ import { DocumentFolder } from '@icon-park/vue-next'
   <div class="app flex flex-col h-full p-4">
     <TitleBar>
       <template #title>
-        <document-folder
-          theme="outline"
-          size="38"
-        />
+        <document-folder theme="outline" size="38" />
         <span>我的试卷</span>
       </template>
       <template #module>
         <div class="join">
-          <div
-            class="tooltip tooltip-bottom"
-            data-tip="输入试卷编号"
-          >
+          <div class="tooltip tooltip-bottom" data-tip="输入试卷编号">
             <input
               class="input input-bordered join-item w-full max-w-xs"
               placeholder="输入试卷编号来添加试卷"
-            >
+            />
           </div>
-          <button class="btn btn-primary join-item">
-            添加试卷
-          </button>
+          <button class="btn btn-primary join-item">添加试卷</button>
         </div>
       </template>
     </TitleBar>

@@ -8,12 +8,8 @@
         <!-- 这里可以放置聊天消息内容 -->
         <div class="flex justify-center items-center h-full">
           <div class="text-center text-gray-500">
-            <h2 class="text-5xl font-bold mb-2">
-              GOODAI
-            </h2>
-            <p class="text-sm">
-              输入任何问题，开始对话
-            </p>
+            <h2 class="text-5xl font-bold mb-2">GOODAI</h2>
+            <p class="text-sm">输入任何问题，开始对话</p>
           </div>
         </div>
       </div>

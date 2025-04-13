@@ -6,7 +6,7 @@ import router from '@/router'
 const texts = ref([
   { value: '', final: '欢迎使用好助学!😄' },
   { value: '', final: 'Welcome to' },
-  { value: '', final: 'good learn!' },
+  { value: '', final: 'good learn!' }
 ])
 
 // 生成随机乱码（增加更多字符让变化更丰富）
@@ -50,8 +50,8 @@ const runTextAnimation = (index) => {
       },
       onComplete: () => {
         texts.value[index].value = finalText
-      },
-    },
+      }
+    }
   )
 }
 
@@ -116,12 +116,12 @@ onMounted(() => {
 <style scoped>
 /* 保持原有字体样式 */
 @font-face {
-  font-family: "Fusion";
-  src: url("@/assets/font/fusion.otf") format("opentype");
+  font-family: 'Fusion';
+  src: url('@/assets/font/fusion.otf') format('opentype');
   font-display: swap;
 }
 
 * {
-  font-family: "Fusion", sans-serif;
+  font-family: 'Fusion', sans-serif;
 }
 </style>

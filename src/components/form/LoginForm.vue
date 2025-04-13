@@ -7,7 +7,7 @@ import router from '@/router'
 const user = userStore()
 const loginInfo = ref({
   email: '',
-  password: '',
+  password: ''
 })
 const handleLogin = async () => {
   const res = await login(loginInfo.value)
@@ -30,13 +30,8 @@ const handleLogin = async () => {
 }
 </script>
 <template>
-  <form
-    class="space-y-6"
-    @submit.prevent="handleLogin"
-  >
-    <h2 class="text-2xl font-bold text-center mb-6">
-      登录到好助学
-    </h2>
+  <form class="space-y-6" @submit.prevent="handleLogin">
+    <h2 class="text-2xl font-bold text-center mb-6">登录到好助学</h2>
 
     <!-- 邮箱输入 -->
     <div class="form-control">
@@ -64,7 +59,7 @@ const handleLogin = async () => {
           placeholder="your@email.com"
           class="grow"
           required
-        >
+        />
       </label>
     </div>
 
@@ -72,10 +67,9 @@ const handleLogin = async () => {
     <div class="form-control">
       <label class="label">
         <span class="label-text font-medium">密码</span>
-        <a
-          href="#"
-          class="label-text-alt link link-hover text-primary"
-        >忘记密码?</a>
+        <a href="#" class="label-text-alt link link-hover text-primary"
+          >忘记密码?</a
+        >
       </label>
       <label class="input input-bordered validator flex items-center gap-2">
         <svg
@@ -93,12 +87,7 @@ const handleLogin = async () => {
             <path
               d="M2.586 17.414A2 2 0 0 0 2 18.828V21a1 1 0 0 0 1 1h3a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h1a1 1 0 0 0 1-1v-1a1 1 0 0 1 1-1h.172a2 2 0 0 0 1.414-.586l.814-.814a6.5 6.5 0 1 0-4-4z"
             />
-            <circle
-              cx="16.5"
-              cy="7.5"
-              r=".5"
-              fill="currentColor"
-            />
+            <circle cx="16.5" cy="7.5" r=".5" fill="currentColor" />
           </g>
         </svg>
         <input
@@ -108,7 +97,7 @@ const handleLogin = async () => {
           class="grow"
           required
           minlength="6"
-        >
+        />
       </label>
     </div>
 

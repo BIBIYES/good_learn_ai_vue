@@ -29,11 +29,7 @@
           <div
             class="flex items-center gap-1 bg-base-100 px-3 py-1.5 rounded-full shadow-sm border border-base-200"
           >
-            <Trophy
-              theme="outline"
-              size="16"
-              class="text-primary"
-            />
+            <Trophy theme="outline" size="16" class="text-primary" />
             <span class="font-medium text-primary">{{ credits }}</span>
             <span class="text-xs text-base-content/70">学分</span>
           </div>
@@ -50,7 +46,7 @@
                 <img
                   :src="teacherAvatar || '/api/placeholder/24/24'"
                   alt="Teacher"
-                >
+                />
               </div>
             </div>
             <div>
@@ -61,10 +57,7 @@
 
           <!-- 成员数量 -->
           <div class="badge badge-primary badge-outline gap-1 px-3 py-3">
-            <Peoples
-              theme="outline"
-              size="14"
-            />
+            <Peoples theme="outline" size="14" />
             <span>{{ memberCount }}</span>
             <span class="text-xs">学员</span>
           </div>
@@ -77,35 +70,27 @@
           <!-- 课程状态 -->
           <div class="flex items-center gap-2">
             <!-- 开启的状态 -->
-            <div
-              v-if="status === 1"
-              class="flex items-center space-x-3"
-            >
+            <div v-if="status === 1" class="flex items-center space-x-3">
               <div class="inline-grid *:[grid-area:1/1]">
                 <div class="status status-success animate-ping" />
                 <div class="status status-success" />
               </div>
-              <p class="text-xs text-base-content/60">
-                该课程正常开放
-              </p>
+              <p class="text-xs text-base-content/60">该课程正常开放</p>
             </div>
             <!-- 关闭的状态 -->
-            <div
-              v-else
-              class="flex items-center space-x-3"
-            >
+            <div v-else class="flex items-center space-x-3">
               <div class="inline-grid *:[grid-area:1/1]">
                 <div class="status status-error animate-ping" />
                 <div class="status status-error" />
               </div>
-              <p class="text-xs text-base-content/60">
-                该课程已被关闭
-              </p>
+              <p class="text-xs text-base-content/60">该课程已被关闭</p>
             </div>
           </div>
 
           <!-- 加入时间 -->
-          <span class="text-xs text-base-content/60">加入时间: {{ formatDate(joinTime) }}</span>
+          <span class="text-xs text-base-content/60"
+            >加入时间: {{ formatDate(joinTime) }}</span
+          >
         </div>
       </div>
     </div>
@@ -119,13 +104,13 @@ export default {
   name: 'CourseCard',
   components: {
     Trophy,
-    Peoples,
+    Peoples
   },
   props: {
     courseInfo: {
       type: Object,
-      required: true,
-    },
+      required: true
+    }
   },
   computed: {
     firstChar() {
@@ -172,7 +157,7 @@ export default {
     },
     monitorName() {
       return this.courseInfo.monitorName
-    },
+    }
   },
   methods: {
     formatDate(dateString) {
@@ -184,8 +169,8 @@ export default {
 
         return dateString
       }
-    },
-  },
+    }
+  }
 }
 </script>
 

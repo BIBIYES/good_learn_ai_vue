@@ -39,9 +39,9 @@ class AIStreamClient {
         signal,
         headers: {
           Authorization: token || this.token,
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
-        body: message,
+        body: message
       })
 
       if (!response.ok) {

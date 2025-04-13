@@ -17,7 +17,7 @@ const handleAddCouser = async () => {
   addCourseLoading.value = true
   try {
     const res = await addCourse({
-      courseId: courseId.value,
+      courseId: courseId.value
     })
 
     if (res.code == 200) {
@@ -59,28 +59,19 @@ onMounted(() => {
   <div class="app flex flex-col h-full p-4">
     <TitleBar>
       <template #title>
-        <school
-          theme="outline"
-          size="38"
-        />
+        <school theme="outline" size="38" />
         <span>我的课程</span>
       </template>
       <template #module>
         <div class="join">
-          <div
-            class="tooltip tooltip-bottom"
-            data-tip="向老师索要课程编号"
-          >
+          <div class="tooltip tooltip-bottom" data-tip="向老师索要课程编号">
             <input
               v-model="courseId"
               class="input input-bordered join-item w-full max-w-xs"
               placeholder="输入课程来加入课程"
-            >
+            />
           </div>
-          <button
-            class="btn btn-primary join-item"
-            @click="handleAddCouser()"
-          >
+          <button class="btn btn-primary join-item" @click="handleAddCouser()">
             <span
               v-show="addCourseLoading"
               class="loading loading-spinner loading-md"
@@ -97,10 +88,7 @@ onMounted(() => {
       <span class="loading loading-spinner loading-xl" />
     </div>
     <!-- 课程 -->
-    <div
-      v-else
-      class="overflow-y-auto space-y-5"
-    >
+    <div v-else class="overflow-y-auto space-y-5">
       <CourseCard
         v-for="(item, index) in courses"
         :key="index"

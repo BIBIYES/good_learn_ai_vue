@@ -37,7 +37,7 @@ const handleSendMessage = async (message) => {
     role: 'user',
     content: message,
     createTime: new Date().toISOString(),
-    sessionId,
+    sessionId
   }
   chatList.value.push(userMessage)
 
@@ -54,7 +54,7 @@ const handleSendMessage = async (message) => {
     role: 'system',
     content: '',
     createTime: new Date().toISOString(),
-    sessionName: sessionId,
+    sessionName: sessionId
   }
   chatList.value.push(aiMessage)
 
@@ -65,7 +65,7 @@ const handleSendMessage = async (message) => {
     msg: message,
     sessionId: sessionId,
     sessionName: message,
-    role: 'user',
+    role: 'user'
   }
   // 发送消息并处理流式响应
   client.sendMessage(sendMessage, {
@@ -78,7 +78,7 @@ const handleSendMessage = async (message) => {
       console.log(data)
 
       const aiMessageIndex = chatList.value.findIndex(
-        (item) => item.historyId === aiMessageId,
+        (item) => item.historyId === aiMessageId
       )
       if (aiMessageIndex !== -1) {
         chatList.value[aiMessageIndex].content = client.content.value
@@ -93,7 +93,7 @@ const handleSendMessage = async (message) => {
       // 发生错误时的处理
       ai.aiLoading = false
       console.error('AI响应错误:', error)
-    },
+    }
   })
 }
 
@@ -105,24 +105,17 @@ onMounted(() => {
 <template>
   <div class="app flex flex-col w-full h-screen pb-9">
     <div class="flex-1 overflow-y-auto pt-10 p-4 py-2 space-y-3 pl-50 pr-50">
-      <div
-        v-for="item in chatList"
-        :key="item.historyId"
-        class="flex flex-col"
-      >
+      <div v-for="item in chatList" :key="item.historyId" class="flex flex-col">
         <div
           :class="item.role === 'user' ? 'chat chat-end' : 'chat chat-start'"
         >
           <div class="chat-image avatar">
             <div class="w-10 rounded-full p-1">
-              <img
-                alt="avatar"
-                src="@/assets/img/avatar.jpg"
-              >
+              <img alt="avatar" src="@/assets/img/avatar.jpg" />
             </div>
           </div>
           <div class="chat-header">
-            {{ item.role === "user" ? user.userInfo.username : "好助学" }}
+            {{ item.role === 'user' ? user.userInfo.username : '好助学' }}
             <time class="text-xs opacity-50 ml-1">{{
               formatTime(item.createTime)
             }}</time>

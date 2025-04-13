@@ -7,14 +7,14 @@ import { Time, Book, Trophy } from '@icon-park/vue-next'
 const props = defineProps({
   weeklyStudyHours: {
     type: Array,
-    default: () => [2, 3, 4, 5, 3, 2, 5], // 默认一周七天的学习时间
+    default: () => [2, 3, 4, 5, 3, 2, 5] // 默认一周七天的学习时间
   },
   courseCompletionData: {
     type: Array,
     default: () => [
       { value: 75, name: '已完成' },
-      { value: 25, name: '未完成' },
-    ],
+      { value: 25, name: '未完成' }
+    ]
   },
   subjectScores: {
     type: Array,
@@ -23,9 +23,9 @@ const props = defineProps({
       { name: 'JavaScript', score: 92 },
       { name: 'Python', score: 78 },
       { name: '网页制作', score: 88 },
-      { name: 'linux基础实践', score: 76 },
-    ],
-  },
+      { name: 'linux基础实践', score: 76 }
+    ]
+  }
 })
 
 // 图表实例引用
@@ -41,42 +41,42 @@ const initWeeklyChart = () => {
   const myChart = echarts.init(chartDom)
   const option = {
     title: {
-      show: false,
+      show: false
     },
     tooltip: {
       trigger: 'axis',
       axisPointer: {
-        type: 'shadow',
-      },
+        type: 'shadow'
+      }
     },
     xAxis: {
       type: 'category',
-      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
+      data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
     },
     yAxis: {
       type: 'value',
-      name: '小时',
+      name: '小时'
     },
     series: [
       {
         data: props.weeklyStudyHours,
         type: 'bar',
         itemStyle: {
-          color: '#6366f1',
+          color: '#6366f1'
         },
         emphasis: {
           itemStyle: {
-            color: '#4f46e5',
-          },
-        },
-      },
+            color: '#4f46e5'
+          }
+        }
+      }
     ],
     grid: {
       top: 50,
       bottom: 30,
       left: 40,
-      right: 20,
-    },
+      right: 20
+    }
   }
   myChart.setOption(option)
 
@@ -91,14 +91,14 @@ const initCourseChart = () => {
   const myChart = echarts.init(chartDom)
   const option = {
     title: {
-      show: false,
+      show: false
     },
     tooltip: {
-      trigger: 'item',
+      trigger: 'item'
     },
     legend: {
       bottom: '5%',
-      left: 'center',
+      left: 'center'
     },
     series: [
       {
@@ -109,26 +109,26 @@ const initCourseChart = () => {
         itemStyle: {
           borderRadius: 10,
           borderColor: '#fff',
-          borderWidth: 2,
+          borderWidth: 2
         },
         label: {
           show: false,
-          position: 'center',
+          position: 'center'
         },
         emphasis: {
           label: {
             show: true,
             fontSize: 20,
-            fontWeight: 'bold',
-          },
+            fontWeight: 'bold'
+          }
         },
         labelLine: {
-          show: false,
+          show: false
         },
         data: props.courseCompletionData,
-        color: ['#6366f1', '#e5e7eb'],
-      },
-    ],
+        color: ['#6366f1', '#e5e7eb']
+      }
+    ]
   }
   myChart.setOption(option)
 
@@ -145,19 +145,19 @@ const initSubjectChart = () => {
   // 准备雷达图数据
   const indicators = props.subjectScores.map((item) => ({
     name: item.name,
-    max: 100,
+    max: 100
   }))
 
   const data = props.subjectScores.map((item) => item.score)
 
   const option = {
     title: {
-      show: false,
+      show: false
     },
     tooltip: {},
     radar: {
       indicator: indicators,
-      radius: '60%',
+      radius: '60%'
     },
     series: [
       {
@@ -168,18 +168,18 @@ const initSubjectChart = () => {
             value: data,
             name: '成绩',
             areaStyle: {
-              color: 'rgba(99, 102, 241, 0.3)',
+              color: 'rgba(99, 102, 241, 0.3)'
             },
             lineStyle: {
-              color: '#6366f1',
+              color: '#6366f1'
             },
             itemStyle: {
-              color: '#6366f1',
-            },
-          },
-        ],
-      },
-    ],
+              color: '#6366f1'
+            }
+          }
+        ]
+      }
+    ]
   }
 
   myChart.setOption(option)
@@ -268,57 +268,30 @@ onBeforeUnmount(() => {
       class="chart-card bg-base-100 shadow rounded-lg p-4 hover:shadow-md transition-all"
     >
       <div class="flex items-center justify-center mb-2">
-        <Time
-          theme="outline"
-          size="20"
-          class="text-primary mr-2"
-        />
-        <h3 class="text-base font-medium">
-          本周学习时间分布
-        </h3>
+        <Time theme="outline" size="20" class="text-primary mr-2" />
+        <h3 class="text-base font-medium">本周学习时间分布</h3>
       </div>
-      <div
-        ref="weeklyChartRef"
-        class="chart-container h-64"
-      />
+      <div ref="weeklyChartRef" class="chart-container h-64" />
     </div>
 
     <div
       class="chart-card bg-base-100 shadow rounded-lg p-4 hover:shadow-md transition-all"
     >
       <div class="flex items-center justify-center mb-2">
-        <Book
-          theme="outline"
-          size="20"
-          class="text-secondary mr-2"
-        />
-        <h3 class="text-base font-medium">
-          课程完成率
-        </h3>
+        <Book theme="outline" size="20" class="text-secondary mr-2" />
+        <h3 class="text-base font-medium">课程完成率</h3>
       </div>
-      <div
-        ref="courseChartRef"
-        class="chart-container h-64"
-      />
+      <div ref="courseChartRef" class="chart-container h-64" />
     </div>
 
     <div
       class="chart-card bg-base-100 shadow rounded-lg p-4 hover:shadow-md transition-all"
     >
       <div class="flex items-center justify-center mb-2">
-        <Trophy
-          theme="outline"
-          size="20"
-          class="text-accent mr-2"
-        />
-        <h3 class="text-base font-medium">
-          学科成绩分布
-        </h3>
+        <Trophy theme="outline" size="20" class="text-accent mr-2" />
+        <h3 class="text-base font-medium">学科成绩分布</h3>
       </div>
-      <div
-        ref="subjectChartRef"
-        class="chart-container h-64"
-      />
+      <div ref="subjectChartRef" class="chart-container h-64" />
     </div>
   </div>
 </template>

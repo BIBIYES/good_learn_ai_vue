@@ -31,21 +31,12 @@ const goGithub = () => {
       <footer
         class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig"
       >
-        <button
-          class="btn btn-md w-30"
-          @click="goGithub()"
-        >
-          <Github
-            theme="outline"
-            size="18"
-          />Github
+        <button class="btn btn-md w-30" @click="goGithub()">
+          <Github theme="outline" size="18" />Github
         </button>
         <router-link to="/about">
           <button class="btn btn-md w-30">
-            <attention
-              theme="outline"
-              size="18"
-            />关于我们
+            <attention theme="outline" size="18" />关于我们
           </button>
         </router-link>
       </footer>

@@ -3,13 +3,13 @@ defineProps({
   // 标题图标大小
   iconSize: {
     type: Number,
-    default: 38,
+    default: 38
   },
   // 标题间距
   titleGap: {
     type: Number,
-    default: 2,
-  },
+    default: 2
+  }
 })
 </script>
 

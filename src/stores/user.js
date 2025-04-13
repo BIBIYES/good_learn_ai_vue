@@ -21,6 +21,6 @@ export const userStore = defineStore(
     return { userInfo, setUserInfo, logout }
   },
   {
-    persist: true,
-  },
+    persist: true
+  }
 )
