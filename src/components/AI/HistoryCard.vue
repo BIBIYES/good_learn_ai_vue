@@ -71,8 +71,8 @@ const formatDate = (dateString) => {
 </script>
 
 <template>
-  <div class="app w-full">
-    <ul class="menu bg-base-200 rounded-box w-full h-screen">
+  <div class="app w-full h-full">
+    <ul class="menu bg-base-200 rounded-box w-full h-[calc(100vh-100px)]">
       <!-- 今天 -->
       <li v-if="groupedChats.today.length > 0">
         <h2 class="menu-title">今天</h2>
@@ -80,9 +80,14 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.today"
             :key="'today-' + index"
-            @click="router.push({ name: 'ai-chat', params: { id: item.sessionId } })"
+            @click="
+              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+            "
           >
-            <a class="flex justify-between items-center" :class="{ 'menu-active': route.params.id === item.sessionId }">
+            <a
+              class="flex justify-between items-center"
+              :class="{ 'menu-active': route.params.id === item.sessionId }"
+            >
               <span>{{ item.sessionName }}</span>
               <span class="text-xs opacity-60">{{
                 formatDate(item.createTime)
@@ -99,9 +104,14 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.yesterday"
             :key="'yesterday-' + index"
-            @click="router.push({ name: 'ai-chat', params: { id: item.sessionId } })"
+            @click="
+              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+            "
           >
-            <a class="flex justify-between items-center" :class="{ 'menu-active': route.params.id === item.sessionId }">
+            <a
+              class="flex justify-between items-center"
+              :class="{ 'menu-active': route.params.id === item.sessionId }"
+            >
               <span>{{ item.sessionName }}</span>
               <span class="text-xs opacity-60">{{
                 formatDate(item.createTime)
@@ -118,9 +128,14 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.threeDaysAgo"
             :key="'threeDays-' + index"
-            @click="router.push({ name: 'ai-chat', params: { id: item.sessionId } })"
+            @click="
+              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+            "
           >
-            <a class="flex justify-between items-center" :class="{ 'menu-active': route.params.id === item.sessionId }">
+            <a
+              class="flex justify-between items-center"
+              :class="{ 'menu-active': route.params.id === item.sessionId }"
+            >
               <span>{{ item.sessionName }}</span>
               <span class="text-xs opacity-60">{{
                 formatDate(item.createTime)
@@ -137,9 +152,14 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.sevenDaysAgo"
             :key="'sevenDays-' + index"
-            @click="router.push({ name: 'ai-chat', params: { id: item.sessionId } })"
+            @click="
+              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+            "
           >
-            <a class="flex justify-between items-center" :class="{ 'menu-active': route.params.id === item.sessionId }">
+            <a
+              class="flex justify-between items-center"
+              :class="{ 'menu-active': route.params.id === item.sessionId }"
+            >
               <span>{{ item.sessionName }}</span>
               <span class="text-xs opacity-60">{{
                 formatDate(item.createTime)
@@ -156,9 +176,14 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.older"
             :key="'older-' + index"
-            @click="router.push({ name: 'ai-chat', params: { id: item.sessionId } })"
+            @click="
+              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+            "
           >
-            <a class="flex justify-between items-center" :class="{ 'menu-active': route.params.id === item.sessionId }">
+            <a
+              class="flex justify-between items-center"
+              :class="{ 'menu-active': route.params.id === item.sessionId }"
+            >
               <span>{{ item.sessionName }}</span>
               <span class="text-xs opacity-60">{{
                 formatDate(item.createTime)

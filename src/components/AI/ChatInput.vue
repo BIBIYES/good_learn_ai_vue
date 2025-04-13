@@ -1,8 +1,12 @@
 <script setup>
-import { ref, nextTick, onMounted, computed } from 'vue'
+import { nextTick, onMounted, computed, ref } from 'vue'
+import { aiStore } from '@/stores/ai'
+import { storeToRefs } from 'pinia'
 
-const isLodaing = ref(false)
-const textInput = ref('')
+const ai = aiStore()
+
+// 使用AI Store中的状态
+const { input: textInput, aiLoading: isLodaing } = storeToRefs(ai)
 const textareaRef = ref(null)
 const containerRef = ref(null)
 const currentHeight = ref(48) // 初始高度
