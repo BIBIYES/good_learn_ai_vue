@@ -50,26 +50,26 @@ const router = createRouter({
         {
           path: 'home',
           name: 'home-page-s',
-          component: () => import('../views/student/page/HomePage.vue')
+          component: () => import('../views/student/HomePage.vue')
         },
         {
           path: 'my-test-paper',
           name: 'my-test-paper',
-          component: () => import('../views/student/page/MyTestPaper.vue')
+          component: () => import('../views/student/MyTestPaper.vue')
         },
         {
           path: 'my-course',
           name: 'my-course',
-          component: () => import('../views/student/page/MyCoursePage.vue')
+          component: () => import('../views/student/MyCoursePage.vue')
         },
         {
           path: 'my-course/:courseId',
           name: 'my-course-courseId',
-          component: () => import('../views/student/page/CoursePage/CourseHome.vue')
+          component: () => import('../views/student/Course/CourseView.vue')
         },
         {
           path: 'ai',
-          component: () => import('../views/student/page/AIPage.vue'),
+          component: () => import('../views/student/AIPage.vue'),
           children: [
             {
               path: '',
@@ -98,7 +98,7 @@ const router = createRouter({
     {
       path: '/test',
       name: 'test',
-      component: () => import('../views/student/page/TestPage.vue')
+      component: () => import('../views/student/TestPage.vue')
     }
   ]
 })
