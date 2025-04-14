@@ -104,7 +104,7 @@ onMounted(() => {
       <CourseCard
         v-for="(item, index) in courses"
         :key="index"
-        class="animate__animated animate__slideInUp"
+        class="animate__animated animate__fadeIn"
         :course-info="item"
       />
     </div>
