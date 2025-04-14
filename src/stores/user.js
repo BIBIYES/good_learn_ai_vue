@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const userStore = defineStore(
+export const useUserStore = defineStore(
   'userInfo',
   () => {
     // 初始化为空对象而非空字符串

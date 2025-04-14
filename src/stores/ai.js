@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-export const aiStore = defineStore(
+export const useAIStore = defineStore(
   'ai',
   () => {
     // 输入框的输入内容

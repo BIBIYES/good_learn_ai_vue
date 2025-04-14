@@ -36,7 +36,7 @@ const route = useRoute()
       <li>
         <router-link
           to="/s/my-course"
-          :class="{ 'menu-active': route.name === 'my-course' }"
+          :class="{ 'menu-active': route.path.startsWith('/s/my-course') }"
         >
           <school
             theme="outline"

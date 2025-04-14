@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import { userStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -104,7 +104,7 @@ const router = createRouter({
 })
 // 前置路由守卫
 router.beforeEach((to, from, next) => {
-  const store = userStore()
+  const store = useUserStore()
   const isLoggedIn = store.userInfo && store.userInfo.jwtToken
 
   // 登录相关页面路径

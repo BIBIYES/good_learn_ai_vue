@@ -2,8 +2,8 @@
 
 
 import { Attention, Github } from '@icon-park/vue-next'
-import { userStore } from '@/stores/user'
-const user = userStore()
+import { useUserStore } from '@/stores/user'
+const user = useUserStore()
 // 跳转github
 const goGithub = () => {
   window.open('https://github.com/BIBIYES') // 你的github地址

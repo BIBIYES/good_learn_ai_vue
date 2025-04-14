@@ -1,11 +1,11 @@
 <script setup>
 import { ref } from 'vue'
 import { login } from '@/api/user'
-import { userStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import message from '@/plugin/message'
 
 const router = useRouter()
-const user = userStore()
+const user = useUserStore()
 const loginInfo = ref({
   email: '',
   password: ''
