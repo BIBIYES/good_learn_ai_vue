@@ -338,7 +338,7 @@ const handleSendMessage = async (message) => {
                   item.role === 'system' &&
                     ai.aiLoading &&
                     index === chatList.length - 1
-                "
+                " 
               />
             </div>
           </div>

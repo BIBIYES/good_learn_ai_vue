@@ -1,5 +1,8 @@
 <template>
-  <div class="course-card-container">
+  <div
+    class="course-card-container"
+    @click="router.push({ name: 'my-course-courseId', params: { courseId: courseInfo.courseId } })"
+  >
     <div
       class="hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden border border-base-200 cursor-pointer"
     >
@@ -112,79 +115,46 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { Trophy, Peoples } from '@icon-park/vue-next'
+import { useRouter } from 'vue-router'
+import { computed } from 'vue'
 
-export default {
-  name: 'CourseCard',
-  components: {
-    Trophy,
-    Peoples
-  },
-  props: {
-    courseInfo: {
-      type: Object,
-      required: true
-    }
-  },
-  computed: {
-    firstChar() {
-      return this.courseInfo.className.charAt(0)
-    },
-    title() {
-      return this.courseInfo.className
-    },
-    description() {
-      return this.courseInfo.description
-    },
-    teacherName() {
-      return this.courseInfo.teacherName
-    },
-    teacherAvatar() {
-      if (this.courseInfo.teacherAvatar) {
-        return this.courseInfo.teacherAvatar
-      } else if (
-        this.courseInfo.teacherEmail &&
-        this.courseInfo.teacherEmail.includes('@qq.com')
-      ) {
-        const qqNumber = this.courseInfo.teacherEmail.split('@')[0]
-        return `http://q1.qlogo.cn/g?b=qq&nk=${qqNumber}&s=100`
-      }
-      return null
-    },
-    memberCount() {
-      return this.courseInfo.memberCount
-    },
-    credits() {
-      return this.courseInfo.credits
-    },
-    joinTime() {
-      return this.courseInfo.joinTime
-    },
-    status() {
-      return this.courseInfo.courseStatus ? 1 : 0
-    },
-    statusText() {
-      return this.status === 1 ? '正常' : '禁用'
-    },
-    statusClass() {
-      return this.status === 1 ? 'badge-success' : 'badge-error'
-    },
-    monitorName() {
-      return this.courseInfo.monitorName
-    }
-  },
-  methods: {
-    formatDate(dateString) {
-      try {
-        const date = new Date(dateString)
-        return date.toLocaleDateString()
-      } catch (e) {
-        console.log(e)
+const router = useRouter()
+const props = defineProps({
+  courseInfo: {
+    type: Object,
+    required: true
+  }
+})
 
-        return dateString
-      }
-    }
+const firstChar = computed(() => props.courseInfo.className.charAt(0))
+const title = computed(() => props.courseInfo.className)
+const teacherName = computed(() => props.courseInfo.teacherName)
+const teacherAvatar = computed(() => {
+  if (props.courseInfo.teacherAvatar) {
+    return props.courseInfo.teacherAvatar
+  } else if (
+    props.courseInfo.teacherEmail &&
+    props.courseInfo.teacherEmail.includes('@qq.com')
+  ) {
+    const qqNumber = props.courseInfo.teacherEmail.split('@')[0]
+    return `http://q1.qlogo.cn/g?b=qq&nk=${qqNumber}&s=100`
+  }
+  return null
+})
+const memberCount = computed(() => props.courseInfo.memberCount)
+const credits = computed(() => props.courseInfo.credits)
+const joinTime = computed(() => props.courseInfo.joinTime)
+const status = computed(() => props.courseInfo.courseStatus ? 1 : 0)
+
+const formatDate = (dateString) => {
+  try {
+    const date = new Date(dateString)
+    return date.toLocaleDateString()
+  } catch (e) {
+    console.log(e)
+    return dateString
   }
 }
 </script>
