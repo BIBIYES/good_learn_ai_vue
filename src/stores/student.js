@@ -12,10 +12,12 @@ export const useStudentStore = defineStore(
     }
 
     // 通过id来获取当前学生的信息
-    const getStudentCourse = (id) => {
-      return studentCourse.value.find((item) => item.id === id)
+    const getStudentCourse = (courseId) => {
+      return studentCourse.value.find((course) => course.courseId == courseId)
     }
 
     return { studentCourse, setStudentCourse, getStudentCourse }
   }
+  ,
+  { persist: true }
 )

@@ -65,7 +65,22 @@ const router = createRouter({
         {
           path: 'my-course/:courseId',
           name: 'my-course-courseId',
-          component: () => import('../views/student/Course/CourseView.vue')
+          component: () => import('../views/student/Course/CourseView.vue'),
+          redirect: to => {
+            return `/s/my-course/${to.params.courseId}/sign-in`
+          },
+          children: [
+            {
+              path: 'sign-in',
+              name: 'sign-in',
+              component: () => import('../views/student/Course/page/CourseSignInView.vue')
+            },
+            {
+              path:'work',
+              name:'course-work',
+              component: () => import('../views/student/Course/page/CourseWorkView.vue')
+            }
+          ]
         },
         {
           path: 'ai',
