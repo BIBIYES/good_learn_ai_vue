@@ -7,10 +7,10 @@ import router from '@/router'
 import { History, Edit, DeleteFive, More } from '@icon-park/vue-next'
 // API和Store
 import { getSession } from '@/api/chat'
-import { aiStore } from '@/stores/ai'
+import { useAIStore } from '@/stores/ai'
 
 // Store和路由实例
-const ai = aiStore()
+const ai = useAIStore()
 const route = useRoute()
 
 // 响应式状态

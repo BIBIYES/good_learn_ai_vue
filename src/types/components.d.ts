@@ -17,6 +17,7 @@ declare module 'vue' {
     LoginForm: typeof import('./../components/form/LoginForm.vue')['default']
     MarkdBox: typeof import('./../components/common/MarkdBox.vue')['default']
     MyLogo: typeof import('./../components/common/MyLogo.vue')['default']
+    PinInput: typeof import('./../components/common/PinInput.vue')['default']
     RegisterForm: typeof import('./../components/form/RegisterForm.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']

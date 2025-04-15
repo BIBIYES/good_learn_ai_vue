@@ -1,10 +1,9 @@
 <script setup>
-
 import { School } from '@icon-park/vue-next'
-
 import { addCourse, getCourse } from '@/api/course'
 import message from '@/plugin/message'
-
+import  { useStudentStore } from '@/stores/student' 
+const studentStore = useStudentStore()
 const courseId = ref('')
 
 // 页面加载的loading
@@ -41,8 +40,9 @@ const handleGetCourse = async () => {
   try {
     const res = await getCourse()
     if (res.code == 200) {
-      console.log(res.data)
       courses.value = res.data.reverse()
+      // 将课程数据设置到stroes中
+      studentStore.setStudentCourse(res.data)
       loading.value = false
     }
   } catch (err) {

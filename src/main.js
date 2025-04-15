@@ -1,11 +1,13 @@
 import './assets/main.css'
-import 'animate.css'
 import '@icon-park/vue-next/styles/index.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+// 引入animate.css动画库
+import 'animate.css'
 const app = createApp(App)
 
 const pinia = createPinia()

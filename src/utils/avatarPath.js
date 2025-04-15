@@ -1,5 +1,5 @@
-import { userStore } from '@/stores/user'
-const user = userStore()
+import { useUserStore } from '@/stores/user'
+const user = useUserStore()
 
 /**
  * 此方法会获取用户的信息来返回头像路径

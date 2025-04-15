@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { userStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 
 // 创建单例变量
 const content = ref('')
@@ -49,7 +49,7 @@ const AIStreamClient = {
         onStart()
       }
       // 获取最新的token
-      const user = userStore()
+      const user = useUserStore()
       const currentToken = user.userInfo.jwtToken
 
       const response = await fetch(baseUrl, {

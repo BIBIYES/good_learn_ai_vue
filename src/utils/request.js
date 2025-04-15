@@ -1,6 +1,6 @@
 import axios from 'axios'
 import message from '@/plugin/message'
-import { userStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import router from '@/router'
 
 const request = axios.create({
@@ -12,7 +12,7 @@ const request = axios.create({
 request.interceptors.request.use(
   function (config) {
     // 在发送请求之前获取最新的token
-    const user = userStore()
+    const user = useUserStore()
     const token = user.userInfo.jwtToken
     if (token) {
       config.headers.Authorization = `${token}`
@@ -45,7 +45,7 @@ request.interceptors.response.use(
     
     if (error.response && error.response.status === 401) {
       console.log('令牌出错')
-      const user = userStore()
+      const user = useUserStore()
       message.info('登录已经过期，请重新登录')
       user.logout()
       router.push('/login')

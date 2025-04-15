@@ -5,7 +5,7 @@ const route = useRoute()
 
 <template>
   <div class="app animate__animated animate__fadeInLeft">
-    <ul class="menu bg-base-200 rounded-box w-56 menu-lg gap-4">
+    <ul class="menu  rounded-box w-56 menu-lg gap-4">
       <li class="">
         <router-link
           to="/s/home"
@@ -36,7 +36,7 @@ const route = useRoute()
       <li>
         <router-link
           to="/s/my-course"
-          :class="{ 'menu-active': route.name === 'my-course' }"
+          :class="{ 'menu-active': route.path.startsWith('/s/my-course') }"
         >
           <school
             theme="outline"
