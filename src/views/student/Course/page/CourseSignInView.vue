@@ -52,7 +52,7 @@ onMounted(() => {
     <!-- 空状态 -->
     <div
       v-else-if="signInList.length === 0"
-      class="card bg-base-200 shadow-xl"
+      class="card"
     >
       <div class="card-body text-center">
         <h3 class="text-lg font-medium">

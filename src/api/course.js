@@ -10,7 +10,8 @@ export const getCourse = () => {
 }
 
 // 获取课程中的签到信息
-
 export const getSign = (courseId) => {
   return request.get(`/course-attendance/get-attendance-info/${courseId}`)
 }
+
+// 点击起拿到

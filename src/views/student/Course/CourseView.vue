@@ -2,6 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudentStore } from '@/stores/student'
+import { Return, Ranking } from '@icon-park/vue-next'
 
 const route = useRoute()
 const router = useRouter()
@@ -20,6 +21,16 @@ const navigateTo = (path) => {
   router.push(`/s/my-course/${route.params.courseId}/${path}`)
 }
 
+// 返回上一页
+const goBack = () => {
+  router.back()
+}
+
+// 前往学分排行榜
+const navigateToRanking = () => {
+  router.push('/s/credit-ranking')
+}
+
 // 获取教师头像
 const getTeacherAvatar = () => {
   if (courseInfo.value?.teacherAvatar) {
@@ -34,34 +45,48 @@ const getTeacherAvatar = () => {
   return '/api/placeholder/24/24'
 }
 
-// 格式化日期
-const formatDate = (dateString) => {
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleDateString()
-  } catch (e) {
-    console.log(e)
-    return dateString
-  }
-}
-
 onMounted(() => {
   getCourseInfo()
 })
 
 </script>
 <template>
-  <div class="app flex flex-col gap-4 p-4">
+  <div class="app flex flex-col gap-4">
     <!-- 课程信息卡片 -->
     <div
       v-if="courseInfo"
-      class="card bg-base-100 overflow-hidden border border-base-200 hover:shadow-lg transition-all duration-300 rounded-xl"
+      class="bg-base-100 overflow-hidden h-screen overflow-y-auto border border-base-200 rounded-xl"
     >
       <!-- 顶部彩色条 -->
       <div class="h-2 bg-gradient-to-r from-primary to-secondary" />
-      
+      <!-- 返回按钮和排行榜按钮区域 -->
+      <div class="flex justify-between items-center p-3">
+        <!-- 返回按钮 -->
+        <button 
+          class="btn btn-sm btn-ghost gap-1"
+          @click="goBack"
+        >
+          <Return
+            theme="outline"
+            size="16"
+            fill="#333"
+          />
+          返回
+        </button>
+        <!-- 学分排行榜按钮 -->
+        <button
+          class="btn btn-sm btn-outline btn-primary gap-1"
+          @click="navigateToRanking"
+        >
+          <Ranking
+            theme="outline"
+            size="18"
+          />
+          学分排行榜
+        </button>
+      </div>
       <div class="p-5">
-        <!-- 头部区域：标题和状态 -->
+        <!-- 头部区域：标题和学分 -->
         <div class="flex justify-between items-center mb-4">
           <!-- 左侧标题 -->
           <div class="flex items-center gap-3">
@@ -95,99 +120,60 @@ onMounted(() => {
             <span class="text-xs text-base-content/70">学分</span>
           </div>
         </div>
-
-        <!-- 课程描述 -->
-        <p
-          v-if="courseInfo.description"
-          class="text-base-content/70 mb-4 line-clamp-2"
-        >
-          {{ courseInfo.description }}
-        </p>
         
-        <!-- 教师信息和成员数量 -->
-        <div class="flex items-center justify-between mb-3">
-          <!-- 教师信息 -->
-          <div class="flex items-center gap-2">
-            <div class="avatar">
-              <div class="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1">
-                <img
-                  :src="getTeacherAvatar()"
-                  alt="Teacher"
-                >
-              </div>
-            </div>
-            <div>
-              <span class="text-sm font-medium block">{{ courseInfo.teacherName }}</span>
-              <span class="text-xs text-base-content/60">讲师</span>
+        <!-- 教师信息 -->
+        <div class="flex items-center mb-4">
+          <div class="avatar mr-2">
+            <div class="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1">
+              <img
+                :src="getTeacherAvatar()"
+                alt="Teacher"
+              >
             </div>
           </div>
-
-          <!-- 成员数量 -->
-          <div class="badge badge-primary badge-outline gap-1 px-3 py-3">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-4 w-4"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-            >
-              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
-              <circle
-                cx="9"
-                cy="7"
-                r="4"
-              />
-              <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
-              <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-            <span>{{ courseInfo.memberCount }}</span>
-            <span class="text-xs">学员</span>
+          <div>
+            <span class="text-sm font-medium block">{{ courseInfo.teacherName }}</span>
+            <span class="text-xs text-base-content/60">讲师</span>
           </div>
         </div>
         
-        <!-- 底部状态栏 -->
-        <div class="flex justify-between items-center pt-3 border-t border-base-200">
-          <!-- 课程状态 -->
-          <div class="flex items-center gap-2">
-            <!-- 开启的状态 -->
-            <div
-              v-if="courseInfo.courseStatus"
-              class="flex items-center space-x-3"
-            >
-              <div class="inline-grid *:[grid-area:1/1]">
-                <div class="status status-success animate-ping" />
-                <div class="status status-success" />
-              </div>
-              <p class="text-xs text-base-content/60">
-                该课程正常开放
-              </p>
+        <!-- 课程状态 -->
+        <div class="flex items-center pb-3 mb-3 border-b border-base-200">
+          <!-- 开启的状态 -->
+          <div
+            v-if="courseInfo.courseStatus"
+            class="flex items-center space-x-3"
+          >
+            <div class="inline-grid *:[grid-area:1/1]">
+              <div class="status status-success animate-ping" />
+              <div class="status status-success" />
             </div>
-            <!-- 关闭的状态 -->
-            <div
-              v-else
-              class="flex items-center space-x-3"
-            >
-              <div class="inline-grid *:[grid-area:1/1]">
-                <div class="status status-error animate-ping" />
-                <div class="status status-error" />
-              </div>
-              <p class="text-xs text-base-content/60">
-                该课程已被关闭
-              </p>
-            </div>
+            <p class="text-xs text-base-content/60">
+              该课程正常开放
+            </p>
           </div>
-
-          <!-- 加入时间 -->
-          <span class="text-xs text-base-content/60">加入时间: {{ formatDate(courseInfo.joinTime) }}</span>
+          <!-- 关闭的状态 -->
+          <div
+            v-else
+            class="flex items-center space-x-3"
+          >
+            <div class="inline-grid *:[grid-area:1/1]">
+              <div class="status status-error animate-ping" />
+              <div class="status status-error" />
+            </div>
+            <p class="text-xs text-base-content/60">
+              该课程已被关闭
+            </p>
+          </div>
         </div>
       </div>
+      
       <!-- 切换控件 -->
-      <div>
-        <ul class="menu bg-base-200 lg:menu-horizontal rounded-box">
-          <li>
+      <div class="px-4 mb-2">
+        <ul class="menu bg-base-200 lg:menu-horizontal rounded-box w-full">
+          <li class="flex-1">
             <a
-              class="flex items-center gap-2"
+              class="flex justify-center items-center gap-2"
               :class="{ 'menu-active': route.name === 'sign-in' }"
               @click="navigateTo('sign-in')"
             >
@@ -208,9 +194,10 @@ onMounted(() => {
               签到
             </a>
           </li>
-          <li>
+          <li class="flex-1">
             <a
-              class="flex items-center gap-2"
+              class="flex justify-center items-center gap-2"
+              :class="{ 'active': route.name === 'work' }"
               @click="navigateTo('work')"
             >
               <svg
@@ -230,12 +217,11 @@ onMounted(() => {
               作业
             </a>
           </li>
-        <!-- 可以根据需要添加更多子路由 -->
         </ul>
       </div>
 
       <!-- 子路由视图 -->
-      <div class="bg-base-100 p-4 rounded-box shadow-sm">
+      <div class="bg-base-100 p-4 rounded-box mx-4 mb-4 border border-base-200">
         <RouterView />
       </div>
     </div>

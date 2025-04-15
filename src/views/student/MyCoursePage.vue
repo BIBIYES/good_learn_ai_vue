@@ -42,7 +42,7 @@ const handleGetCourse = async () => {
     if (res.code == 200) {
       courses.value = res.data.reverse()
       // 将课程数据设置到stroes中
-      studentStore.setStudentCourse(res.data.reverse())
+      studentStore.setStudentCourse(res.data)
       loading.value = false
     }
   } catch (err) {
