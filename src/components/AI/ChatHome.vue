@@ -1,8 +1,8 @@
 <script setup>
 import { v4 as uuidv4 } from 'uuid'
-import {aiStore} from '@/stores/ai'
+import {useAIStore} from '@/stores/ai'
 import router from '@/router'
-const ai = aiStore()
+const ai = useAIStore()
 
 const handeleSendMessage = () => {
   const uuid = uuidv4()

@@ -5,16 +5,16 @@ import { getChat, uploadBotChat } from '@/api/chat'
 import AIStreamClient from '@/plugin/AIStreamClient'
 import { getAvatarPath } from '@/utils/avatarPath'
 // Store
-import { userStore } from '@/stores/user'
-import { aiStore } from '@/stores/ai'
+import { useUserStore } from '@/stores/user'
+import { useAIStore } from '@/stores/ai'
 // 组件
 import ChatInput from './ChatInput.vue'
 import MarkdBox from '@/components/common/MarkdBox.vue'
 import LoadingState from '@/components/common/LoadingState.vue'
 
 // Store实例
-const user = userStore()
-const ai = aiStore()
+const user = useUserStore()
+const ai = useAIStore()
 
 // 路由相关
 const route = useRoute()

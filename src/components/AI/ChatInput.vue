@@ -1,9 +1,9 @@
 <script setup>
 import { nextTick, onMounted, computed, ref } from 'vue'
-import { aiStore } from '@/stores/ai'
+import { useAIStore } from '@/stores/ai'
 import { storeToRefs } from 'pinia'
 
-const ai = aiStore()
+const ai = useAIStore()
 const emit = defineEmits(['send'])
 
 // 使用AI Store中的状态

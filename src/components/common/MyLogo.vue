@@ -1,7 +1,7 @@
 <script setup>
 import router from '@/router'
-import { userStore } from '@/stores/user'
-const user = userStore()
+import { useUserStore } from '@/stores/user'
+const user = useUserStore()
 const logout = () => {
   user.logout()
   router.push('/login')

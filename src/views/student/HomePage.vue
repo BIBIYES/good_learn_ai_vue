@@ -2,14 +2,14 @@
 
 
 import { Home, Book, Time, CheckOne, Trophy } from '@icon-park/vue-next'
-import { userStore } from '@/stores/user'
+import { useUserStore } from '@/stores/user'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 
 // 注册GSAP插件
 gsap.registerPlugin(ScrollTrigger)
 
-const user = userStore()
+const user = useUserStore()
 
 // 模拟数据 - 实际项目中应该从API获取
 const studentStats = ref({
