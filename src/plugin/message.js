@@ -6,10 +6,21 @@ const message = {
    * @param {number} duration - 显示时间(毫秒)，默认 3000 毫秒
    *
    */
-  create(message, type, duration = 3000) {
+  create(message, type, duration = 3000, position = 'top-center') {
     // 消息位置容器
     const messageContainer = document.createElement('div')
-    messageContainer.className = 'toast toast-top toast-center z-50 w-100'
+    
+    // 根据position设置位置类名
+    const positionClasses = {
+      'top-center': 'toast-top toast-center',
+      'top-left': 'toast-top toast-start',
+      'top-right': 'toast-top toast-end',
+      'bottom-center': 'toast-bottom toast-center',
+      'bottom-left': 'toast-bottom toast-start',
+      'bottom-right': 'toast-bottom toast-end'
+    }
+    
+    messageContainer.className = `toast ${positionClasses[position] || 'toast-top toast-center'} z-50 w-100`
 
     // SVG 图标（不同类型对应不同图标）
     const icons = {
@@ -21,9 +32,16 @@ const message = {
         'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
     }
 
-    // 设置消息内容
+    // 设置消息内容和颜色样式
+    const colorClasses = {
+      info: 'bg-info text-info-content',
+      success: 'bg-success text-success-content',
+      warning: 'bg-warning text-warning-content',
+      error: 'bg-error text-error-content'
+    }
+    
     messageContainer.innerHTML = `
-      <div class="alert alert-${type}" role="alert">
+      <div class="alert ${colorClasses[type]}" role="alert">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${icons[type]}"></path>
         </svg>
