@@ -1,10 +1,25 @@
 <script setup>
-import { getSign } from '@/api/course'
+
+import { useRoute } from 'vue-router'
+import { getSign, sign } from '@/api/course'
 import { formatDateObject } from '@/utils/dataFormat'
+import message from '@/plugin/message'
+import { CheckOne } from '@icon-park/vue-next'
+import PinInput from '@/components/common/PinInput.vue'
+
 const route = useRoute()
 // 签到数据
 const signInList = ref([])
-const loading = ref(true)
+const loading = ref(false)
+
+// 签到弹窗相关
+const isModalOpen = ref(false)
+const currentAttendance = ref(null)
+const pinCode = ref('')
+const signingIn = ref(false)
+const pinInputRef = ref(null)
+const errorLoading = ref(false)
+
 // 获取课程签到信息
 const handleGetSign = async () => {    
   loading.value = true
@@ -25,9 +40,90 @@ const getSerialNumber = (index) => {
 }
 
 // 打开签到弹窗的方法
-const openSignModal = (attendanceId) => {
-  // 这里可以添加打开弹窗的逻辑
-  console.log('打开签到弹窗，签到ID:', attendanceId)
+const openSignModal = (attendance) => {
+  // 查找对应的签到记录
+  const attendanceItem = signInList.value.find(item => item.attendanceId === attendance)
+  if (attendanceItem) {
+    currentAttendance.value = attendanceItem
+    pinCode.value = ''
+    isModalOpen.value = true
+  }
+}
+
+// 关闭弹窗
+const closeModal = () => {
+  isModalOpen.value = false
+  currentAttendance.value = null
+  pinCode.value = ''
+  errorLoading.value = false // 重置错误状态
+  // 重置PIN输入组件
+  if (pinInputRef.value) {
+    pinInputRef.value.clear()
+  }
+}
+
+// 处理PIN码输入更新
+const handlePinUpdate = (value) => {
+  pinCode.value = value
+  // 当用户开始输入时，重置错误状态
+  errorLoading.value = false
+}
+
+// 处理PIN码输入完成
+const handlePinComplete = (value) => {
+  pinCode.value = value
+  // 可以选择自动提交
+  // submitSignIn()
+}
+
+// 提交签到
+const submitSignIn = async () => {
+  if (!currentAttendance.value) return
+  
+  signingIn.value = true
+  try {
+    const payload = {
+      attendanceId: currentAttendance.value.attendanceId
+    }
+    
+    // 如果是PIN码签到，需要添加pinCode
+    if (currentAttendance.value.type === 'pin') {
+      if (!pinCode.value || pinCode.value.length !== 4) {
+        // 先设置为false再设置为true，触发动画重新播放
+        errorLoading.value = false
+        // 使用nextTick确保DOM更新后再触发动画
+        nextTick(() => {
+          errorLoading.value = true
+        })
+        message.error('请输入4位签到码')
+        signingIn.value = false
+        return
+      }
+      payload.pinCode = pinCode.value
+    }
+    
+    const res = await sign(payload)
+    if (res.code === 200) {
+      message.success('签到成功')
+      closeModal()
+      // 刷新签到列表
+      handleGetSign()
+    } else {
+      // 处理错误响应，特别是PIN码错误
+      if (res.code === 500 && res.message === 'PIN码错误') {
+        // 触发错误动画
+        errorLoading.value = false
+        nextTick(() => {
+          errorLoading.value = true
+        })
+      }
+      message.error(res.message || '签到失败')
+    }
+  } catch (err) {
+    message.error(err.message || '签到失败')
+  } finally {
+    signingIn.value = false
+  }
 }
 
 onMounted(() => {
@@ -36,7 +132,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app p-4">
+  <div class="app p-4 ">
     <h2 class="text-2xl font-bold mb-6">
       课程签到
     </h2>
@@ -72,14 +168,14 @@ onMounted(() => {
       <div 
         v-for="(item, index) in signInList" 
         :key="item.attendanceId" 
-        class="card bg-base-100 shadow-xl hover:shadow-2xl transition-shadow"
+        class="card bg-base-100 shadow-md"
       >
         <div class="card-body">
           <div class="flex justify-between items-start">
             <h3 class="card-title text-lg">
               签到 #{{ getSerialNumber(index) }}
               <div class="badge badge-outline">
-                {{ item.type === 'button' ? '按钮签到' : '二维码签到' }}
+                {{ item.type === 'button' ? '按钮签到' : 'pin码签到' }}
               </div>
             </h3>
             
@@ -114,13 +210,89 @@ onMounted(() => {
           <div class="card-actions justify-end mt-4">
             <button 
               class="btn btn-success btn-sm text-white"
+              :disabled="!item.status"
               @click="openSignModal(item.attendanceId)"
             >
-              签到
+              {{ item.status ? '签到' : '已结束' }}
             </button>
           </div>
         </div>
       </div>
     </div>
+    
+    <!-- 签到弹窗 -->
+    <dialog :class="{'modal': true, 'modal-open': isModalOpen}">
+      <div class="modal-box">
+        <h3 class="font-bold text-lg mb-4">
+          课程签到
+        </h3>
+        
+        <div
+          v-if="currentAttendance"
+          class="py-4"
+        >
+          <!-- PIN码签到 -->
+          <div
+            v-if="currentAttendance.type === 'pin'"
+            class="form-control w-full"
+          >
+            <label class="label">
+              <span class="label-text">请输入4位签到码</span>
+            </label>
+            <PinInput
+              ref="pinInputRef"
+              :length="4"
+              :auto-focus="true"
+              :disabled="signingIn"
+              class="animate__animated animate__faster"
+              :class="{'animate__shakeX': errorLoading}"
+              @update:model-value="handlePinUpdate"
+              @complete="handlePinComplete"
+            />
+          </div>
+          
+          <!-- 按钮签到 -->
+          <div
+            v-else
+            class="text-center py-4"
+          >
+            <p class="mb-4 flex items-center justify-center gap-2">
+              <CheckOne
+                theme="outline"
+                size="20"
+              />
+              点击下方按钮完成签到
+            </p>
+          </div>
+        </div>
+        
+        <div class="modal-action">
+          <button
+            class="btn btn-ghost"
+            @click="closeModal"
+          >
+            取消
+          </button>
+          <button 
+            class="btn btn-primary" 
+            :disabled="signingIn"
+            @click="submitSignIn"
+          >
+            <span
+              v-if="signingIn"
+              class="loading loading-spinner"
+            />
+            确认签到
+          </button>
+        </div>
+      </div>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+        @click="closeModal"
+      >
+        <button>关闭</button>
+      </form>
+    </dialog>
   </div>
 </template>

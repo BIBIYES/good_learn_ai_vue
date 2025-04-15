@@ -14,4 +14,8 @@ export const getSign = (courseId) => {
   return request.get(`/course-attendance/get-attendance-info/${courseId}`)
 }
 
-// 点击起拿到
+// 签到接口
+
+export const sign = (obj) => {
+  return request.post('/student-attendance-record/student-check-in', obj)
+}

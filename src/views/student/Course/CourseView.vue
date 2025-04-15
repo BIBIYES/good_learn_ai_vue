@@ -51,7 +51,7 @@ onMounted(() => {
 
 </script>
 <template>
-  <div class="app flex flex-col gap-4">
+  <div class="app flex flex-col gap-4 animate__animated animate__fadeInRight">
     <!-- 课程信息卡片 -->
     <div
       v-if="courseInfo"
