@@ -102,7 +102,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app flex items-center justify-center">
+  <div class="app">
     <div
       ref="containerRef"
       class="bg-base-200 w-full max-w-3xl flex items-center px-4 transition-all mx-auto"

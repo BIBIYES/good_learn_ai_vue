@@ -11,7 +11,8 @@ import { useAIStore } from '@/stores/ai'
 import ChatInput from './ChatInput.vue'
 import MarkdBox from '@/components/common/MarkdBox.vue'
 import LoadingState from '@/components/common/LoadingState.vue'
-
+import { useComponentsStore } from '@/stores/components'
+const componentsStore = useComponentsStore()
 // Store实例
 const user = useUserStore()
 const ai = useAIStore()
@@ -258,47 +259,56 @@ const handleSendMessage = async (message) => {
 
 <template>
   <div
-    class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md pb-9 pt-2"
+    class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md pb-10 pt-2"
   >
-    <div class="dropdown self-start ml-5">
-      <div
-        tabindex="0"
-        role="button"
-        class="btn m-1 bg-base-100"
-      >
-        <span>{{ sessionName }}</span>
-        <Down
-          theme="outline"
-          size="20"
-          fill="#333"
-        />
-      </div>
-      <ul
-        tabindex="0"
-        class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
-      >
-        <li class="flex">
-          <a> <Edit
+    <div class="self-start flex items-center space-x-3 ml-5">
+      <ExpandIcon
+        :class="{
+          'hidden': !componentsStore.aiSiderBarStatus 
+        }"
+        @click="componentsStore.toggleAiSiderBar()"
+      />
+      <div class="dropdown self-start ">
+        <div
+          tabindex="0"
+          role="button"
+          class="btn m-1 bg-base-100"
+        >
+          <span>{{ sessionName }}</span>
+          <Down
             theme="outline"
             size="20"
             fill="#333"
-          />修改名称</a>
-        </li>
-        <li>
-          <a class="text-red-500"><DeleteFive
-            theme="outline"
-            size="20"
-            fill="#fa1010"
-          />删除</a>
-        </li>
-      </ul>
+          />
+        </div>
+        <ul
+          tabindex="0"
+          class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+        >
+          <li class="flex">
+            <a> <Edit
+              theme="outline"
+              size="20"
+              fill="#333"
+            />修改名称</a>
+          </li>
+          <li>
+            <a class="text-red-500"><DeleteFive
+              theme="outline"
+              size="20"
+              fill="#fa1010"
+            />删除</a>
+          </li>
+        </ul>
+      </div>
     </div>
+    
     <!-- 聊天内容区域 -->
     <div
       ref="chatContainer"
       class="flex-1 overflow-y-auto p-4 w-full"
     >
-      <div class="chat-container space-y-3 h-full">
+      <div class="chat-container space-y-3 h-full bg-amber-500 overflow-y-auto flex flex-col pl-60 pr-80">
         <div
           v-for="(item, index) in chatList"
           :key="item.historyId"
@@ -346,7 +356,7 @@ const handleSendMessage = async (message) => {
       </div>
     </div>
     <!-- 底部输入框 -->
-    <div class="p-4 flex w-full items-center justify-center">
+    <div class="flex w-full  justify-center">
       <ChatInput
         class="w-full"
         @send="handleSendMessage"
