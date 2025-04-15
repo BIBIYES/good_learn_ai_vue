@@ -248,13 +248,6 @@ const handleSendMessage = async (message) => {
   })
 }
 
-
-
-
-
-
-
-
 </script>
 
 <template>
@@ -308,7 +301,7 @@ const handleSendMessage = async (message) => {
       ref="chatContainer"
       class="flex-1 overflow-y-auto p-4 w-full"
     >
-      <div class="chat-container space-y-3 h-full bg-amber-500 overflow-y-auto flex flex-col pl-60 pr-80">
+      <div class="chat-container space-y-3 h-full overflow-y-auto flex flex-col pl-50 pr-50">
         <div
           v-for="(item, index) in chatList"
           :key="item.historyId"
@@ -365,20 +358,5 @@ const handleSendMessage = async (message) => {
   </div>
 </template>
 <style scoped>
-.chat-box {
-  max-width: 80%;
-}
 
-.chat-container {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  scroll-behavior: smooth;
-}
-
-@media (max-width: 640px) {
-  .chat-box {
-    max-width: 90%;
-  }
-}
 </style>
