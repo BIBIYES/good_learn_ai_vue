@@ -10,18 +10,18 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: 'login-parent',
+      name: 'login-parent', // 保持这个特殊命名，因为是父路由
       component: () => import('../views/LoginPage.vue'),
       meta: { requiresAuth: false },
       children: [
         {
           path: '',
-          name: 'login',
+          name: 'login', // 保持这个基础命名
           component: () => import('@/components/form/LoginForm.vue')
         },
         {
           path: '/register',
-          name: 'register',
+          name: 'register', // 保持这个基础命名
           component: () => import('@/components/form/RegisterForm.vue')
         }
       ]
@@ -29,18 +29,18 @@ const router = createRouter({
     // 老师路由
     {
       path: '/t',
-      name: 'home-t',
+      name: 'teacher-home',
       component: HomeView,
       redirect: '/t/home',
       children: [
         {
-          path: 't-home',
-          name: 'home-page-t',
+          path: 'home',
+          name: 'teacher-home-page',
           component: () => import('@/views/teacher/HomePage.vue')
         },
         {
           path:'course',
-          name:'t-course',
+          name:'teacher-course',
           component: () => import('@/views/teacher/CourseView.vue')
         }
       ]
@@ -48,28 +48,28 @@ const router = createRouter({
     // 学生
     {
       path: '/s',
-      name: 's-home',
+      name: 'student-home',
       component: HomeView,
       redirect: '/s/home',
       children: [
         {
-          path: 's-home',
-          name: 'home-page-s',
+          path: 'home',
+          name: 'student-home-page',
           component: () => import('../views/student/HomePage.vue')
         },
         {
           path: 'my-test-paper',
-          name: 'my-test-paper',
+          name: 'student-test-paper',
           component: () => import('../views/student/MyTestPaper.vue')
         },
         {
           path: 'my-course',
-          name: 'my-course',
+          name: 'student-course-list',
           component: () => import('../views/student/MyCoursePage.vue')
         },
         {
           path: 'my-course/:courseId',
-          name: 'my-course-courseId',
+          name: 'student-course-detail',
           component: () => import('../views/student/Course/CourseView.vue'),
           redirect: to => {
             return `/s/my-course/${to.params.courseId}/sign-in`
@@ -77,12 +77,12 @@ const router = createRouter({
           children: [
             {
               path: 'sign-in',
-              name: 'sign-in',
+              name: 'student-course-signin',
               component: () => import('../views/student/Course/page/CourseSignInView.vue')
             },
             {
               path:'work',
-              name:'course-work',
+              name:'student-course-work',
               component: () => import('../views/student/Course/page/CourseWorkView.vue')
             }
           ]
@@ -93,17 +93,17 @@ const router = createRouter({
           children: [
             {
               path: '',
-              name: 'AI',
+              name: 'ai-parent', // 保持特殊命名
               redirect: '/s/ai/home'
             },
             {
               path: 'home',
-              name: 'ai-home',
+              name: 'ai-chat-home',
               component: () => import('@/components/AI/ChatHome.vue')
             },
             {
               path: 'chat/:id',
-              name: 'ai-chat',
+              name: 'ai-chat-session',
               component: () => import('@/components/AI/ChatBox.vue')
             }
           ]
@@ -112,12 +112,12 @@ const router = createRouter({
     },
     {
       path: '/about',
-      name: 'about',
+      name: 'about-page',
       component: () => import('../views/AboutMePage.vue')
     },
     {
       path: '/test',
-      name: 'test',
+      name: 'test-page',
       component: () => import('../views/student/TestPage.vue')
     }
   ]
@@ -140,9 +140,9 @@ router.beforeEach((to, from, next) => {
   // 已登录用户访问登录页面时重定向到首页
   if (isLoggedIn && authRoutes.includes(to.path)) {
     if (store.userInfo.role === 'teacher') {
-      next('/t/home')
+      next({ name: 'teacher-home-page' })
     } else {
-      next('/s/home')
+      next({ name: 'student-home-page' })
     }
     return
   }
@@ -159,12 +159,12 @@ router.beforeEach((to, from, next) => {
     const isStudentPath = to.path.startsWith('/s')
 
     if (store.userInfo.role === 'teacher' && !isTeacherPath) {
-      next('/t/home')
+      next({ name: 'teacher-home-page' })
       return
     }
 
     if (store.userInfo.role === 'student' && !isStudentPath) {
-      next('/s/home')
+      next({ name: 'student-home-page' })
       return
     }
   }
