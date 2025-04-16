@@ -1,6 +1,4 @@
 <script setup>
-
-
 import { Attention, Github } from '@icon-park/vue-next'
 import { useUserStore } from '@/stores/user'
 const user = useUserStore()
@@ -26,7 +24,7 @@ const goGithub = () => {
         <div v-else-if="user.userInfo.role == 'teacher'">
           <TeacherSideBarMenu />
         </div>
-      </nav>
+      </nav> 
       <!-- 底部 -->
       <footer
         class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig"

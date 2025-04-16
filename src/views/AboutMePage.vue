@@ -5,11 +5,11 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
 
 
-const isloading = ref(true)
+const isLoading = ref(true)
 
 // 切换loading状态
 const toggleLoading = () => {
-  isloading.value = false
+  isLoading.value = false
 }
 
 const developmentTeam = ref(null)
@@ -27,7 +27,7 @@ const scrollToBottom = () => {
 }
 
 onMounted(() => {
-  isloading.value = true
+  isLoading.value = true
   window.addEventListener('load', () => {
     console.log('所有资源加载完成')
     toggleLoading()
@@ -386,7 +386,7 @@ const animation = () => {
     </div>
     <!-- <div
       class="w-full min-h-full flex items-center justify-center absolute top-0 left-0 bg-base-100 transform transition-all ease-in ease opacity-100"
-      :class="{ isloading: !isloading }"
+      :class="{ isLoading: !isLoading }"
     >
       <span class="loading loading-infinity w-20"></span>
     </div> -->
@@ -562,7 +562,7 @@ const animation = () => {
   </div>
 </template>
 <style>
-.isloading {
+.isLoading {
   opacity: 0;
   /* 隐藏 */
   visibility: hidden;

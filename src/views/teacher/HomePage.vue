@@ -1,5 +1,4 @@
 <script setup>
-
 import { Home } from '@icon-park/vue-next'
 </script>
 

@@ -6,18 +6,18 @@ export const useComponentsStore = defineStore(
   'components',
   () => {
     // ai状态栏是否关闭
-    const aiSiderBarStatus = ref(false)
+    const aiSideBarStatus = ref(false)
     
     // 切换侧边栏状态
-    function toggleAiSiderBar() {
-      aiSiderBarStatus.value = !aiSiderBarStatus.value
+    function toggleAiSideBar() {
+      aiSideBarStatus.value = !aiSideBarStatus.value
      
       
     }
 
     return {
-      aiSiderBarStatus,
-      toggleAiSiderBar
+      aiSideBarStatus,
+      toggleAiSideBar
     }
   }
  

@@ -21,7 +21,7 @@ const router = useRouter()
         </div>
         <div
           class="cursor-pointer"
-          @click="componentsStore.toggleAiSiderBar()"
+          @click="componentsStore.toggleAiSideBar()"
         >
           <CollapseIcon />
         </div>
