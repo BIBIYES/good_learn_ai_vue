@@ -119,7 +119,7 @@ const formatDate = (dateString) => {
             v-for="(item, index) in groupedChats.today"
             :key="'today-' + index"
             @click="
-              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
             "
           >
             <a
@@ -182,7 +182,7 @@ const formatDate = (dateString) => {
             v-for="(item, index) in groupedChats.yesterday"
             :key="'yesterday-' + index"
             @click="
-              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
             "
           >
             <a
@@ -245,7 +245,7 @@ const formatDate = (dateString) => {
             v-for="(item, index) in groupedChats.threeDaysAgo"
             :key="'threeDays-' + index"
             @click="
-              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
             "
           >
             <a
@@ -308,7 +308,7 @@ const formatDate = (dateString) => {
             v-for="(item, index) in groupedChats.sevenDaysAgo"
             :key="'sevenDays-' + index"
             @click="
-              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
             "
           >
             <a
@@ -371,7 +371,7 @@ const formatDate = (dateString) => {
             v-for="(item, index) in groupedChats.older"
             :key="'older-' + index"
             @click="
-              router.push({ name: 'ai-chat', params: { id: item.sessionId } })
+              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
             "
           >
             <a

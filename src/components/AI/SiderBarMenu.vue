@@ -28,7 +28,7 @@ const router = useRouter()
       </div>
       <div
         class="btn w-full mb-7 bg-base-100"
-        @click="router.push({ name: 'ai-home' })"
+        @click="router.push({ name: 'ai-parent' })"
       >
         创建会话
         <kbd class="kbd">ctrl</kbd>

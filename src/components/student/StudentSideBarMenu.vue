@@ -9,7 +9,7 @@ const route = useRoute()
       <li class="">
         <router-link
           to="/s/home"
-          :class="{ 'menu-active': route.name === 'home-page-s' }"
+          :class="{ 'menu-active': route.name === 'student-home-page' }"
         >
           <home
             theme="outline"
@@ -48,7 +48,7 @@ const route = useRoute()
       <li>
         <router-link
           to="/s/my-test-paper"
-          :class="{ 'menu-active': route.name === 'my-test-paper' }"
+          :class="{ 'menu-active': route.name === 'student-test-paper' }"
         >
           <document-folder
             theme="outline"
