@@ -1,35 +1,38 @@
 <script setup>
 
-// 路由相关
+// 导入Vue Router相关功能，用于路由导航和获取当前路由信息
 import { useRoute } from 'vue-router'
 import router from '@/router'
-// 图标组件
+
+// 导入图标组件，用于UI展示
 import { History, Edit, DeleteFive, More } from '@icon-park/vue-next'
-// API和Store
+
+// 导入API和Store，用于数据获取和状态管理
 import { getSession } from '@/api/chat'
 import { useAIStore } from '@/stores/ai'
 import { useUserStore } from '@/stores/user'
 
-// Store和路由实例
+// 初始化Store和路由实例
 const ai = useAIStore()
 const user = useUserStore()
 const route = useRoute()
 
-// 响应式状态
-const isLoading = ref(true)
+// 定义响应式状态变量
+const isLoading = ref(true) // 加载状态标志
 
 /**
  * 获取聊天会话历史记录
+ * 从服务器获取会话列表并更新到AI Store中
  */
 const handleGetSession = async () => {
   const res = await getSession()
   if (res.code === 200) {
     ai.chatSessionHistory = res.data
-    isLoading.value = false
+    isLoading.value = false // 数据加载完成，更新加载状态
   }
 }
 
-// 生命周期钩子
+// 组件挂载时获取会话历史
 onMounted(() => {
   handleGetSession()
 })
@@ -37,8 +40,10 @@ onMounted(() => {
 /**
  * 根据时间分组会话历史
  * 将聊天记录分为今天、昨天、三天前、七天前和更早的分组 
+ * @returns {Object} 按时间分组的会话对象
  */
 const groupedChats = computed(() => {
+  // 设置各个时间点，用于分组
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
@@ -51,6 +56,7 @@ const groupedChats = computed(() => {
   const sevenDaysAgo = new Date(today)
   sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7)
 
+  // 初始化分组对象
   const groups = {
     today: [],
     yesterday: [],
@@ -59,11 +65,13 @@ const groupedChats = computed(() => {
     older: []
   }
 
+  // 遍历会话历史并根据创建时间分组
   if (ai.chatSessionHistory) {
     ai.chatSessionHistory.forEach((chat) => {
       const chatDate = new Date(chat.createTime)
       chatDate.setHours(0, 0, 0, 0)
 
+      // 根据日期将聊天记录分配到对应的时间组
       if (chatDate.getTime() === today.getTime()) {
         groups.today.push(chat)
       } else if (chatDate.getTime() === yesterday.getTime()) {
@@ -106,8 +114,10 @@ const getSessionPath = (sessionId) => {
 </script>
 
 <template>
+  <!-- 历史消息容器 -->
   <div class="app w-full h-full overflow-y-auto">
     <ul class="menu rounded-box w-full h-full">
+      <!-- 标题栏 -->
       <div class="flex items-center space-x-2">
         <History
           theme="outline"
@@ -116,13 +126,14 @@ const getSessionPath = (sessionId) => {
         />
         <span class="text-md font-bold">历史消息</span>
       </div>
+      <!-- 加载状态指示器 -->
       <div
         v-if="isLoading"
         class="flex justify-center items-center p-4"
       >
         <span class="loading loading-spinner" />
       </div>
-      <!-- 今天 -->
+      <!-- 今天的聊天记录 -->
       <li v-if="groupedChats.today.length > 0">
         <h2 class="menu-title">
           今天
@@ -142,6 +153,7 @@ const getSessionPath = (sessionId) => {
                 <span class="text-xs opacity-60">{{
                   formatDate(item.createTime)
                 }}</span>
+                <!-- 操作下拉菜单 -->
                 <div class="dropdown dropdown-bottom dropdown-end">
                   <div
                     tabindex="0"
@@ -183,7 +195,7 @@ const getSessionPath = (sessionId) => {
         </ul>
       </li>
 
-      <!-- 昨天 -->
+      <!-- 昨天的聊天记录 -->
       <li v-if="groupedChats.yesterday.length > 0">
         <h2 class="menu-title">
           昨天
@@ -203,6 +215,7 @@ const getSessionPath = (sessionId) => {
                 <span class="text-xs opacity-60">{{
                   formatDate(item.createTime)
                 }}</span>
+                <!-- 操作下拉菜单 -->
                 <div class="dropdown dropdown-bottom dropdown-end">
                   <div
                     tabindex="0"
@@ -244,7 +257,7 @@ const getSessionPath = (sessionId) => {
         </ul>
       </li>
 
-      <!-- 三天前 -->
+      <!-- 三天前的聊天记录 -->
       <li v-if="groupedChats.threeDaysAgo.length > 0">
         <h2 class="menu-title">
           三天前
@@ -305,7 +318,7 @@ const getSessionPath = (sessionId) => {
         </ul>
       </li>
 
-      <!-- 七天前 -->
+      <!-- 七天前的聊天记录 -->
       <li v-if="groupedChats.sevenDaysAgo.length > 0">
         <h2 class="menu-title">
           七天前
@@ -366,7 +379,7 @@ const getSessionPath = (sessionId) => {
         </ul>
       </li>
 
-      <!-- 更久之前 -->
+      <!-- 更早之前的聊天记录 -->
       <li v-if="groupedChats.older.length > 0">
         <h2 class="menu-title">
           更久之前
