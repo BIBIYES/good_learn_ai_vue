@@ -42,6 +42,27 @@ const router = createRouter({
           path:'course',
           name:'teacher-course',
           component: () => import('@/views/teacher/CourseView.vue')
+        },
+        {
+          path: 'ai',
+          component: () => import('../views/student/AIPage.vue'),
+          children: [
+            {
+              path: '',
+              name: 'teacher-ai-parent', // 修改为特定于老师的命名
+              redirect: '/t/ai/home'
+            },
+            {
+              path: 'home',
+              name: 'teacher-ai-chat-home', // 修改为特定于老师的命名
+              component: () => import('@/components/AI/ChatHome.vue')
+            },
+            {
+              path: 'chat/:id',
+              name: 'teacher-ai-chat-session', // 修改为特定于老师的命名
+              component: () => import('@/components/AI/ChatBox.vue')
+            }
+          ]
         }
       ]
     },
@@ -93,17 +114,17 @@ const router = createRouter({
           children: [
             {
               path: '',
-              name: 'ai-parent', // 保持特殊命名
+              name: 'student-ai-parent', // 修改为特定于学生的命名
               redirect: '/s/ai/home'
             },
             {
               path: 'home',
-              name: 'ai-chat-home',
+              name: 'student-ai-chat-home', // 修改为特定于学生的命名
               component: () => import('@/components/AI/ChatHome.vue')
             },
             {
               path: 'chat/:id',
-              name: 'ai-chat-session',
+              name: 'student-ai-chat-session', // 修改为特定于学生的命名
               component: () => import('@/components/AI/ChatBox.vue')
             }
           ]

@@ -8,9 +8,11 @@ import { History, Edit, DeleteFive, More } from '@icon-park/vue-next'
 // API和Store
 import { getSession } from '@/api/chat'
 import { useAIStore } from '@/stores/ai'
+import { useUserStore } from '@/stores/user'
 
 // Store和路由实例
 const ai = useAIStore()
+const user = useUserStore()
 const route = useRoute()
 
 // 响应式状态
@@ -90,6 +92,17 @@ const formatDate = (dateString) => {
   const minutes = date.getMinutes().toString().padStart(2, '0')
   return `${hours}:${minutes}`
 }
+
+/**
+ * 根据用户角色和会话ID生成正确的路由路径
+ * @param {string} sessionId - 会话ID
+ * @returns {string} 完整的路由路径
+ */
+const getSessionPath = (sessionId) => {
+  const role = user.userInfo?.role || ''
+  const basePath = role === 'teacher' ? '/t/ai/chat/' : '/s/ai/chat/'
+  return basePath + sessionId
+}
 </script>
 
 <template>
@@ -118,9 +131,7 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.today"
             :key="'today-' + index"
-            @click="
-              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
-            "
+            @click="router.push(getSessionPath(item.sessionId))"
           >
             <a
               class="flex justify-between items-center"
@@ -181,9 +192,7 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.yesterday"
             :key="'yesterday-' + index"
-            @click="
-              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
-            "
+            @click="router.push(getSessionPath(item.sessionId))"
           >
             <a
               class="flex justify-between items-center"
@@ -244,9 +253,7 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.threeDaysAgo"
             :key="'threeDays-' + index"
-            @click="
-              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
-            "
+            @click="router.push(getSessionPath(item.sessionId))"
           >
             <a
               class="flex justify-between items-center"
@@ -307,9 +314,7 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.sevenDaysAgo"
             :key="'sevenDays-' + index"
-            @click="
-              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
-            "
+            @click="router.push(getSessionPath(item.sessionId))"
           >
             <a
               class="flex justify-between items-center"
@@ -370,9 +375,7 @@ const formatDate = (dateString) => {
           <li
             v-for="(item, index) in groupedChats.older"
             :key="'older-' + index"
-            @click="
-              router.push({ name: 'ai-chat-session', params: { id: item.sessionId } })
-            "
+            @click="router.push(getSessionPath(item.sessionId))"
           >
             <a
               class="flex justify-between items-center"

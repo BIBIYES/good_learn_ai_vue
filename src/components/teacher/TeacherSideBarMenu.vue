@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import { Home } from '@icon-park/vue-next'
+import { Home, Lightning } from '@icon-park/vue-next'
 const route = useRoute()
 </script>
 
@@ -17,6 +17,30 @@ const route = useRoute()
             size="24"
           />
           <a href="#">首页</a>
+        </router-link>
+      </li>
+      <li>
+        <router-link
+          to="/t/ai"
+          :class="{ 'menu-active': route.path.startsWith('/t/ai') }"
+        >
+          <lightning
+            theme="outline"
+            size="24"
+          />
+          <a href="#">智识顾问</a>
+        </router-link>
+      </li>
+      <li class="">
+        <router-link
+          to="/t/course"
+          :class="{ 'menu-active': route.name === 'teacher-course' }"
+        >
+          <home
+            theme="outline"
+            size="24"
+          />
+          <a href="#">我的课程</a>
         </router-link>
       </li>
     </ul>

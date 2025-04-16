@@ -2,6 +2,7 @@
 import HistoryCard from './HistoryCard.vue'
 import { useRouter } from 'vue-router'
 import { useComponentsStore } from '@/stores/components'
+import { useUserStore } from '@/stores/user'
 const componentsStore = useComponentsStore()
 const router = useRouter()
 </script>
@@ -28,7 +29,7 @@ const router = useRouter()
       </div>
       <div
         class="btn w-full mb-7 bg-base-100"
-        @click="router.push({ name: 'ai-parent' })"
+        @click="router.push({ name: useUserStore().userInfo.role === 'teacher' ? 'teacher-ai-parent' : 'student-ai-parent' })"
       >
         创建会话
         <kbd class="kbd">ctrl</kbd>

@@ -2,7 +2,9 @@
 import { v4 as uuidv4 } from 'uuid'
 import {useAIStore} from '@/stores/ai'
 import router from '@/router'
+import { useUserStore } from '@/stores/user'
 const ai = useAIStore()
+const user = useUserStore()
 
 const handeleSendMessage = () => {
   const uuid = uuidv4()
@@ -18,7 +20,9 @@ const handeleSendMessage = () => {
     ai.chatSessionHistory = []
   }
   ai.chatSessionHistory.unshift(payload)
-  router.push({ path: `/s/ai/chat/${uuid}`, query: { msg: payload.msg } })
+  // 根据用户角色动态决定跳转路径
+  const basePath = user.userInfo.role === 'teacher' ? '/t/ai/chat/' : '/s/ai/chat/'
+  router.push({ path: `${basePath}${uuid}`, query: { msg: payload.msg } })
   console.log(payload)
   
 }
