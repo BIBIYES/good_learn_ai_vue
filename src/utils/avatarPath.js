@@ -1,11 +1,11 @@
 import { useUserStore } from '@/stores/user'
-const user = useUserStore()
 
 /**
  * 此方法会获取用户的信息来返回头像路径
  * @returns 返回头像的路径
  */
 export const getAvatarPath = () => {
+  const user = useUserStore()
   if(user.userInfo.avatar){
     return user.userInfo.avatar
   }else{

@@ -11,7 +11,6 @@ declare module 'vue' {
     ChatBox: typeof import('./../components/AI/ChatBox.vue')['default']
     ChatHome: typeof import('./../components/AI/ChatHome.vue')['default']
     ChatInput: typeof import('./../components/AI/ChatInput.vue')['default']
-    Collapse: typeof import('../components/icon/collapse-icon.vue')['default']
     CollapseIcon: typeof import('./../components/icon/collapse-icon.vue')['default']
     CourseCard: typeof import('./../components/student/CourseCard.vue')['default']
     ExpandIcon: typeof import('./../components/icon/expand-icon.vue')['default']
@@ -25,9 +24,9 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SiderBarMenu: typeof import('./../components/AI/SiderBarMenu.vue')['default']
-    StudentSiderBarMenu: typeof import('./../components/student/StudentSiderBarMenu.vue')['default']
+    StudentSideBarMenu: typeof import('./../components/student/StudentSideBarMenu.vue')['default']
     StudentStatsCharts: typeof import('./../components/charts/StudentStatsCharts.vue')['default']
-    TeacherSiderBarMenu: typeof import('./../components/teacher/TeacherSiderBarMenu.vue')['default']
+    TeacherSideBarMenu: typeof import('./../components/teacher/TeacherSideBarMenu.vue')['default']
     TitleBar: typeof import('./../components/common/TitleBar.vue')['default']
   }
 }

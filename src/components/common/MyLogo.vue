@@ -1,11 +1,13 @@
 <script setup>
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
+import {getAvatarPath} from '@/utils/avatarPath'
 const user = useUserStore()
 const logout = () => {
   user.logout()
   router.push('/login')
 }
+
 </script>
 
 <template>
@@ -23,7 +25,7 @@ const logout = () => {
           <!-- 头像元素 -->
           <div class="avatar avatar-online">
             <div class="w-15 rounded-full">
-              <img src="http://q1.qlogo.cn/g?b=qq&nk=3203727672&s=100">
+              <img :src="getAvatarPath()">
             </div>
           </div>
         </div>
