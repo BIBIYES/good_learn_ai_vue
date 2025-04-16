@@ -1,7 +1,7 @@
 <template>
   <div
     class="course-card-container"
-    @click="router.push({ name: 'my-course-courseId', params: { courseId: String(courseInfo.courseId) } })"
+    @click="router.push({ name: 'student-course-detail', params: { courseId: String(courseInfo.courseId) } })"
   >
     <div
       class="hover:shadow-lg transition-all duration-300 rounded-xl overflow-hidden border border-base-200 cursor-pointer"

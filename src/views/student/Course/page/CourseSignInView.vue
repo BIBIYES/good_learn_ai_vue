@@ -6,7 +6,6 @@ import { formatDateObject } from '@/utils/dataFormat'
 import message from '@/plugin/message'
 import { CheckOne } from '@icon-park/vue-next'
 import PinInput from '@/components/common/PinInput.vue'
-
 const route = useRoute()
 // 签到数据
 const signInList = ref([])
@@ -174,9 +173,12 @@ onMounted(() => {
           <div class="flex justify-between items-start">
             <h3 class="card-title text-lg">
               签到 #{{ getSerialNumber(index) }}
-              <div class="badge badge-outline">
+              <div
+                class="badge badge-outline"
+                style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100px;"
+              >
                 {{ item.type === 'button' ? '按钮签到' : 'pin码签到' }}
-              </div>
+              </div> 
             </h3>
             
             <!-- 状态指示器 -->
