@@ -34,21 +34,26 @@ const router = createRouter({
       redirect: '/t/home',
       children: [
         {
-          path: 'home',
+          path: 't-home',
           name: 'home-page-t',
-          component: () => import('../views/teacher/HomePage.vue')
+          component: () => import('@/views/teacher/HomePage.vue')
+        },
+        {
+          path:'course',
+          name:'t-course',
+          component: () => import('@/views/teacher/CourseView.vue')
         }
       ]
     },
     // 学生
     {
       path: '/s',
-      name: 'home-s',
+      name: 's-home',
       component: HomeView,
       redirect: '/s/home',
       children: [
         {
-          path: 'home',
+          path: 's-home',
           name: 'home-page-s',
           component: () => import('../views/student/HomePage.vue')
         },
