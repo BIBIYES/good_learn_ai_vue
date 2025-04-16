@@ -21,10 +21,10 @@ const goGithub = () => {
           <MyLogo />
         </div>
         <div v-if="user.userInfo.role == 'student'">
-          <StudentSiderBarMenu />
+          <StudentSideBarMenu />
         </div>
         <div v-else-if="user.userInfo.role == 'teacher'">
-          <TeacherSiderBarMenu />
+          <TeacherSideBarMenu />
         </div>
       </nav>
       <!-- 底部 -->

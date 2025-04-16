@@ -36,7 +36,7 @@ const router = createRouter({
         {
           path: 'home',
           name: 'home-page-t',
-          component: () => import('../views/teacher/page/HomePage.vue')
+          component: () => import('../views/teacher/HomePage.vue')
         }
       ]
     },

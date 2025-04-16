@@ -1,7 +1,7 @@
 <script setup>
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
-import {getAvatarPath} from '@/utils/avatarPath'
+import { getAvatarPath } from '@/utils/avatarPath'
 const user = useUserStore()
 const logout = () => {
   user.logout()

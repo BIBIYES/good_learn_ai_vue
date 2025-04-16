@@ -5,7 +5,6 @@ import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
 import 'github-markdown-css/github-markdown.css'
-import { onMounted } from 'vue'
 // 导入常用的编程语言高亮支持
 import 'highlight.js/lib/languages/sql'
 import 'highlight.js/lib/languages/python'
