@@ -36,7 +36,7 @@ export const deleteQuestionBank = (bankId)=>{
 }
 
 /**
- * 
+ * 更新题目
  * @param {题目对象携带id} obj 
  * @returns 
  */
@@ -44,3 +44,46 @@ export const updateQuestionBank = (obj)=>{
     return request.post('/question-bank/update',obj)
 }
 
+/**
+ * 分页获取题目
+ * @param {每页返回的数量} size 
+ * @param {页码} current 
+ * @param {题库id} bankId 
+ * @returns 
+ */
+export const getQuestionBankById = (size,current,bankId)=>{
+    return request.get('/question/page',{
+        params:{
+            size,
+            current,
+            bankId
+        }
+    })
+}
+
+/**
+ * 
+ * @param {题目对象} obj 
+ * @returns 
+ */
+export const createQuestion = (obj)=>{
+    return request.post('/question/create',obj)
+}
+
+/**
+ * 
+ * @param {题目id} questionId 
+ * @returns 
+ */
+export const deleteQuestion = (questionId)=>{
+    return request.put(`/question/delete/${questionId}`)
+}
+
+/**
+ * 
+ * @param {题目id} questionId 
+ * @returns 
+ */
+export const updateQuestion = (obj)=>{
+    return request.post('/question/update',obj)
+}

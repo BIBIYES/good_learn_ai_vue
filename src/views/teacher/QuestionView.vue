@@ -260,20 +260,20 @@ onMounted(() => {
         <div
           v-for="bank in questionBanks"
           :key="bank.bankId"
-          class="relative group bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-gray-100 hover:shadow-2xl transition-all animate__animated animate__fadeIn"
+          class="relative group bg-base-100 rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-base-200 hover:shadow-2xl transition-all animate__animated animate__fadeIn"
         >
           <div class="flex items-center gap-3 mb-2">
-            <div class="bg-green-100 w-12 h-12 rounded-lg flex justify-center items-center text-green-600 text-2xl font-bold">
+            <div class="bg-primary text-primary-content w-12 h-12 rounded-lg flex justify-center items-center text-2xl font-bold">
               {{ bank.bankName.charAt(0) }}
             </div>
             <div class="flex-1">
-              <span class="text-lg font-bold text-gray-800 flex items-center gap-2">
+              <span class="text-lg font-bold text-base-content flex items-center gap-2">
                 {{ bank.bankName }}
                 <span
                   class="ml-2 px-2 py-0.5 rounded text-xs font-medium"
-                  :class="bank.status ? 'bg-green-100 text-green-600' : 'bg-gray-200 text-gray-500'"
+                  :class="bank.status ? 'bg-success/10 text-success' : 'bg-base-200 text-base-content/50'"
                 >
-                  {{ bank.status ? '已启用' : '未启用' }}
+                  {{ bank.status ? '正常' : '未启用' }}
                 </span>
               </span>
             </div>
@@ -320,16 +320,23 @@ onMounted(() => {
             </div>
           </div>
           
-          <div class="text-gray-500 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-green-200 pl-3 bg-gray-50 rounded">
+          <div class="text-base-content/60 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-primary/20 pl-3 bg-base-200/30 rounded">
             <div>{{ bank.description || '暂无描述' }}</div> 
           </div>
           
-          <div class="flex items-center justify-between mt-4 text-xs text-gray-400 border-t pt-3">
+          <div class="flex items-center justify-between mt-4 text-xs text-base-content/40 border-t pt-3">
             <span>题库ID: {{ bank.bankId }}</span>
             <span>创建时间: {{ formatDate(bank.createdAt) }}</span>
-            <button class="btn btn-sm btn-outline btn-primary">
+            <router-link 
+              :to="{
+                name: 'QuestionBankDetail',
+                params: { bankId: bank.bankId },
+                query: { bankName: bank.bankName }
+              }"
+              class="btn btn-sm btn-outline btn-primary"
+            >
               查看详情
-            </button>
+            </router-link>
           </div>
         </div>
       </div>

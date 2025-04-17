@@ -54,7 +54,7 @@ const route = useRoute()
             theme="outline"
             size="24"
           />
-          <a href="#">我的试卷</a>
+          <a href="#">未设置的按钮</a>
         </router-link>
       </li>
     </ul>
