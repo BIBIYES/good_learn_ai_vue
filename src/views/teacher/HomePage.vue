@@ -1,5 +1,7 @@
 <script setup>
 import { Home } from '@icon-park/vue-next'
+import { useUserStore } from '@/stores/user'
+const userStore = useUserStore()
 </script>
 
 <template>
@@ -12,7 +14,7 @@ import { Home } from '@icon-park/vue-next'
             size="38"
           />
           <span>首页</span>
-          <p>你好老师欢迎你</p>
+          <p>你好{{ userStore.userInfo.username }}老师欢迎你</p>
         </template>
       </TitleBar>
     </div>

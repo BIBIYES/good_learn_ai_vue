@@ -26,7 +26,7 @@ export const getQuestionBankList = (current,size)=>{
 }
 
 
-export const deleteQuestionBank = (obj)=>{
-    return request.delete('/question-bank/delete', obj )
+export const deleteQuestionBank = (bankId)=>{
+    return request.delete(`/question-bank/delete/${bankId}` )
 }
 
