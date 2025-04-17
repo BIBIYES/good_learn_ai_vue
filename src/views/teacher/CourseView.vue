@@ -143,8 +143,8 @@ onMounted(() => {
               >{{ item.teacherEmail }}</span></span>
             </div>
           </div>
-          <div class="text-gray-500 text-sm flex-1 min-h-[40px] border-l-4 border-green-200 pl-3 bg-gray-50 rounded">
-            {{ item.description || '暂无介绍' }}
+          <div class="text-gray-500 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-green-200 pl-3 bg-gray-50 rounded">
+            <div>{{ item.description || '暂无介绍' }}</div> 
           </div>
           <div class="flex items-center justify-between mt-4 text-xs text-gray-400 border-t pt-3">
             <span>课程ID: {{ item.courseId }}</span>

@@ -27,6 +27,7 @@ declare module 'vue' {
     StudentSideBarMenu: typeof import('./../components/student/StudentSideBarMenu.vue')['default']
     StudentStatsCharts: typeof import('./../components/charts/StudentStatsCharts.vue')['default']
     TeacherSideBarMenu: typeof import('./../components/teacher/TeacherSideBarMenu.vue')['default']
+    TeacherStatsCharts: typeof import('./../components/teacher/TeacherStatsCharts.vue')['default']
     TitleBar: typeof import('./../components/common/TitleBar.vue')['default']
   }
 }
