@@ -11,7 +11,7 @@ export const createQuestionBank = (obj)=>{
 }
 
 /**
- * 
+ * 分页获取题库
  * @param {页码} current 
  * @param {每页返回的数量} size 
  * @returns 
@@ -25,8 +25,20 @@ export const getQuestionBankList = (current,size)=>{
     })
 }
 
-
+/**
+ * 删除题库
+ * @param {题库id} bankId 
+ * @returns 
+ */
 export const deleteQuestionBank = (bankId)=>{
     return request.delete(`/question-bank/delete/${bankId}` )
 }
 
+/**
+ * 
+ * @param {题目对象携带id} obj 
+ * @returns 
+ */
+export const updateQuestionBank = (obj)=>{
+    return request.post('/question-bank/update',obj)
+}
