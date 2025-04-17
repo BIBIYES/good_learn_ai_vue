@@ -25,6 +25,7 @@ export const getQuestionBankList = (current,size)=>{
     })
 }
 
+
 /**
  * 删除题库
  * @param {题库id} bankId 
@@ -42,3 +43,4 @@ export const deleteQuestionBank = (bankId)=>{
 export const updateQuestionBank = (obj)=>{
     return request.post('/question-bank/update',obj)
 }
+

@@ -196,12 +196,32 @@ onMounted(() => {
     </TitleBar> 
     <!-- Main content area -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6">
-      <!-- Loading State -->
+      <!-- Loading State - Skeleton -->
       <div
         v-if="loading"
-        class="flex  items-center justify-center h-full"
+        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
       >
-        <span class="loading loading-spinner loading-lg " />
+        <!-- Skeleton Cards - repeat 6 skeletons -->
+        <div 
+          v-for="i in 6" 
+          :key="i" 
+          class="card bg-base-100 shadow-lg rounded-2xl p-6 "
+        >
+          <div class="flex items-center gap-3 mb-4">
+            <div class="skeleton w-12 h-12 rounded-lg" />
+            <div class="flex-1">
+              <div class="skeleton h-5 w-2/3 mb-2" />
+              <div class="skeleton h-3 w-1/3" />
+            </div>
+            <div class="skeleton w-6 h-6 rounded-full" />
+          </div>
+          <div class="skeleton h-20 w-full mb-4 rounded" />
+          <div class="flex justify-between mt-4 pt-3 border-t">
+            <div class="skeleton h-3 w-1/4" />
+            <div class="skeleton h-3 w-1/4" />
+            <div class="skeleton h-6 w-16 rounded" />
+          </div>
+        </div>
       </div>
 
       <!-- Empty State -->

@@ -241,8 +241,5 @@ onMounted(() => {
 </template>
 
 <style scoped>
-/* 如果需要，可以在这里添加特定于教师首页的样式 */
-.app {
-  /* background-color: #f9fafb; /* Optional: Set a light background */
-}
+
 </style>
