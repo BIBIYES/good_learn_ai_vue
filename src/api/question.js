@@ -31,7 +31,7 @@ export const getQuestionBankList = (current,size)=>{
  * @returns 
  */
 export const deleteQuestionBank = (bankId)=>{
-    return request.delete(`/question-bank/delete/${bankId}` )
+    return request.put(`/question-bank/delete/${bankId}` )
 }
 
 /**
