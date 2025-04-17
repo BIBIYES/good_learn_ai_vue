@@ -11,6 +11,7 @@ const userStore = useUserStore()
 const navigateToGithub = () => {
   window.open('https://github.com/BIBIYES')
 }
+
 </script>
 
 <template>

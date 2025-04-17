@@ -1,6 +1,6 @@
 <script setup>
 import { useRoute } from 'vue-router'
-import { Home, Lightning } from '@icon-park/vue-next'
+import { Garage, Home, Lightning } from '@icon-park/vue-next'
 const route = useRoute()
 </script>
 
@@ -41,6 +41,18 @@ const route = useRoute()
             size="24"
           />
           <a href="#">我的课程</a>
+        </router-link>
+      </li>
+      <li class="">
+        <router-link
+          to="/t/question"
+          :class="{ 'menu-active': route.name === 'teacher-question' }"
+        >
+          <Garage
+            theme="outline"
+            size="24"
+          />
+          <a href="#">我的题库</a>
         </router-link>
       </li>
     </ul>

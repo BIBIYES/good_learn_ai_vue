@@ -63,6 +63,11 @@ const router = createRouter({
               component: () => import('@/components/AI/ChatBox.vue')
             }
           ]
+        },
+        {
+          path:'question',
+          name:'teacher-question',
+          component: () => import('@/views/teacher/QuestionView.vue')
         }
       ]
     },
