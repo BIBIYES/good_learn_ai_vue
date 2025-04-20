@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, watch, onUnmounted } from 'vue'
 import * as echarts from 'echarts/core'
 import {
   TitleComponent,
@@ -28,17 +28,14 @@ echarts.use([
 const props = defineProps({
   courseDistribution: {
     type: Array,
-    required: true,
     default: () => []
   },
   studentActivity: {
     type: Array,
-    required: true,
     default: () => []
   },
   assignmentStatus: {
     type: Array,
-    required: true,
     default: () => []
   }
 })
@@ -62,7 +59,7 @@ const initCharts = () => {
         text: '课程分布',
         left: 'center',
         textStyle: {
-            color: '#ffffff' // 设置标题文字颜色为白色
+          color: '#ffffff' // 设置标题文字颜色为白色
         }
       },
       tooltip: {
@@ -71,8 +68,8 @@ const initCharts = () => {
       legend: {
         orient: 'vertical',
         left: 'left',
-         textStyle: {
-            color: '#ffffff' // 设置图例文字颜色为白色
+        textStyle: {
+          color: '#ffffff' // 设置图例文字颜色为白色
         }
       },
       series: [
@@ -102,8 +99,8 @@ const initCharts = () => {
     const activityOption = {
       title: {
         text: '学生活跃度 (近7日)',
-         textStyle: {
-            color: '#ffffff' // 设置标题文字颜色为白色
+        textStyle: {
+          color: '#ffffff' // 设置标题文字颜色为白色
         }
       },
       tooltip: {
@@ -113,17 +110,17 @@ const initCharts = () => {
         type: 'category',
         data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日'],
         axisLabel: {
-            color: '#ffffff' // 设置 x 轴标签文字颜色为白色
+          color: '#ffffff' // 设置 x 轴标签文字颜色为白色
         }
       },
       yAxis: {
         type: 'value',
         name: '活跃人数',
-         axisLabel: {
-            color: '#ffffff' // 设置 y 轴标签文字颜色为白色
+        axisLabel: {
+          color: '#ffffff' // 设置 y 轴标签文字颜色为白色
         },
         nameTextStyle: {
-            color: '#ffffff' // 设置 y 轴名称文字颜色为白色
+          color: '#ffffff' // 设置 y 轴名称文字颜色为白色
         }
       },
       series: [
@@ -146,8 +143,8 @@ const initCharts = () => {
     const assignmentOption = {
       title: {
         text: '作业批改状态',
-         textStyle: {
-            color: '#ffffff' // 设置标题文字颜色为白色
+        textStyle: {
+          color: '#ffffff' // 设置标题文字颜色为白色
         }
       },
       tooltip: {
@@ -159,18 +156,18 @@ const initCharts = () => {
       xAxis: {
         type: 'category',
         data: ['待批改', '已批改', '已截止未提交'],
-         axisLabel: {
-            color: '#ffffff' // 设置 x 轴标签文字颜色为白色
+        axisLabel: {
+          color: '#ffffff' // 设置 x 轴标签文字颜色为白色
         }
       },
       yAxis: {
         type: 'value',
         name: '数量',
-         axisLabel: {
-            color: '#ffffff' // 设置 y 轴标签文字颜色为白色
+        axisLabel: {
+          color: '#ffffff' // 设置 y 轴标签文字颜色为白色
         },
         nameTextStyle: {
-            color: '#ffffff' // 设置 y 轴名称文字颜色为白色
+          color: '#ffffff' // 设置 y 轴名称文字颜色为白色
         }
       },
       series: [
@@ -197,7 +194,11 @@ onMounted(() => {
 })
 
 watch(
-  () => [props.courseDistribution, props.studentActivity, props.assignmentStatus],
+  () => [
+    props.courseDistribution,
+    props.studentActivity,
+    props.assignmentStatus
+  ],
   () => {
     initCharts() // Re-initialize charts when data changes
   },
@@ -219,7 +220,7 @@ onUnmounted(() => {
     <div class="chart-container bg-base-100 shadow rounded-lg p-4">
       <div
         ref="courseChartRef"
-        style="width: 100%; height: 300px;"
+        style="width: 100%; height: 300px"
       />
     </div>
 
@@ -227,7 +228,7 @@ onUnmounted(() => {
     <div class="chart-container bg-base-100 shadow rounded-lg p-4">
       <div
         ref="activityChartRef"
-        style="width: 100%; height: 300px;"
+        style="width: 100%; height: 300px"
       />
     </div>
 
@@ -235,7 +236,7 @@ onUnmounted(() => {
     <div class="chart-container bg-base-100 shadow rounded-lg p-4">
       <div
         ref="assignmentChartRef"
-        style="width: 100%; height: 300px;"
+        style="width: 100%; height: 300px"
       />
     </div>
   </div>

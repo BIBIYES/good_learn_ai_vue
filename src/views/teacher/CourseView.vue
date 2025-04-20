@@ -1,16 +1,24 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getTeacherCourse, createCourse, updateTeacherCourse } from '@/api/course'
+import {
+  getTeacherCourse,
+  createCourse,
+  updateTeacherCourse
+} from '@/api/course'
 import message from '@/plugin/message'
-import {School} from '@icon-park/vue-next'
+import { School } from '@icon-park/vue-next'
 import { Add } from '@icon-park/vue-next'
-
 
 const loading = ref(true)
 const courses = ref([])
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
 
+// 添加分页相关状态
+const currentPage = ref(1)
+const totalPages = ref(1)
+const pageSize = ref(10)
+const total = ref(0)
 
 const newCourse = ref({
   className: '',
@@ -25,17 +33,28 @@ const editForm = ref({
   status: true
 })
 
-const handleGetCourses = async () => {
+const handleGetCourses = async (page = 1) => {
   loading.value = true
   try {
-    const res = await getTeacherCourse()
+    const res = await getTeacherCourse(page, pageSize.value)
     if (res.code === 200) {
-      courses.value = res.data.reverse()
+      // 更新为API返回的标准分页数据结构
+      courses.value = res.data.records || []
+      currentPage.value = res.data.current || 1
+      totalPages.value = res.data.pages || 1
+      total.value = res.data.total || 0
+      pageSize.value = res.data.size || 10
     }
   } catch (err) {
     message.error(err.message)
   } finally {
     loading.value = false
+  }
+}
+
+const handlePageChange = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    handleGetCourses(page)
   }
 }
 
@@ -53,7 +72,7 @@ const handleCreateCourse = async () => {
       message.success('创建成功')
       showCreateModal.value = false
       newCourse.value = { className: '', description: '' }
-      handleGetCourses()
+      handleGetCourses(1) // 创建成功后返回第一页
     }
   } catch (err) {
     message.error(err.message)
@@ -77,7 +96,7 @@ const handleEditCourse = async () => {
     if (res.code === 200) {
       message.success('编辑成功')
       showEditModal.value = false
-      handleGetCourses()
+      handleGetCourses(currentPage.value) // 编辑后刷新当前页
     }
   } catch (err) {
     message.error(err.message)
@@ -112,7 +131,7 @@ onMounted(() => {
         </button>
       </template>
     </TitleBar>
-    
+
     <!-- Main content area -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6">
       <!-- Loading State - Skeleton -->
@@ -121,9 +140,9 @@ onMounted(() => {
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
       >
         <!-- Skeleton Cards - repeat 6 skeletons -->
-        <div 
-          v-for="i in 6" 
-          :key="i" 
+        <div
+          v-for="i in 6"
+          :key="i"
           class="card bg-base-100 shadow-lg rounded-2xl p-6"
         >
           <div class="flex items-center gap-3 mb-4">
@@ -182,20 +201,29 @@ onMounted(() => {
           class="relative group bg-base-100 rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-base-200 hover:shadow-2xl transition-all animate__animated animate__fadeIn"
         >
           <div class="flex items-center gap-3 mb-2">
-            <div class="bg-primary text-primary-content w-12 h-12 rounded-lg flex justify-center items-center text-2xl font-bold">
+            <div
+              class="bg-primary text-primary-content w-12 h-12 rounded-lg flex justify-center items-center text-2xl font-bold"
+            >
               {{ item.className.charAt(0) }}
             </div>
             <div class="flex-1">
-              <span class="text-lg font-bold text-base-content flex items-center gap-2">
+              <span
+                class="text-lg font-bold text-base-content flex items-center gap-2"
+              >
                 {{ item.className }}
                 <span
                   class="ml-2 px-2 py-0.5 rounded text-xs font-medium"
-                  :class="item.status ? 'bg-success/10 text-success' : 'bg-base-200 text-base-content/50'"
+                  :class="
+                    item.status
+                      ? 'bg-success/10 text-success'
+                      : 'bg-base-200 text-base-content/50'
+                  "
                 >
                   {{ item.status ? '启用' : '停用' }}
                 </span>
               </span>
-              <span class="text-sm text-gray-500">{{ item.teacherName || '教师' }}<span
+              <span class="text-sm text-gray-500">{{ item.teacherName || '教师'
+              }}<span
                 v-if="item.teacherEmail"
                 class="ml-2 text-xs text-gray-400"
               >{{ item.teacherEmail }}</span></span>
@@ -230,12 +258,17 @@ onMounted(() => {
               </ul>
             </div>
           </div>
-          <div class="text-base-content/60 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-primary/20 pl-3 bg-base-200/30 rounded">
-            <div>{{ item.description || '暂无介绍' }}</div> 
+          <div
+            class="text-base-content/60 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-primary/20 pl-3 bg-base-200/30 rounded"
+          >
+            <div>{{ item.description || '暂无介绍' }}</div>
           </div>
-          <div class="flex items-center justify-between mt-4 text-xs text-base-content/40 border-t pt-3">
+          <div
+            class="flex items-center justify-between mt-4 text-xs text-base-content/40 border-t pt-3"
+          >
             <span>课程ID: {{ item.courseId }}</span>
-            <span>创建时间: {{ item.createdAt ? (item.createdAt.split('T')[0]) : '—' }}</span>
+            <span>创建时间:
+              {{ item.createdAt ? item.createdAt.split('T')[0] : '—' }}</span>
             <button
               class="btn btn-sm btn-outline btn-primary"
               @click="openEditModal(item)"
@@ -247,7 +280,7 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Pagination section (optional, if you have pagination) -->
+    <!-- Pagination section  -->
     <div class="mt-auto border-t border-base-200 p-4 bg-base-100">
       <div
         v-if="!loading && courses.length > 0"
@@ -258,7 +291,36 @@ onMounted(() => {
             aria-label="status"
             class="status status-primary"
           />
-          <span>总计课程数：</span>{{ courses.length }}
+          <span>总计课程数：</span>{{ total }}
+        </div>
+
+        <div
+          v-if="totalPages > 1"
+          class="join"
+        >
+          <button
+            class="join-item btn btn-sm"
+            :disabled="currentPage === 1"
+            @click="handlePageChange(currentPage - 1)"
+          >
+            «
+          </button>
+          <button
+            v-for="page in totalPages"
+            :key="page"
+            class="join-item btn btn-sm"
+            :class="{ 'btn-active': currentPage === page }"
+            @click="handlePageChange(page)"
+          >
+            {{ page }}
+          </button>
+          <button
+            class="join-item btn btn-sm"
+            :disabled="currentPage === totalPages"
+            @click="handlePageChange(currentPage + 1)"
+          >
+            »
+          </button>
         </div>
       </div>
     </div>
@@ -307,7 +369,7 @@ onMounted(() => {
         </div>
       </form>
     </dialog>
-    
+
     <!-- 编辑课程弹窗 -->
     <dialog
       class="modal"

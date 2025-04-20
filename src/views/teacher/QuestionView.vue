@@ -1,6 +1,11 @@
 <script setup>
 import { Garage, Add, Edit, Delete } from '@icon-park/vue-next'
-import { getQuestionBankList, createQuestionBank, deleteQuestionBank, updateQuestionBank } from '@/api/question'
+import {
+  getQuestionBankList,
+  createQuestionBank,
+  deleteQuestionBank,
+  updateQuestionBank
+} from '@/api/question'
 import message from '@/plugin/message.js'
 
 const questionBanks = ref([])
@@ -52,9 +57,9 @@ const handleCreateBank = async () => {
   }
   createLoading.value = true
   try {
-    const res = await createQuestionBank({ 
-      bankName: newBankName.value, 
-      description: newBankDescription.value 
+    const res = await createQuestionBank({
+      bankName: newBankName.value,
+      description: newBankDescription.value
     })
     if (res.code === 200) {
       message.success('创建成功')
@@ -63,8 +68,8 @@ const handleCreateBank = async () => {
       if (modalCheckbox) modalCheckbox.checked = false
       // Reset form and refresh list
       newBankName.value = ''
-      newBankDescription.value = '' 
-      fetchQuestionBanks(currentPage.value) 
+      newBankDescription.value = ''
+      fetchQuestionBanks(currentPage.value)
     } else {
       message.error(res.message || '创建失败')
     }
@@ -81,7 +86,7 @@ const handleEdit = (bank) => {
   editBankId.value = bank.bankId
   editBankName.value = bank.bankName
   editBankDescription.value = bank.description || ''
-  
+
   // 打开编辑模态框
   const modalCheckbox = document.getElementById('edit_bank_modal')
   if (modalCheckbox) modalCheckbox.checked = true
@@ -121,7 +126,7 @@ const handleDelete = (bank) => {
   // 设置要删除的题库信息
   deleteConfirmBankId.value = bank.bankId
   deleteConfirmBankName.value = bank.bankName
-  
+
   // 打开确认删除模态框
   const modalCheckbox = document.getElementById('delete_confirm_modal')
   if (modalCheckbox) modalCheckbox.checked = true
@@ -193,21 +198,21 @@ onMounted(() => {
           创建题库
         </label>
       </template>
-    </TitleBar> 
+    </TitleBar>
     <!-- Main content area -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6">
-      <!-- Loading State - Skeleton -->
+      <!-- Loading State - Skeleton Screen -->
       <div
         v-if="loading"
         class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
       >
-        <!-- Skeleton Cards - repeat 6 skeletons -->
-        <div 
-          v-for="i in 6" 
-          :key="i" 
-          class="card bg-base-100 shadow-lg rounded-2xl p-6 "
+        <!-- 骨架屏 -->
+        <div
+          v-for="i in 6"
+          :key="i"
+          class="relative bg-base-100 rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-base-200"
         >
-          <div class="flex items-center gap-3 mb-4">
+          <div class="flex items-center gap-3 mb-2">
             <div class="skeleton w-12 h-12 rounded-lg" />
             <div class="flex-1">
               <div class="skeleton h-5 w-2/3 mb-2" />
@@ -215,7 +220,9 @@ onMounted(() => {
             </div>
             <div class="skeleton w-6 h-6 rounded-full" />
           </div>
-          <div class="skeleton h-20 w-full mb-4 rounded" />
+
+          <div class="skeleton h-16 w-full rounded mb-4" />
+
           <div class="flex justify-between mt-4 pt-3 border-t">
             <div class="skeleton h-3 w-1/4" />
             <div class="skeleton h-3 w-1/4" />
@@ -260,20 +267,28 @@ onMounted(() => {
         <div
           v-for="bank in questionBanks"
           :key="bank.bankId"
-          class="relative group bg-base-100 rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-base-200 hover:shadow-2xl transition-all animate__animated animate__fadeIn"
+          class="relative group bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-gray-100 hover:shadow-2xl transition-all animate__animated animate__fadeIn"
         >
           <div class="flex items-center gap-3 mb-2">
-            <div class="bg-primary text-primary-content w-12 h-12 rounded-lg flex justify-center items-center text-2xl font-bold">
+            <div
+              class="bg-green-100 w-12 h-12 rounded-lg flex justify-center items-center text-green-600 text-2xl font-bold"
+            >
               {{ bank.bankName.charAt(0) }}
             </div>
             <div class="flex-1">
-              <span class="text-lg font-bold text-base-content flex items-center gap-2">
+              <span
+                class="text-lg font-bold text-gray-800 flex items-center gap-2"
+              >
                 {{ bank.bankName }}
                 <span
                   class="ml-2 px-2 py-0.5 rounded text-xs font-medium"
-                  :class="bank.status ? 'bg-success/10 text-success' : 'bg-base-200 text-base-content/50'"
+                  :class="
+                    bank.status
+                      ? 'bg-green-100 text-green-600'
+                      : 'bg-gray-200 text-gray-500'
+                  "
                 >
-                  {{ bank.status ? '正常' : '未启用' }}
+                  {{ bank.status ? '已启用' : '未启用' }}
                 </span>
               </span>
             </div>
@@ -319,31 +334,28 @@ onMounted(() => {
               </ul>
             </div>
           </div>
-          
-          <div class="text-base-content/60 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-primary/20 pl-3 bg-base-200/30 rounded">
-            <div>{{ bank.description || '暂无描述' }}</div> 
+
+          <div
+            class="text-gray-500 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-green-200 pl-3 bg-gray-50 rounded"
+          >
+            <div>{{ bank.description || '暂无描述' }}</div>
           </div>
-          
-          <div class="flex items-center justify-between mt-4 text-xs text-base-content/40 border-t pt-3">
+
+          <div
+            class="flex items-center justify-between mt-4 text-xs text-gray-400 border-t pt-3"
+          >
             <span>题库ID: {{ bank.bankId }}</span>
             <span>创建时间: {{ formatDate(bank.createdAt) }}</span>
-            <router-link 
-              :to="{
-                name: 'QuestionBankDetail',
-                params: { bankId: bank.bankId },
-                query: { bankName: bank.bankName }
-              }"
-              class="btn btn-sm btn-outline btn-primary"
-            >
+            <button class="btn btn-sm btn-outline btn-primary">
               查看详情
-            </router-link>
+            </button>
           </div>
         </div>
       </div>
     </div>
 
     <!-- Pagination - always at bottom -->
-    <div class="mt-auto border-t border-base-200 p-4 bg-base-100 ">
+    <div class="mt-auto border-t border-base-200 p-4 bg-base-100">
       <div
         v-if="!loading"
         class="flex justify-center space-x-5"
@@ -356,23 +368,23 @@ onMounted(() => {
           <span>总计题库数：</span>{{ questionBanks.length }}
         </div>
         <div class="join">
-          <button 
+          <button
             class="join-item btn btn-sm"
             :disabled="currentPage === 1"
             @click="changePage(currentPage - 1)"
           >
             «
           </button>
-          <button 
-            v-for="page in totalPages" 
-            :key="page" 
+          <button
+            v-for="page in totalPages"
+            :key="page"
             class="join-item btn btn-sm"
             :class="{ 'btn-active': currentPage === page }"
             @click="changePage(page)"
           >
             {{ page }}
           </button>
-          <button 
+          <button
             class="join-item btn btn-sm"
             :disabled="currentPage === totalPages"
             @click="changePage(currentPage + 1)"
@@ -514,7 +526,9 @@ onMounted(() => {
           确认删除
         </h3>
         <p class="py-4">
-          您确定要删除题库 <span class="font-bold text-error">{{ deleteConfirmBankName }}</span> 吗？此操作不可逆。
+          您确定要删除题库
+          <span class="font-bold text-error">{{ deleteConfirmBankName }}</span>
+          吗？此操作不可逆。
         </p>
         <div class="modal-action">
           <label
@@ -541,6 +555,4 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped>
-
-</style>
+<style scoped></style>
