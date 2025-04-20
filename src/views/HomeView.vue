@@ -1,16 +1,44 @@
 <script setup>
 // 导入图标组件
-import { Attention, Github } from '@icon-park/vue-next'
+import { Attention, Github, Moon, Sun } from '@icon-park/vue-next'
 // 导入用户状态管理
 import { useUserStore } from '@/stores/user'
+import { ref, onMounted } from 'vue'
 
 // 初始化用户状态
 const userStore = useUserStore()
+
+// 主题状态
+const isDarkMode = ref(false)
+
+// 切换主题
+const toggleTheme = () => {
+  isDarkMode.value = !isDarkMode.value
+  document.documentElement.setAttribute('data-theme', isDarkMode.value ? 'dark' : 'emerald')
+  // 保存主题选择到本地存储
+  localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'emerald')
+}
 
 // 跳转到开发者GitHub主页
 const navigateToGithub = () => {
   window.open('https://github.com/BIBIYES')
 }
+
+// 初始化主题
+onMounted(() => {
+  // 从localStorage获取保存的主题
+  const savedTheme = localStorage.getItem('theme')
+  // 如果有保存的主题，使用保存的主题；否则使用系统主题
+  if (savedTheme) {
+    isDarkMode.value = savedTheme === 'dark'
+    document.documentElement.setAttribute('data-theme', savedTheme)
+  } else {
+    // 检查系统是否为暗色模式
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    isDarkMode.value = prefersDark
+    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'emerald')
+  }
+})
 </script>
 
 <template>
@@ -32,6 +60,24 @@ const navigateToGithub = () => {
       </nav>
       <!-- 页面底部导航链接 -->
       <footer class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig">
+        <!-- 主题切换按钮 -->
+        <button
+          class="btn btn-md w-30"
+          @click="toggleTheme"
+        >
+          <Sun
+            v-if="isDarkMode"
+            theme="outline"
+            size="18"
+          />
+          <Moon
+            v-else
+            theme="outline"
+            size="18"
+          />
+          {{ isDarkMode ? '亮色模式' : '暗色模式' }}
+        </button>
+        
         <button
           class="btn btn-md w-30"
           @click="navigateToGithub()"
