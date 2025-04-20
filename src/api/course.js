@@ -29,11 +29,18 @@ export const createCourse = (obj) => {
 }
 
 /**
- * 不需要传递参数，直接从临牌中获取老师的userId
+ * 获取老师创建的所有课程，支持分页
+ * @param {Number} page 页码，默认第1页
+ * @param {Number} pageSize 每页条数，默认10条
  * @returns 返回老师创建的所有课程
  */
-export const getTeacherCourse = () => {
-  return request.get('/course/get-course')
+export const getTeacherCourse = (page = 1, pageSize = 10) => {
+  return request.get('/course/get-course', {
+    params: {
+      page,
+      pageSize
+    }
+  })
 }
 
 /**

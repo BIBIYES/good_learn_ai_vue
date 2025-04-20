@@ -222,10 +222,10 @@ onMounted(() => {
                   {{ item.status ? '启用' : '停用' }}
                 </span>
               </span>
-              <span class="text-sm text-gray-500">{{ item.teacherName || '教师'
+              <span class="text-sm text-base-content/70">{{ item.teacherName || '教师'
               }}<span
                 v-if="item.teacherEmail"
-                class="ml-2 text-xs text-gray-400"
+                class="ml-2 text-xs text-base-content/50"
               >{{ item.teacherEmail }}</span></span>
             </div>
             <div class="dropdown dropdown-end">
@@ -280,11 +280,11 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Pagination section  -->
+    <!-- Pagination section -->
     <div class="mt-auto border-t border-base-200 p-4 bg-base-100">
       <div
         v-if="!loading && courses.length > 0"
-        class="flex justify-center space-x-5"
+        class="flex flex-wrap justify-center gap-5 items-center"
       >
         <div class="btn btn-sm">
           <div

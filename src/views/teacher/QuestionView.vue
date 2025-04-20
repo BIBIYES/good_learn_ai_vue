@@ -1,4 +1,6 @@
 <script setup>
+import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import { Garage, Add, Edit, Delete } from '@icon-park/vue-next'
 import {
   getQuestionBankList,
@@ -7,6 +9,8 @@ import {
   updateQuestionBank
 } from '@/api/question'
 import message from '@/plugin/message.js'
+
+const router = useRouter()
 
 const questionBanks = ref([])
 const currentPage = ref(1)
@@ -168,6 +172,14 @@ const formatDate = (dateString) => {
     console.log(e)
     return dateString
   }
+}
+
+const viewBankDetail = (bank) => {
+  router.push({
+    name: 'QuestionBankDetail',
+    params: { bankId: bank.bankId },
+    query: { bankName: bank.bankName }
+  })
 }
 
 onMounted(() => {
@@ -346,7 +358,10 @@ onMounted(() => {
           >
             <span>题库ID: {{ bank.bankId }}</span>
             <span>创建时间: {{ formatDate(bank.createdAt) }}</span>
-            <button class="btn btn-sm btn-outline btn-primary">
+            <button
+              class="btn btn-sm btn-outline btn-primary"
+              @click="viewBankDetail(bank)"
+            >
               查看详情
             </button>
           </div>
