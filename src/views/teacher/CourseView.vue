@@ -2,8 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { getTeacherCourse, createCourse, updateTeacherCourse } from '@/api/course'
 import message from '@/plugin/message'
-import {School} from '@icon-park/vue-next'
-import { Add } from '@icon-park/vue-next'
+import {School, Add, Copy} from '@icon-park/vue-next'
 
 
 const loading = ref(true)
@@ -65,6 +64,25 @@ const openEditModal = (course) => {
   showEditModal.value = true
 }
 
+const copyCourseId = async (id) => {
+  try {
+    if (navigator.clipboard) {
+      await navigator.clipboard.writeText(id)
+      message.success('课程ID已复制')
+    } else {
+      const textArea = document.createElement('textarea')
+      textArea.value = id
+      document.body.appendChild(textArea)
+      textArea.select()
+      document.execCommand('copy')
+      document.body.removeChild(textArea)
+      message.success('课程ID已复制')
+    }
+  } catch (err) {
+    message.error(`复制失败: ${err.message}`)
+  }
+}
+
 const handleEditCourse = async () => {
   try {
     const res = await updateTeacherCourse({
@@ -108,7 +126,7 @@ onMounted(() => {
             theme="outline"
             size="18"
           />
-          新建课程
+          创建课程
         </button>
       </template>
     </TitleBar>
@@ -235,6 +253,15 @@ onMounted(() => {
           </div>
           <div class="flex items-center justify-between mt-4 text-xs text-base-content/40 border-t pt-3">
             <span>课程ID: {{ item.courseId }}</span>
+            <button
+              class="btn btn-ghost btn-sm btn-circle text-primary hover:text-black"
+              @click="copyCourseId(item.courseId)"
+            >
+              <Copy 
+                theme="outline" 
+                size="16" 
+              />
+            </button>
             <span>创建时间: {{ item.createdAt ? (item.createdAt.split('T')[0]) : '—' }}</span>
             <button
               class="btn btn-sm btn-outline btn-primary"

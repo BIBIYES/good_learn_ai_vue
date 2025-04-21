@@ -74,6 +74,11 @@ const router = createRouter({
           path:'question/:bankId',
           name:'QuestionBankDetail',
           component: () => import('@/views/teacher/QuestionBankDetail.vue')
+        },
+        {
+         path: 'exam',
+         name: 'teacher-exam',
+         component: () => import('@/views/teacher/ExamView.vue') 
         }
       ]
     },

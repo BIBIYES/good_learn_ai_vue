@@ -42,5 +42,5 @@ export const getTeacherCourse = () => {
  * @returns 返回跟新成功获取失败
  */
 export const updateTeacherCourse = (obj) => {
-  return request.post('/course/compile-course', obj)
+  return request.put('/course/compile-course', obj)
 }
