@@ -10,11 +10,11 @@ import {School, Add, Copy} from '@icon-park/vue-next'
 
 
 const loading = ref(true)
-const courses = ref([])
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
 
 // 添加分页相关状态
+const courses = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
 const pageSize = ref(10)
@@ -37,14 +37,20 @@ const editForm = ref({
 const handleGetCourses = async (page = 1) => {
   loading.value = true
   try {
-    const res = await getTeacherCourse({ page, pageSize: pageSize.value }) // 使用 pageSize
-    if (res.code === 200 && Array.isArray(res.data)) {
-      courses.value = res.data.reverse()
-      total.value = res.total // 假设接口返回总课程数
-      totalPages.value = Math.ceil(total.value / pageSize.value)// 计算总页数
+    const res = await getTeacherCourse(page, pageSize.value)
+    if (res.code === 200 ) {
+      courses.value = res.data.records.map(course => ({
+        ...course,
+        monitorName: course.monitorName || '无' // 如果 monitorName 为空，显示 '无'
+      }))
+      total.value = res.data.total // 假设接口返回总课程数
+      totalPages.value = res.data.pages // 计算总页数
+      currentPage.value = res.data.current // 更新当前页码
+      loading.value = false
     }
   } catch (err) {
-    message.error(err.message)
+    console.error('获取课程列表失败',err.message)
+    message.error('获取课程列表失败')
   } finally {
     loading.value = false
   }
@@ -53,7 +59,7 @@ const handleGetCourses = async (page = 1) => {
 // 在分页切换时传递 pageSize
 const handlePageChange = (page) => {
   if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page// 更新当前页
+    currentPage.value = page
     handleGetCourses(page)
   }
 }
@@ -124,7 +130,7 @@ const handleEditCourse = async () => {
 }
 
 onMounted(() => {
-  handleGetCourses()
+  handleGetCourses(1)
 })
 </script>
 <template>
@@ -324,7 +330,7 @@ onMounted(() => {
         </div>
 
         <div
-          v-if="totalPages > 1"
+          v-if="totalPages > 0"
           class="join"
         >
           <button

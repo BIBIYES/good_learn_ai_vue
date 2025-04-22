@@ -15,7 +15,7 @@ const router = useRouter()
 const questionBanks = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
-const pageSize = ref(9) // Default page size set to 9
+const pageSize = ref(10) // Default page size set to 9
 const loading = ref(false)
 
 // 按钮加载状态

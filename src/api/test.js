@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
 /**
- * 老师创建课程的一个方法
- * @param {课程对象} obj 
+ * 老师创建试卷的一个方法
+ * @param {试卷对象} obj 
  * @returns 返回创建成功或者失败
  */
 export const addexam = (obj) => {
@@ -10,18 +10,16 @@ export const addexam = (obj) => {
 }
 
 /**
- * 分页获取题目
- * @param {每页返回的数量} size 
- * @param {页码} current 
- * @param {试卷ID} examId
+ * 分页获取试卷
+ * @param {每页返回的数量} pageSize 每页条数，默认10条
+ * @param {页码} page 页码，默认第1页 
  * @returns 
  */
-export const getexam = (size,current, examId)=>{
+export const getexam = (pageSize,page)=>{
   return request.get('/exam/page',{
       params:{
-          size,
-          current,
-          examId
+          pageSize,
+          page,
       }
   })
 }

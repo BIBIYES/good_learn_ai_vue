@@ -6,9 +6,9 @@ import message from '@/plugin/message'
 
 // const msg = ref('');
 const exam = ref([])
-const current = ref(1)
+const currentPage = ref(1)
 const totalPages = ref(1)
-const size = ref(9) // Default page size set to 9
+const pageSize = ref(10) // Default page size set to 10
 const loading = ref(true) // Loading state for skeleton effect
 // const showCreateExam = ref(false)
 
@@ -29,11 +29,11 @@ const deleteConfirmExamName = ref('')
 const fetchExam = async(page = 1) => {
   loading.value = true // 开始加载
    try {
-    const res = await getexam(  page, size.value)
+    const res = await getexam(  page, pageSize.value)
       if (res.code === 200) {
        exam.value = res.data.records.map(record => ({ examId: record.examId, examName: record.examName, description: record.description, createdAt: record.createdAt, status: record.status === 1 ? '作业' : '考试' }))
-       current.value = res.data.current
        totalPages.value = res.data.pages
+       currentPage.value = res.data.current
        loading.value = false // 数据加载完成，更新加载状态
      } else {
        message.error(res.message || '获取试卷列表失败')
@@ -52,7 +52,7 @@ const newExam = ref({
   examName: '', // 试卷名称
   description: '' ,// 考试描述
   status: 1, // 考试类型 1 考试 2 模拟
-  examTime: '10', // 考试时间 
+  examTime: '', // 考试时间 
   
 })
 const handleCreateExam = async() => {
@@ -72,9 +72,9 @@ const handleCreateExam = async() => {
      message.success('创建成功')
      const modalCheckbox = document.getElementById('create_exam_modal')
      if (modalCheckbox) modalCheckbox.checked = false // 关闭模态框
-     newExam.value = { examName: '', description: '', status: 1, examTime: '10' }
+     newExam.value = { examName: '', description: '', status: 1, examTime: '' }
      newExam.value.description = '' // 重置描述
-     fetchExam(current.value) // 刷新列表
+     fetchExam(currentPage.value) // 刷新列表
     } else {
      message.error(res.message || '创建失败')
     }
@@ -115,7 +115,7 @@ const handleUpdate = async () => {
       const modalCheckbox = document.getElementById('edit_exam_modal')
       if (modalCheckbox) modalCheckbox.checked = false
       // 刷新列表
-      fetchExam(current.value)
+      fetchExam(currentPage.value)
     } else {
       message.error(res.message || '更新失败')
     }
@@ -147,7 +147,7 @@ const confirmDelete = async () => {
       const modalCheckbox = document.getElementById('delete_confirm_modal')
       if (modalCheckbox) modalCheckbox.checked = false
       // 刷新列表
-      fetchExam(current.value)
+      fetchExam(currentPage.value)
     } else {
       message.error(res.message || '删除失败')
     }
@@ -370,8 +370,8 @@ onMounted(() => {
         <div class="join">
           <button 
             class="join-item btn btn-sm"
-            :disabled="current === 1"
-            @click="changePage(current - 1)"
+            :disabled="currentPage === 1"
+            @click="changePage(currentPage - 1)"
           >
             «
           </button>
@@ -379,15 +379,15 @@ onMounted(() => {
             v-for="page in totalPages" 
             :key="page" 
             class="join-item btn btn-sm"
-            :class="{ 'btn-active': current === page }"
+            :class="{ 'btn-active': currentPage === page }"
             @click="changePage(page)"
           >
             {{ page }}
           </button>
           <button 
             class="join-item btn btn-sm"
-            :disabled="current === totalPages"
-            @click="changePage(current + 1)"
+            :disabled="currentPage === totalPages"
+            @click="changePage(currentPage + 1)"
           >
             »
           </button>
