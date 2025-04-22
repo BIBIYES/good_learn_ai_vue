@@ -18,6 +18,7 @@ const newCourse = ref({
 
 const editForm = ref({
   courseId: '',
+  coursePassword: '',
   className: '',
   description: '',
   monitorId: '',
@@ -28,7 +29,7 @@ const handleGetCourses = async () => {
   loading.value = true
   try {
     const res = await getTeacherCourse()
-    if (res.code === 200) {
+    if (res.code === 200 && Array.isArray(res.data)) {
       courses.value = res.data.reverse()
     }
   } catch (err) {
@@ -87,6 +88,7 @@ const handleEditCourse = async () => {
   try {
     const res = await updateTeacherCourse({
       courseId: editForm.value.courseId,
+      coursePassword: editForm.value.coursePassword,
       className: editForm.value.className,
       description: editForm.value.description,
       monitorId: editForm.value.monitorId,
@@ -262,6 +264,7 @@ onMounted(() => {
                 size="16" 
               />
             </button>
+            <span>课程密码: {{ item.coursePassword || '无密码' }}</span>
             <span>创建时间: {{ item.createdAt ? (item.createdAt.split('T')[0]) : '—' }}</span>
             <button
               class="btn btn-sm btn-outline btn-primary"
@@ -360,6 +363,14 @@ onMounted(() => {
             v-model="editForm.description"
             class="textarea textarea-bordered h-24"
           />
+        </div>
+        <div class="form-control mb-2">
+          <label class="label">课程密码</label>
+          <input
+            v-model="editForm.coursePassword"
+            class="input input-bordered"
+            readonly
+          >
         </div>
         <div class="form-control mb-2">
           <label class="label">状态</label>

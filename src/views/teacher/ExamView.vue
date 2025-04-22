@@ -33,7 +33,7 @@ const fetchExam = async(page = 1) => {
       if (res.code === 200) {
        exam.value = res.data.records.map(record => ({ examId: record.examId, examName: record.examName, description: record.description, createdAt: record.createdAt, status: record.status === 1 ? '作业' : '考试' }))
        current.value = res.data.current
-       totalPages.value = res.data.page
+       totalPages.value = res.data.pages
        loading.value = false // 数据加载完成，更新加载状态
      } else {
        message.error(res.message || '获取试卷列表失败')
