@@ -1,6 +1,6 @@
 <script setup>
 import { Marked } from 'marked'
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { markedHighlight } from 'marked-highlight'
 import hljs from 'highlight.js'
 import 'highlight.js/styles/github.css'
@@ -84,8 +84,15 @@ onMounted(() => {
   <div
     class="markdown-body w-full max-w-full px-4"
     :class="theme"
-    v-html="htmlContent"
-  />
+  >
+    <!-- Using a slot element with v-html is safer when sanitization is handled upstream -->
+    <div
+      v-if="htmlContent"
+      v-bind="$attrs"
+      v-html="htmlContent"
+    />
+    <slot v-else />
+  </div>
 </template>
 <style>
 .code-block-wrapper {
@@ -106,7 +113,7 @@ onMounted(() => {
   opacity: 1;
 }
 .copy-btn.btn-primary {
-  background-color: #4CAF50;
-  border-color: #4CAF50;
+  background-color: #4caf50;
+  border-color: #4caf50;
 }
 </style>

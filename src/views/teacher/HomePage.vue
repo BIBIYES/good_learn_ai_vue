@@ -72,10 +72,7 @@ onMounted(() => {
             theme="outline"
             size="38"
           />
-          <span>教师首页</span>
-          <p class="ml-4 text-lg">
-            你好，{{ userStore.userInfo.username }} 老师，欢迎回来！
-          </p>
+          <span>欢迎回来，<span class="text-primary">{{ userStore.userInfo.username }}</span>老师!</span>
         </template>
       </TitleBar>
     </div>

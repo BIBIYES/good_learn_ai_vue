@@ -29,8 +29,8 @@ const handleRegister = async () => {
   }
 
   // 密码复杂度验证
-  if (registerForm.value.password.length > 6) {
-    message.error('密码必须包含至少6个字符')
+  if (registerForm.value.password.length < 8) {
+    message.error('密码必须包含至少8个字符')
     return
   }
 
