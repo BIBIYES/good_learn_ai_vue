@@ -14,7 +14,10 @@ const isDarkMode = ref(false)
 // 切换主题
 const toggleTheme = () => {
   isDarkMode.value = !isDarkMode.value
-  document.documentElement.setAttribute('data-theme', isDarkMode.value ? 'dark' : 'emerald')
+  document.documentElement.setAttribute(
+    'data-theme',
+    isDarkMode.value ? 'dark' : 'emerald',
+  )
   // 保存主题选择到本地存储
   localStorage.setItem('theme', isDarkMode.value ? 'dark' : 'emerald')
 }
@@ -34,9 +37,14 @@ onMounted(() => {
     document.documentElement.setAttribute('data-theme', savedTheme)
   } else {
     // 检查系统是否为暗色模式
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const prefersDark = window.matchMedia(
+      '(prefers-color-scheme: dark)',
+    ).matches
     isDarkMode.value = prefersDark
-    document.documentElement.setAttribute('data-theme', prefersDark ? 'dark' : 'emerald')
+    document.documentElement.setAttribute(
+      'data-theme',
+      prefersDark ? 'dark' : 'emerald',
+    )
   }
 })
 </script>
@@ -44,7 +52,9 @@ onMounted(() => {
 <template>
   <div class="app flex h-screen overflow-hidden">
     <!-- 侧边导航栏 -->
-    <div class="sidebar p-4 flex-col justify-between items-center hidden sm:flex transition-all duration-300 w-75">
+    <div
+      class="sidebar p-4 flex-col justify-between items-center hidden sm:flex transition-all duration-300 w-75"
+    >
       <nav class="flex flex-col items-center space-y-4">
         <!-- 网站Logo -->
         <div class="my-logo">
@@ -59,40 +69,22 @@ onMounted(() => {
         </div>
       </nav>
       <!-- 页面底部导航链接 -->
-      <footer class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig">
+      <footer
+        class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig"
+      >
         <!-- 主题切换按钮 -->
-        <button
-          class="btn btn-md w-30"
-          @click="toggleTheme"
-        >
-          <Sun
-            v-if="isDarkMode"
-            theme="outline"
-            size="18"
-          />
-          <Moon
-            v-else
-            theme="outline"
-            size="18"
-          />
+        <button class="btn btn-md w-30" @click="toggleTheme">
+          <Sun v-if="isDarkMode" theme="outline" size="18" />
+          <Moon v-else theme="outline" size="18" />
           {{ isDarkMode ? '亮色模式' : '暗色模式' }}
         </button>
-        
-        <button
-          class="btn btn-md w-30"
-          @click="navigateToGithub()"
-        >
-          <Github
-            theme="outline"
-            size="18"
-          />Github
+
+        <button class="btn btn-md w-30" @click="navigateToGithub()">
+          <Github theme="outline" size="18" />Github
         </button>
         <router-link to="/about">
           <button class="btn btn-md w-30">
-            <attention
-              theme="outline"
-              size="18"
-            />关于我们
+            <attention theme="outline" size="18" />关于我们
           </button>
         </router-link>
       </footer>

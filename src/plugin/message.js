@@ -9,7 +9,7 @@ const message = {
   create(message, type, duration = 3000, position = 'top-center') {
     // 消息位置容器
     const messageContainer = document.createElement('div')
-    
+
     // 根据position设置位置类名
     const positionClasses = {
       'top-center': 'toast-top toast-center',
@@ -17,9 +17,9 @@ const message = {
       'top-right': 'toast-top toast-end',
       'bottom-center': 'toast-bottom toast-center',
       'bottom-left': 'toast-bottom toast-start',
-      'bottom-right': 'toast-bottom toast-end'
+      'bottom-right': 'toast-bottom toast-end',
     }
-    
+
     messageContainer.className = `toast ${positionClasses[position] || 'toast-top toast-center'} z-50 w-100`
 
     // SVG 图标（不同类型对应不同图标）
@@ -29,7 +29,7 @@ const message = {
       warning:
         'M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z',
       error:
-        'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z'
+        'M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z',
     }
 
     // 设置消息内容和颜色样式
@@ -37,9 +37,9 @@ const message = {
       info: 'bg-info text-info-content',
       success: 'bg-success text-success-content',
       warning: 'bg-warning text-warning-content',
-      error: 'bg-error text-error-content'
+      error: 'bg-error text-error-content',
     }
-    
+
     messageContainer.innerHTML = `
       <div class="alert ${colorClasses[type]}" role="alert">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="h-6 w-6 shrink-0 stroke-current">
@@ -81,7 +81,7 @@ const message = {
 
   error(message, duration = 3000, position = 'top-center') {
     return this.create(message, 'error', duration, position)
-  }
+  },
 }
 
 export default message

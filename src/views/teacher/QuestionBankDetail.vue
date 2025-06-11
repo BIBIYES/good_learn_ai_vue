@@ -1,7 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import { getQuestionBankById, createQuestion, deleteQuestion, updateQuestion } from '@/api/question'
+import {
+  getQuestionBankById,
+  createQuestion,
+  deleteQuestion,
+  updateQuestion,
+} from '@/api/question'
 import message from '@/plugin/message'
 import { FileQuestion, Add, ArrowLeft, Edit, Delete } from '@icon-park/vue-next'
 
@@ -23,7 +28,7 @@ const newQuestion = ref({
   bankId: bankId.value,
   content: '',
   difficulty: '1', // 默认简单难度
-  status: true
+  status: true,
 })
 
 // 编辑题目模态框
@@ -34,7 +39,7 @@ const editQuestion = ref({
   bankId: bankId.value,
   content: '',
   difficulty: '1',
-  status: true
+  status: true,
 })
 
 // 删除确认模态框
@@ -64,14 +69,14 @@ const fetchQuestions = async (page = 1) => {
 }
 
 // 切换分页
-const changePage = (page) => {
+const changePage = page => {
   if (page >= 1 && page <= totalPages.value) {
     fetchQuestions(page)
   }
 }
 
 // 格式化日期
-const formatDate = (dateString) => {
+const formatDate = dateString => {
   try {
     const date = new Date(dateString)
     return date.toLocaleString()
@@ -82,8 +87,8 @@ const formatDate = (dateString) => {
 }
 
 // 获取难度标签样式
-const getDifficultyStyle = (difficulty) => {
-  switch(difficulty) {
+const getDifficultyStyle = difficulty => {
+  switch (difficulty) {
     case '1':
     case 'easy':
       return 'badge-success'
@@ -100,12 +105,12 @@ const getDifficultyStyle = (difficulty) => {
 
 // 难度中文映射
 const difficultyMap = {
-  '1': '简单',
-  '2': '中等',
-  '3': '困难',
-  'easy': '简单',
-  'medium': '中等',
-  'hard': '困难'
+  1: '简单',
+  2: '中等',
+  3: '困难',
+  easy: '简单',
+  medium: '中等',
+  hard: '困难',
 }
 
 // 添加题目
@@ -114,15 +119,15 @@ const handleCreateQuestion = async () => {
     message.error('题目内容不能为空')
     return
   }
-  
+
   createLoading.value = true
   try {
     const res = await createQuestion({
       bankId: bankId.value,
       content: newQuestion.value.content,
-      difficulty: newQuestion.value.difficulty
+      difficulty: newQuestion.value.difficulty,
     })
-    
+
     if (res.code === 200) {
       message.success('添加题目成功')
       showCreateModal.value = false
@@ -130,7 +135,7 @@ const handleCreateQuestion = async () => {
         bankId: bankId.value,
         content: '',
         difficulty: '1',
-        status: true
+        status: true,
       }
       fetchQuestions(currentPage.value)
     } else {
@@ -145,13 +150,20 @@ const handleCreateQuestion = async () => {
 }
 
 // 打开编辑模态框
-const openEditModal = (question) => {
+const openEditModal = question => {
   editQuestion.value = {
     questionId: question.questionId,
     bankId: question.bankId,
     content: question.content,
-    difficulty: question.difficulty === 'easy' ? '1' : question.difficulty === 'medium' ? '2' : question.difficulty === 'hard' ? '3' : question.difficulty,
-    status: question.status
+    difficulty:
+      question.difficulty === 'easy'
+        ? '1'
+        : question.difficulty === 'medium'
+          ? '2'
+          : question.difficulty === 'hard'
+            ? '3'
+            : question.difficulty,
+    status: question.status,
   }
   showEditModal.value = true
 }
@@ -162,7 +174,7 @@ const handleEditQuestion = async () => {
     message.error('题目内容不能为空')
     return
   }
-  
+
   editLoading.value = true
   try {
     const res = await updateQuestion({
@@ -170,9 +182,9 @@ const handleEditQuestion = async () => {
       bankId: editQuestion.value.bankId,
       content: editQuestion.value.content,
       difficulty: editQuestion.value.difficulty,
-      status: editQuestion.value.status
+      status: editQuestion.value.status,
     })
-    
+
     if (res.code === 200) {
       message.success('编辑题目成功')
       showEditModal.value = false
@@ -189,7 +201,7 @@ const handleEditQuestion = async () => {
 }
 
 // 打开删除确认模态框
-const openDeleteModal = (question) => {
+const openDeleteModal = question => {
   questionToDelete.value = question
   showDeleteModal.value = true
 }
@@ -197,15 +209,15 @@ const openDeleteModal = (question) => {
 // 删除题目
 const handleDeleteQuestion = async () => {
   if (!questionToDelete.value) return
-  
+
   deleteLoading.value = true
   try {
     const res = await deleteQuestion(questionToDelete.value.questionId)
-    
+
     if (res.code === 200) {
       message.success('删除题目成功')
       showDeleteModal.value = false
-      
+
       // 重新获取当前页，如果当前页没有数据了，则获取上一页
       if (questions.value.length === 1 && currentPage.value > 1) {
         fetchQuestions(currentPage.value - 1)
@@ -234,19 +246,10 @@ onMounted(() => {
     <TitleBar>
       <template #title>
         <div class="flex items-center gap-2">
-          <router-link 
-            to="/t/question" 
-            class="btn btn-ghost btn-sm btn-circle"
-          >
-            <ArrowLeft
-              theme="outline"
-              size="20"
-            />
+          <router-link to="/t/question" class="btn btn-ghost btn-sm btn-circle">
+            <ArrowLeft theme="outline" size="20" />
           </router-link>
-          <FileQuestion
-            theme="outline"
-            size="38"
-          />
+          <FileQuestion theme="outline" size="38" />
           <span>{{ bankName }}</span>
         </div>
       </template>
@@ -255,30 +258,24 @@ onMounted(() => {
           class="btn btn-primary btn-sm md:btn-md"
           @click="showCreateModal = true"
         >
-          <Add
-            theme="outline"
-            size="18"
-          />
+          <Add theme="outline" size="18" />
           添加题目
         </button>
       </template>
     </TitleBar>
-    
+
     <!-- Main content area -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6">
       <!-- Loading State - Skeleton -->
-      <div
-        v-if="loading"
-        class="w-full"
-      >
+      <div v-if="loading" class="w-full">
         <div class="skeleton h-12 w-full mb-4 rounded" />
-        <div 
-          v-for="i in 5" 
-          :key="i" 
+        <div
+          v-for="i in 5"
+          :key="i"
           class="skeleton h-16 w-full mb-2 rounded"
         />
       </div>
- 
+
       <!-- Empty State -->
       <div
         v-else-if="!questions.length"
@@ -293,25 +290,15 @@ onMounted(() => {
           <p class="text-base-content/70 text-lg">
             该题库暂无题目，快去添加一个吧！
           </p>
-          <button
-            class="btn btn-primary mt-4"
-            @click="showCreateModal = true"
-          >
-            <Add
-              theme="outline"
-              size="18"
-              class="mr-1"
-            />
+          <button class="btn btn-primary mt-4" @click="showCreateModal = true">
+            <Add theme="outline" size="18" class="mr-1" />
             添加第一个题目
           </button>
         </div>
       </div>
 
       <!-- Questions Table -->
-      <div
-        v-else
-        class="overflow-x-auto w-full"
-      >
+      <div v-else class="overflow-x-auto w-full">
         <table class="table table-zebra">
           <!-- Table head -->
           <thead>
@@ -338,16 +325,18 @@ onMounted(() => {
                 {{ question.content }}
               </td>
               <td>
-                <div 
-                  class="badge" 
+                <div
+                  class="badge"
                   :class="getDifficultyStyle(question.difficulty)"
                 >
-                  {{ difficultyMap[question.difficulty] || question.difficulty }}
+                  {{
+                    difficultyMap[question.difficulty] || question.difficulty
+                  }}
                 </div>
               </td>
               <td>
-                <div 
-                  class="badge" 
+                <div
+                  class="badge"
                   :class="question.status ? 'badge-success' : 'badge-ghost'"
                 >
                   {{ question.status ? '已启用' : '未启用' }}
@@ -358,23 +347,17 @@ onMounted(() => {
               </td>
               <td class="whitespace-nowrap">
                 <div class="flex items-center gap-2">
-                  <button 
+                  <button
                     class="btn btn-ghost btn-xs"
                     @click="openEditModal(question)"
                   >
-                    <Edit
-                      theme="outline"
-                      size="16"
-                    />
+                    <Edit theme="outline" size="16" />
                   </button>
-                  <button 
+                  <button
                     class="btn btn-ghost btn-xs text-error"
                     @click="openDeleteModal(question)"
                   >
-                    <Delete
-                      theme="outline"
-                      size="16"
-                    />
+                    <Delete theme="outline" size="16" />
                   </button>
                 </div>
               </td>
@@ -385,36 +368,33 @@ onMounted(() => {
     </div>
 
     <!-- Pagination section -->
-    <div 
-      v-if="!loading && questions.length > 0" 
+    <div
+      v-if="!loading && questions.length > 0"
       class="mt-auto border-t border-base-200 p-4 bg-base-100"
     >
       <div class="flex justify-center space-x-5">
         <div class="btn btn-sm">
-          <div
-            aria-label="status"
-            class="status status-primary"
-          />
+          <div aria-label="status" class="status status-primary" />
           <span>总计题目数：</span>{{ total }}
         </div>
         <div class="join">
-          <button 
+          <button
             class="join-item btn btn-sm"
             :disabled="currentPage === 1"
             @click="changePage(currentPage - 1)"
           >
             «
           </button>
-          <button 
-            v-for="page in totalPages" 
-            :key="page" 
+          <button
+            v-for="page in totalPages"
+            :key="page"
             class="join-item btn btn-sm"
             :class="{ 'btn-active': currentPage === page }"
             @click="changePage(page)"
           >
             {{ page }}
           </button>
-          <button 
+          <button
             class="join-item btn btn-sm"
             :disabled="currentPage === totalPages"
             @click="changePage(currentPage + 1)"
@@ -426,17 +406,14 @@ onMounted(() => {
     </div>
 
     <!-- 添加题目模态框 -->
-    <dialog
-      class="modal"
-      :open="showCreateModal"
-    >
+    <dialog class="modal" :open="showCreateModal">
       <div class="modal-box w-96 rounded-xl shadow-lg">
-        <h3 class="font-bold text-lg mb-4">
-          添加题目
-        </h3>
+        <h3 class="font-bold text-lg mb-4">添加题目</h3>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text">题目内容<span class="text-error">*</span></span>
+            <span class="label-text"
+              >题目内容<span class="text-error">*</span></span
+            >
           </label>
           <textarea
             v-model="newQuestion.content"
@@ -446,7 +423,9 @@ onMounted(() => {
         </div>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text">难度等级<span class="text-error">*</span></span>
+            <span class="label-text"
+              >难度等级<span class="text-error">*</span></span
+            >
           </label>
           <div class="rating rating-lg">
             <input
@@ -455,28 +434,28 @@ onMounted(() => {
               name="create-rating"
               class="mask mask-star-2 bg-green-500"
               value="1"
-            >
+            />
             <input
               v-model="newQuestion.difficulty"
               type="radio"
               name="create-rating"
               class="mask mask-star-2 bg-yellow-500"
               value="2"
-            >
+            />
             <input
               v-model="newQuestion.difficulty"
               type="radio"
               name="create-rating"
               class="mask mask-star-2 bg-red-500"
               value="3"
-            >
+            />
           </div>
           <div class="text-sm mt-2">
             <span
               :class="{
                 'text-green-500': newQuestion.difficulty === '1',
                 'text-yellow-500': newQuestion.difficulty === '2',
-                'text-red-500': newQuestion.difficulty === '3'
+                'text-red-500': newQuestion.difficulty === '3',
               }"
             >
               {{ difficultyMap[newQuestion.difficulty] }}
@@ -484,10 +463,7 @@ onMounted(() => {
           </div>
         </div>
         <div class="modal-action">
-          <button
-            class="btn btn-ghost"
-            @click="showCreateModal = false"
-          >
+          <button class="btn btn-ghost" @click="showCreateModal = false">
             取消
           </button>
           <button
@@ -510,17 +486,14 @@ onMounted(() => {
     </dialog>
 
     <!-- 编辑题目模态框 -->
-    <dialog
-      class="modal"
-      :open="showEditModal"
-    >
+    <dialog class="modal" :open="showEditModal">
       <div class="modal-box w-96 rounded-xl shadow-lg">
-        <h3 class="font-bold text-lg mb-4">
-          编辑题目
-        </h3>
+        <h3 class="font-bold text-lg mb-4">编辑题目</h3>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text">题目内容<span class="text-error">*</span></span>
+            <span class="label-text"
+              >题目内容<span class="text-error">*</span></span
+            >
           </label>
           <textarea
             v-model="editQuestion.content"
@@ -530,7 +503,9 @@ onMounted(() => {
         </div>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text">难度等级<span class="text-error">*</span></span>
+            <span class="label-text"
+              >难度等级<span class="text-error">*</span></span
+            >
           </label>
           <div class="rating rating-lg">
             <input
@@ -539,28 +514,28 @@ onMounted(() => {
               name="edit-rating"
               class="mask mask-star-2 bg-green-500"
               value="1"
-            >
+            />
             <input
               v-model="editQuestion.difficulty"
               type="radio"
               name="edit-rating"
               class="mask mask-star-2 bg-yellow-500"
               value="2"
-            >
+            />
             <input
               v-model="editQuestion.difficulty"
               type="radio"
               name="edit-rating"
               class="mask mask-star-2 bg-red-500"
               value="3"
-            >
+            />
           </div>
           <div class="text-sm mt-2">
             <span
               :class="{
                 'text-green-500': editQuestion.difficulty === '1',
                 'text-yellow-500': editQuestion.difficulty === '2',
-                'text-red-500': editQuestion.difficulty === '3'
+                'text-red-500': editQuestion.difficulty === '3',
               }"
             >
               {{ difficultyMap[editQuestion.difficulty] }}
@@ -574,15 +549,14 @@ onMounted(() => {
               v-model="editQuestion.status"
               type="checkbox"
               class="toggle toggle-success"
-            >
-            <span class="text-sm">{{ editQuestion.status ? '启用' : '停用' }}</span>
+            />
+            <span class="text-sm">{{
+              editQuestion.status ? '启用' : '停用'
+            }}</span>
           </label>
         </div>
         <div class="modal-action">
-          <button
-            class="btn btn-ghost"
-            @click="showEditModal = false"
-          >
+          <button class="btn btn-ghost" @click="showEditModal = false">
             取消
           </button>
           <button
@@ -605,22 +579,18 @@ onMounted(() => {
     </dialog>
 
     <!-- 删除确认模态框 -->
-    <dialog
-      class="modal"
-      :open="showDeleteModal"
-    >
+    <dialog class="modal" :open="showDeleteModal">
       <div class="modal-box w-96 rounded-xl shadow-lg">
-        <h3 class="font-bold text-lg mb-4">
-          确认删除
-        </h3>
+        <h3 class="font-bold text-lg mb-4">确认删除</h3>
         <p class="py-4">
-          您确定要删除题目 <span class="font-bold text-error">{{ questionToDelete?.content }}</span> 吗？此操作不可逆。
+          您确定要删除题目
+          <span class="font-bold text-error">{{
+            questionToDelete?.content
+          }}</span>
+          吗？此操作不可逆。
         </p>
         <div class="modal-action">
-          <button
-            class="btn btn-ghost"
-            @click="showDeleteModal = false"
-          >
+          <button class="btn btn-ghost" @click="showDeleteModal = false">
             取消
           </button>
           <button
@@ -655,4 +625,4 @@ onMounted(() => {
 .rating .mask-star-2 {
   cursor: pointer;
 }
-</style> 
+</style>

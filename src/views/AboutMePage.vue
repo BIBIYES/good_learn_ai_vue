@@ -1,9 +1,7 @@
 <script setup>
-
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 gsap.registerPlugin(ScrollTrigger)
-
 
 const isLoading = ref(true)
 
@@ -21,7 +19,7 @@ const scrollToBottom = () => {
   if (developmentTeam.value) {
     developmentTeam.value.scrollIntoView({
       behavior: 'smooth',
-      block: 'start'
+      block: 'start',
     })
   }
 }
@@ -45,7 +43,7 @@ const formData = ref({
   phone: '',
   class: '',
   mbti: '',
-  intro: ''
+  intro: '',
 })
 
 const errors = ref({})
@@ -58,7 +56,7 @@ const validateField = (field, value) => {
     phone: /^\+?\d{7,15}$/.test(value),
     class: value.trim().length >= 5,
     mbti: /^[A-Z]{4}$/.test(value),
-    intro: value.trim().length >= 20
+    intro: value.trim().length >= 20,
   }
 
   errors.value[field] = !validations[field]
@@ -80,7 +78,7 @@ const handleSubmit = async () => {
 
   try {
     // 模拟 API 调用
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    await new Promise(resolve => setTimeout(resolve, 1000))
 
     // 重置表单
     formData.value = {
@@ -89,7 +87,7 @@ const handleSubmit = async () => {
       phone: '',
       class: '',
       mbti: '',
-      intro: ''
+      intro: '',
     }
     errors.value = {}
   } finally {
@@ -109,8 +107,8 @@ const animation = () => {
       start: 'top center',
       end: 'top center',
       // markers: true,
-      toggleActions: 'play none reverse none' // 关键配置
-    }
+      toggleActions: 'play none reverse none', // 关键配置
+    },
   })
   gsap.fromTo(
     '.lightning',
@@ -118,7 +116,7 @@ const animation = () => {
       // 起始状态
       opacity: 0, // 透明度从 0 开始
       textShadow: '5px 5px 5px #D86E28', // 起始无阴影
-      scale: 1 // 起始缩放比例为 1
+      scale: 1, // 起始缩放比例为 1
     },
     {
       // 结束状态
@@ -128,34 +126,25 @@ const animation = () => {
       duration: 0.8, // 动画持续时间
       yoyo: true, // 动画来回切换
       repeat: -1, // 无限循环
-      ease: 'power1.inOut' // 缓动效果
-    }
+      ease: 'power1.inOut', // 缓动效果
+    },
   )
 }
 </script>
 
 <template>
   <div class="app flex flex-col h-screen w-full">
-    <dialog
-      id="my_modal_1"
-      class="modal"
-    >
+    <dialog id="my_modal_1" class="modal">
       <div class="modal-box max-w-md">
         <h3 class="text-xl font-bold text-primary mb-6">
           加入 <span class="outlined-text-black">X</span> CAMP申请表
         </h3>
 
         <!-- 表单容器 -->
-        <form
-          class="space-y-4"
-          @submit.prevent="handleSubmit"
-        >
+        <form class="space-y-4" @submit.prevent="handleSubmit">
           <!-- 姓名 -->
           <div class="form-control space-y-1">
-            <label
-              class="label"
-              for="name"
-            >
+            <label class="label" for="name">
               <span class="label-text">你的姓名</span>
             </label>
             <input
@@ -167,21 +156,15 @@ const animation = () => {
               :class="{ 'input-error': errors.name }"
               required
               @blur="validateField('name', formData.name)"
-            >
-            <span
-              v-if="errors.name"
-              class="text-error text-sm"
-            >
+            />
+            <span v-if="errors.name" class="text-error text-sm">
               请输入至少2个字符的有效姓名
             </span>
           </div>
 
           <!-- 邮箱 -->
           <div class="form-control space-y-1">
-            <label
-              class="label"
-              for="email"
-            >
+            <label class="label" for="email">
               <span class="label-text">电子邮箱</span>
             </label>
             <input
@@ -193,21 +176,15 @@ const animation = () => {
               :class="{ 'input-error': errors.email }"
               required
               @blur="validateField('email', formData.email)"
-            >
-            <span
-              v-if="errors.email"
-              class="text-error text-sm"
-            >
+            />
+            <span v-if="errors.email" class="text-error text-sm">
               请输入有效的邮箱地址
             </span>
           </div>
 
           <!-- 联系方式 -->
           <div class="form-control space-y-1">
-            <label
-              class="label"
-              for="phone"
-            >
+            <label class="label" for="phone">
               <span class="label-text">联系电话</span>
             </label>
             <input
@@ -219,21 +196,15 @@ const animation = () => {
               :class="{ 'input-error': errors.phone }"
               required
               @blur="validateField('phone', formData.phone)"
-            >
-            <span
-              v-if="errors.phone"
-              class="text-error text-sm"
-            >
+            />
+            <span v-if="errors.phone" class="text-error text-sm">
               请输入有效的电话号码（7-15位数字）
             </span>
           </div>
 
           <!-- 班级 -->
           <div class="form-control space-y-1">
-            <label
-              class="label"
-              for="class"
-            >
+            <label class="label" for="class">
               <span class="label-text">班级</span>
             </label>
             <input
@@ -245,27 +216,18 @@ const animation = () => {
               :class="{ 'input-error': errors.class }"
               required
               @blur="validateField('class', formData.class)"
-            >
-            <span
-              v-if="errors.class"
-              class="text-error text-sm"
-            >
+            />
+            <span v-if="errors.class" class="text-error text-sm">
               请输入有效的班级信息
             </span>
           </div>
 
           <!-- 人格特质 -->
           <div class="form-control space-y-1">
-            <label
-              class="label"
-              for="mbti"
-            >
+            <label class="label" for="mbti">
               <span class="label-text flex items-center gap-2">
                 人格特质
-                <div
-                  class="tooltip"
-                  data-tip="点击进行MBTI测试"
-                >
+                <div class="tooltip" data-tip="点击进行MBTI测试">
                   <a
                     href="https://www.16personalities.com/ch/"
                     target="_blank"
@@ -288,21 +250,15 @@ const animation = () => {
               required
               @input="formData.mbti = formData.mbti.toUpperCase()"
               @blur="validateField('mbti', formData.mbti)"
-            >
-            <span
-              v-if="errors.mbti"
-              class="text-error text-sm"
-            >
+            />
+            <span v-if="errors.mbti" class="text-error text-sm">
               请输入4位大写字母的MBTI类型
             </span>
           </div>
 
           <!-- 自我介绍 -->
           <div class="form-control space-y-1">
-            <label
-              class="label"
-              for="intro"
-            >
+            <label class="label" for="intro">
               <span class="label-text">描述一下自己吧~</span>
             </label>
             <textarea
@@ -314,10 +270,7 @@ const animation = () => {
               required
               @blur="validateField('intro', formData.intro)"
             />
-            <span
-              v-if="errors.intro"
-              class="text-error text-sm"
-            >
+            <span v-if="errors.intro" class="text-error text-sm">
               请输入至少20字的自我介绍
             </span>
           </div>
@@ -329,21 +282,13 @@ const animation = () => {
               class="btn btn-primary flex-1"
               :disabled="isSubmitting"
             >
-              <span
-                v-if="isSubmitting"
-                class="loading loading-spinner"
-              />
+              <span v-if="isSubmitting" class="loading loading-spinner" />
               {{ isSubmitting ? '提交中...' : '投递申请' }}
             </button>
 
-            <div class="divider divider-horizontal">
-              或
-            </div>
+            <div class="divider divider-horizontal">或</div>
 
-            <form
-              method="dialog"
-              class="flex-1"
-            >
+            <form method="dialog" class="flex-1">
               <button
                 class="btn btn-outline w-full"
                 aria-label="取消提交"
@@ -357,10 +302,7 @@ const animation = () => {
       </div>
 
       <!-- 点击外部关闭 -->
-      <form
-        method="dialog"
-        class="modal-backdrop"
-      >
+      <form method="dialog" class="modal-backdrop">
         <button>close</button>
       </form>
     </dialog>
@@ -402,7 +344,9 @@ const animation = () => {
           <div class="max-w-md">
             <h1 class="mb-5 text-5xl font-bold">
               这里是
-              <span class="outlined-text animate__animated animate__flash">X</span><span>CAMP</span>
+              <span class="outlined-text animate__animated animate__flash"
+                >X</span
+              ><span>CAMP</span>
             </h1>
             <p class="mb-5">
               X Camp
@@ -478,80 +422,55 @@ const animation = () => {
                   class="w-full"
                   src="../assets/author/lzh.png"
                   alt="Shoes"
-                >
+                />
               </figure>
               <div class="card-body">
-                <h2 class="card-title">
-                  骆子豪
-                </h2>
+                <h2 class="card-title">骆子豪</h2>
                 <p>
                   后端工程师：负责后端的接口设计部分,拥有多软开奖项,是一名独立开发者。
                 </p>
                 <div class="card-actions justify-end">
-                  <button class="btn btn-primary btn-outline">
-                    攻略他
-                  </button>
+                  <button class="btn btn-primary btn-outline">攻略他</button>
                 </div>
               </div>
             </div>
             <div class="card bg-base-100 shadow-sm">
               <figure>
-                <img
-                  src="../assets/author/lh.png"
-                  alt="Shoes"
-                >
+                <img src="../assets/author/lh.png" alt="Shoes" />
               </figure>
               <div class="card-body">
-                <h2 class="card-title">
-                  李豪
-                </h2>
+                <h2 class="card-title">李豪</h2>
                 <p>
                   AI算法工程师：本项目的核心算法工程师，负本项目的模型训练，和算法实现，拥有多项数模奖项，比赛经验
                 </p>
                 <div class="card-actions justify-end">
-                  <button class="btn btn-primary btn-outline">
-                    攻略他
-                  </button>
+                  <button class="btn btn-primary btn-outline">攻略他</button>
                 </div>
               </div>
             </div>
             <div class="card bg-base-100 shadow-sm">
               <figure>
-                <img
-                  src="../assets/author/ckl.png"
-                  alt="Shoes"
-                >
+                <img src="../assets/author/ckl.png" alt="Shoes" />
               </figure>
               <div class="card-body">
-                <h2 class="card-title">
-                  陈克岚
-                </h2>
+                <h2 class="card-title">陈克岚</h2>
                 <p>
                   前端工程：师负责页面的前端设计部分,还是一名插画师,拥有多项奖项，比赛经验
                 </p>
                 <div class="card-actions justify-end">
-                  <button class="btn btn-primary btn-outline">
-                    攻略他
-                  </button>
+                  <button class="btn btn-primary btn-outline">攻略他</button>
                 </div>
               </div>
             </div>
             <div class="card bg-base-100 shadow-sm">
               <figure>
-                <img
-                  src="../assets/author/zzx.png"
-                  alt="Shoes"
-                >
+                <img src="../assets/author/zzx.png" alt="Shoes" />
               </figure>
               <div class="card-body">
-                <h2 class="card-title">
-                  曾志翔
-                </h2>
+                <h2 class="card-title">曾志翔</h2>
                 <p>运维工程师：扶着服务器的运行,业余还是一名MC MOD开发者</p>
                 <div class="card-actions justify-end">
-                  <button class="btn btn-primary btn-outline">
-                    攻略他
-                  </button>
+                  <button class="btn btn-primary btn-outline">攻略他</button>
                 </div>
               </div>
             </div>

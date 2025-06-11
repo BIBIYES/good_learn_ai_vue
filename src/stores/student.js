@@ -10,12 +10,12 @@ export const useStudentStore = defineStore(
   () => {
     /** @type {Array} 存储学生的课程列表数据 */
     const studentCourse = ref([])
-    
+
     /**
      * 设置学生的课程列表
      * @param {Array} data - 要设置的课程数据数组
      */
-    const setStudentCourse = (data) => {
+    const setStudentCourse = data => {
       studentCourse.value = data
     }
 
@@ -24,12 +24,11 @@ export const useStudentStore = defineStore(
      * @param {string|number} courseId - 要查询的课程ID
      * @returns {Object|undefined} 返回匹配的课程对象，如果未找到则返回undefined
      */
-    const getStudentCourse = (courseId) => {
-      return studentCourse.value.find((course) => course.courseId == courseId)
+    const getStudentCourse = courseId => {
+      return studentCourse.value.find(course => course.courseId == courseId)
     }
 
     return { studentCourse, setStudentCourse, getStudentCourse }
-  }
-  ,
-  { persist: true }
+  },
+  { persist: true },
 )

@@ -8,19 +8,27 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ChangePasswordForm: typeof import('./../components/form/ChangePasswordForm.vue')['default']
     ChatBox: typeof import('./../components/AI/ChatBox.vue')['default']
     ChatHome: typeof import('./../components/AI/ChatHome.vue')['default']
     ChatInput: typeof import('./../components/AI/ChatInput.vue')['default']
     CollapseIcon: typeof import('./../components/icon/collapse-icon.vue')['default']
     CourseCard: typeof import('./../components/student/CourseCard.vue')['default']
     ExpandIcon: typeof import('./../components/icon/expand-icon.vue')['default']
+    ForgotPasswordForm: typeof import('./../components/form/ForgotPasswordForm.vue')['default']
     HistoryCard: typeof import('./../components/AI/HistoryCard.vue')['default']
+    LayoutView: typeof import('./../components/layout/LayoutView.vue')['default']
     LoadingState: typeof import('./../components/common/LoadingState.vue')['default']
     LoginForm: typeof import('./../components/form/LoginForm.vue')['default']
     MarkdBox: typeof import('./../components/common/MarkdBox.vue')['default']
+    Modal: typeof import('./../components/common/Modal.vue')['default']
     MyLogo: typeof import('./../components/common/MyLogo.vue')['default']
+    Pagination: typeof import('./../components/common/Pagination.vue')['default']
     PinInput: typeof import('./../components/common/PinInput.vue')['default']
+    QuestionForm: typeof import('./../components/teacher/QuestionForm.vue')['default']
+    QuestionList: typeof import('./../components/teacher/QuestionList.vue')['default']
     RegisterForm: typeof import('./../components/form/RegisterForm.vue')['default']
+    RichTextEditor: typeof import('./../components/common/RichTextEditor.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SiderBarMenu: typeof import('./../components/AI/SiderBarMenu.vue')['default']
@@ -29,5 +37,6 @@ declare module 'vue' {
     TeacherSideBarMenu: typeof import('./../components/teacher/TeacherSideBarMenu.vue')['default']
     TeacherStatsCharts: typeof import('./../components/teacher/TeacherStatsCharts.vue')['default']
     TitleBar: typeof import('./../components/common/TitleBar.vue')['default']
+    UserProfileMenu: typeof import('./../components/common/UserProfileMenu.vue')['default']
   }
 }

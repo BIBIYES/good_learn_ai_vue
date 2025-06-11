@@ -59,7 +59,7 @@ const handleInput = () => {
 }
 
 // 处理按键事件，按下Enter键发送消息
-const handleKeydown = (event) => {
+const handleKeydown = event => {
   // 如果按下Enter键且没有按住Shift键，则发送消息
   if (event.key === 'Enter' && !event.shiftKey) {
     event.preventDefault() // 阻止默认的换行行为
@@ -82,8 +82,6 @@ const handleKeydown = (event) => {
 const handleSend = () => {
   // 如果正在加载中，则发送空消息表示需要终止流
   if (isLodaing.value) {
-    
-
     emit('send', '')
     return
   }
@@ -107,11 +105,11 @@ onMounted(() => {
       ref="containerRef"
       class="bg-base-200 w-full max-w-3xl flex items-center px-4 transition-all mx-auto"
       :class="{
-        skeleton: isLodaing
+        skeleton: isLodaing,
       }"
       :style="{
         'min-height': '48px',
-        'border-radius': `${borderRadius}px`
+        'border-radius': `${borderRadius}px`,
       }"
     >
       <textarea
@@ -122,11 +120,11 @@ onMounted(() => {
         :style="{
           'min-height': '32px',
           'max-height': '160px',
-          'border-radius': `${borderRadius}px`
+          'border-radius': `${borderRadius}px`,
         }"
         placeholder="输入你的问题..."
         :class="{
-          skeleton: isLodaing
+          skeleton: isLodaing,
         }"
         @input="handleInput"
         @keydown="handleKeydown"
@@ -139,12 +137,9 @@ onMounted(() => {
           v-if="!isLodaing"
           src="@/assets/icon/send.svg"
           alt=""
-          class="w-full h-full" 
-        >
-        <span
-          v-else
-          class="loading loading-spinner"
+          class="w-full h-full"
         />
+        <span v-else class="loading loading-spinner" />
       </div>
     </div>
   </div>

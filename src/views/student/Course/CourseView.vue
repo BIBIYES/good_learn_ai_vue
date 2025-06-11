@@ -17,7 +17,7 @@ const getCourseInfo = () => {
 }
 
 // 导航到子路由
-const navigateTo = (path) => {
+const navigateTo = path => {
   router.push(`/s/my-course/${route.params.courseId}/${path}`)
 }
 
@@ -48,7 +48,6 @@ const getTeacherAvatar = () => {
 onMounted(() => {
   getCourseInfo()
 })
-
 </script>
 <template>
   <div class="app flex flex-col gap-4 animate__animated animate__fadeInRight">
@@ -62,15 +61,8 @@ onMounted(() => {
       <!-- 返回按钮和排行榜按钮区域 -->
       <div class="flex justify-between items-center p-3">
         <!-- 返回按钮 -->
-        <button 
-          class="btn btn-sm btn-ghost gap-1"
-          @click="goBack"
-        >
-          <Return
-            theme="outline"
-            size="16"
-            fill="#333"
-          />
+        <button class="btn btn-sm btn-ghost gap-1" @click="goBack">
+          <Return theme="outline" size="16" fill="#333" />
           返回
         </button>
         <!-- 学分排行榜按钮 -->
@@ -78,10 +70,7 @@ onMounted(() => {
           class="btn btn-sm btn-outline btn-primary gap-1"
           @click="navigateToRanking"
         >
-          <Ranking
-            theme="outline"
-            size="18"
-          />
+          <Ranking theme="outline" size="18" />
           学分排行榜
         </button>
       </div>
@@ -114,29 +103,34 @@ onMounted(() => {
               stroke="currentColor"
               stroke-width="2"
             >
-              <path d="M12 1v4M4 8l2.5 2.5M1 16h4M16 4l2.5 2.5M8 20l2.5-2.5M20 16h-4M16 20l-2.5-2.5M8 4L5.5 6.5M12 12l4.5 4.5M12 12l-4.5 4.5M12 12l4.5-4.5M12 12l-4.5-4.5" />
+              <path
+                d="M12 1v4M4 8l2.5 2.5M1 16h4M16 4l2.5 2.5M8 20l2.5-2.5M20 16h-4M16 20l-2.5-2.5M8 4L5.5 6.5M12 12l4.5 4.5M12 12l-4.5 4.5M12 12l4.5-4.5M12 12l-4.5-4.5"
+              />
             </svg>
-            <span class="font-medium text-primary">{{ courseInfo.credits }}</span>
+            <span class="font-medium text-primary">{{
+              courseInfo.credits
+            }}</span>
             <span class="text-xs text-base-content/70">学分</span>
           </div>
         </div>
-        
+
         <!-- 教师信息 -->
         <div class="flex items-center mb-4">
           <div class="avatar mr-2">
-            <div class="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1">
-              <img
-                :src="getTeacherAvatar()"
-                alt="Teacher"
-              >
+            <div
+              class="w-8 h-8 rounded-full ring ring-primary ring-offset-base-100 ring-offset-1"
+            >
+              <img :src="getTeacherAvatar()" alt="Teacher" />
             </div>
           </div>
           <div>
-            <span class="text-sm font-medium block">{{ courseInfo.teacherName }}</span>
+            <span class="text-sm font-medium block">{{
+              courseInfo.teacherName
+            }}</span>
             <span class="text-xs text-base-content/60">讲师</span>
           </div>
         </div>
-        
+
         <!-- 课程状态 -->
         <div class="flex items-center pb-3 mb-3 border-b border-base-200">
           <!-- 开启的状态 -->
@@ -148,26 +142,19 @@ onMounted(() => {
               <div class="status status-success animate-ping" />
               <div class="status status-success" />
             </div>
-            <p class="text-xs text-base-content/60">
-              该课程正常开放
-            </p>
+            <p class="text-xs text-base-content/60">该课程正常开放</p>
           </div>
           <!-- 关闭的状态 -->
-          <div
-            v-else
-            class="flex items-center space-x-3"
-          >
+          <div v-else class="flex items-center space-x-3">
             <div class="inline-grid *:[grid-area:1/1]">
               <div class="status status-error animate-ping" />
               <div class="status status-error" />
             </div>
-            <p class="text-xs text-base-content/60">
-              该课程已被关闭
-            </p>
+            <p class="text-xs text-base-content/60">该课程已被关闭</p>
           </div>
         </div>
       </div>
-      
+
       <!-- 切换控件 -->
       <div class="px-4 mb-2">
         <ul class="menu bg-base-200 lg:menu-horizontal rounded-box w-full">
@@ -197,7 +184,7 @@ onMounted(() => {
           <li class="flex-1">
             <a
               class="flex justify-center items-center gap-2"
-              :class="{ 'active': route.name === 'work' }"
+              :class="{ active: route.name === 'work' }"
               @click="navigateTo('work')"
             >
               <svg

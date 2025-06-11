@@ -3,18 +3,18 @@ const props = defineProps({
   // 输入框数量
   length: {
     type: Number,
-    default: 4
+    default: 4,
   },
   // 是否自动聚焦第一个输入框
   autoFocus: {
     type: Boolean,
-    default: true
+    default: true,
   },
   // 是否禁用
   disabled: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:modelValue', 'complete'])
@@ -39,7 +39,7 @@ defineExpose({
     if (inputRefs.value[0]) {
       inputRefs.value[0].focus()
     }
-  }
+  },
 })
 
 // 处理输入
@@ -47,20 +47,23 @@ const handleInput = (event, index) => {
   const value = event.target.value
   // 确保只取最后一个字符
   const singleChar = value.slice(-1)
-  
+
   // 更新当前输入框的值
   inputValues.value[index] = singleChar
-  
+
   // 触发更新事件
   emit('update:modelValue', inputValues.value.join(''))
-  
+
   // 自动聚焦到下一个输入框
   if (singleChar && index < props.length - 1 && inputRefs.value[index + 1]) {
     inputRefs.value[index + 1].focus()
   }
-  
+
   // 如果所有输入框都有值，触发完成事件
-  if (inputValues.value.every(val => val) && inputValues.value.length === props.length) {
+  if (
+    inputValues.value.every(val => val) &&
+    inputValues.value.length === props.length
+  ) {
     emit('complete', inputValues.value.join(''))
   }
 }
@@ -93,7 +96,7 @@ const handleKeydown = (event, index) => {
 const handlePaste = (event, index) => {
   event.preventDefault()
   const pasteData = event.clipboardData.getData('text/plain').trim()
-  
+
   // 如果粘贴的内容长度大于等于输入框数量，则填充所有输入框
   if (pasteData.length >= props.length) {
     for (let i = 0; i < props.length; i++) {
@@ -103,27 +106,30 @@ const handlePaste = (event, index) => {
     if (inputRefs.value[props.length - 1]) {
       inputRefs.value[props.length - 1].focus()
     }
-  } 
+  }
   // 否则从当前位置开始填充
   else {
     const remainingLength = props.length - index
     const fillLength = Math.min(pasteData.length, remainingLength)
-    
+
     for (let i = 0; i < fillLength; i++) {
       inputValues.value[index + i] = pasteData[i] || ''
     }
-    
+
     // 聚焦到最后填充的输入框的下一个，如果有的话
     const nextFocusIndex = Math.min(index + fillLength, props.length - 1)
     if (inputRefs.value[nextFocusIndex]) {
       inputRefs.value[nextFocusIndex].focus()
     }
   }
-  
+
   emit('update:modelValue', inputValues.value.join(''))
-  
+
   // 检查是否所有输入框都已填充
-  if (inputValues.value.every(val => val) && inputValues.value.length === props.length) {
+  if (
+    inputValues.value.every(val => val) &&
+    inputValues.value.length === props.length
+  ) {
     emit('complete', inputValues.value.join(''))
   }
 }
@@ -139,21 +145,25 @@ onMounted(() => {
 <template>
   <div class="pin-input-container">
     <div class="flex justify-center gap-2">
-      <input 
-        v-for="(_, index) in props.length" 
+      <input
+        v-for="(_, index) in props.length"
         :key="index"
-        :ref="el => { if(el) inputRefs[index] = el }"
+        :ref="
+          el => {
+            if (el) inputRefs[index] = el
+          }
+        "
         v-model="inputValues[index]"
-        type="text" 
+        type="text"
         inputmode="numeric"
         pattern="[0-9]*"
-        maxlength="1" 
+        maxlength="1"
         :disabled="disabled"
         class="pin-input animate__animated animate__fadeIn"
-        @input="(e) => handleInput(e, index)"
-        @keydown="(e) => handleKeydown(e, index)"
-        @paste="(e) => handlePaste(e, index)"
-      >
+        @input="e => handleInput(e, index)"
+        @keydown="e => handleKeydown(e, index)"
+        @paste="e => handlePaste(e, index)"
+      />
     </div>
   </div>
 </template>
