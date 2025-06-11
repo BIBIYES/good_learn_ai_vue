@@ -15,7 +15,7 @@ export const useUserStore = defineStore(
      * 设置用户信息
      * @param {Object} e - 包含用户信息的对象
      */
-    const setUserInfo = (e) => {
+    const setUserInfo = e => {
       userInfo.value = e
     }
 
@@ -33,6 +33,6 @@ export const useUserStore = defineStore(
     return { userInfo, setUserInfo, logout }
   },
   {
-    persist: true
-  }
+    persist: true,
+  },
 )

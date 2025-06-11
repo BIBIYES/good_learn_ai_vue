@@ -12,11 +12,11 @@ const router = useRouter()
 const welcomeTexts = ref([
   { value: '', final: '欢迎使用好助学!😄' },
   { value: '', final: 'Welcome to' },
-  { value: '', final: 'good learn!' }
+  { value: '', final: 'good learn!' },
 ])
 
 // 生成指定长度的随机字符
-const generateRandomChars = (length) => {
+const generateRandomChars = length => {
   const specialChars =
     '!@#$%^&*()_+~`|}{[]:;?><,./-=¢∞§¶•ªº–≠œ∑´®†¥¨ˆøπåß∂ƒ©˙∆˚¬…æ«≈ç√∫~'
   let randomText = ''
@@ -27,7 +27,7 @@ const generateRandomChars = (length) => {
 }
 
 // 执行文本动画效果
-const animateText = (index) => {
+const animateText = index => {
   const targetText = welcomeTexts.value[index].final
   const animationDuration = 4 // 动画持续时间（秒）
 
@@ -43,7 +43,7 @@ const animateText = (index) => {
           if (progress % 0.1 < 0.01) {
             // 降低随机字符更新频率
             welcomeTexts.value[index].value = generateRandomChars(
-              targetText.length
+              targetText.length,
             )
           }
         }
@@ -58,8 +58,8 @@ const animateText = (index) => {
       },
       onComplete: () => {
         welcomeTexts.value[index].value = targetText
-      }
-    }
+      },
+    },
   )
 }
 

@@ -3,11 +3,10 @@ import { ref, onMounted } from 'vue'
 import {
   getTeacherCourse,
   createCourse,
-  updateTeacherCourse
+  updateTeacherCourse,
 } from '@/api/course'
 import message from '@/plugin/message'
-import {School, Add, Copy} from '@icon-park/vue-next'
-
+import { School, Add, Copy } from '@icon-park/vue-next'
 
 const loading = ref(true)
 const showCreateModal = ref(false)
@@ -22,7 +21,7 @@ const total = ref(0)
 
 const newCourse = ref({
   className: '',
-  description: ''
+  description: '',
 })
 
 const editForm = ref({
@@ -31,17 +30,17 @@ const editForm = ref({
   className: '',
   description: '',
   monitorId: '',
-  status: true
+  status: true,
 })
 
 const handleGetCourses = async (page = 1) => {
   loading.value = true
   try {
     const res = await getTeacherCourse(page, pageSize.value)
-    if (res.code === 200 ) {
+    if (res.code === 200) {
       courses.value = res.data.records.map(course => ({
         ...course,
-        monitorName: course.monitorName || '无' // 如果 monitorName 为空，显示 '无'
+        monitorName: course.monitorName || '无', // 如果 monitorName 为空，显示 '无'
       }))
       total.value = res.data.total // 假设接口返回总课程数
       totalPages.value = res.data.pages // 计算总页数
@@ -49,7 +48,7 @@ const handleGetCourses = async (page = 1) => {
       loading.value = false
     }
   } catch (err) {
-    console.error('获取课程列表失败',err.message)
+    console.error('获取课程列表失败', err.message)
     message.error('获取课程列表失败')
   } finally {
     loading.value = false
@@ -57,7 +56,7 @@ const handleGetCourses = async (page = 1) => {
 }
 
 // 在分页切换时传递 pageSize
-const handlePageChange = (page) => {
+const handlePageChange = page => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
     handleGetCourses(page)
@@ -72,7 +71,7 @@ const handleCreateCourse = async () => {
   try {
     const res = await createCourse({
       className: newCourse.value.className,
-      description: newCourse.value.description
+      description: newCourse.value.description,
     })
     if (res.code === 200) {
       message.success('创建成功')
@@ -85,12 +84,12 @@ const handleCreateCourse = async () => {
   }
 }
 
-const openEditModal = (course) => {
+const openEditModal = course => {
   editForm.value = { ...course }
   showEditModal.value = true
 }
 
-const copyCourseId = async (id) => {
+const copyCourseId = async id => {
   try {
     if (navigator.clipboard) {
       await navigator.clipboard.writeText(id)
@@ -117,7 +116,7 @@ const handleEditCourse = async () => {
       className: editForm.value.className,
       description: editForm.value.description,
       monitorId: editForm.value.monitorId,
-      status: editForm.value.status
+      status: editForm.value.status,
     })
     if (res.code === 200) {
       message.success('编辑成功')
@@ -138,10 +137,7 @@ onMounted(() => {
     <!-- Header with title and create button -->
     <TitleBar>
       <template #title>
-        <school
-          theme="outline"
-          size="38"
-        />
+        <school theme="outline" size="38" />
         <span>我的课程</span>
       </template>
       <template #module>
@@ -149,10 +145,7 @@ onMounted(() => {
           class="btn btn-primary btn-sm md:btn-md"
           @click="showCreateModal = true"
         >
-          <Add
-            theme="outline"
-            size="18"
-          />
+          <Add theme="outline" size="18" />
           创建课程
         </button>
       </template>
@@ -194,23 +187,10 @@ onMounted(() => {
         class="flex flex-col items-center justify-center h-64"
       >
         <div class="text-center">
-          <School
-            theme="outline"
-            size="48"
-            class="text-base-content/30 mb-4"
-          />
-          <p class="text-base-content/70 text-lg">
-            暂无课程，快去创建一个吧！
-          </p>
-          <button
-            class="btn btn-primary mt-4"
-            @click="showCreateModal = true"
-          >
-            <Add
-              theme="outline"
-              size="18"
-              class="mr-1"
-            />
+          <School theme="outline" size="48" class="text-base-content/30 mb-4" />
+          <p class="text-base-content/70 text-lg">暂无课程，快去创建一个吧！</p>
+          <button class="btn btn-primary mt-4" @click="showCreateModal = true">
+            <Add theme="outline" size="18" class="mr-1" />
             创建第一个课程
           </button>
         </div>
@@ -248,11 +228,14 @@ onMounted(() => {
                   {{ item.status ? '启用' : '停用' }}
                 </span>
               </span>
-              <span class="text-sm text-base-content/70">{{ item.teacherName || '教师'
-              }}<span
-                v-if="item.teacherEmail"
-                class="ml-2 text-xs text-base-content/50"
-              >{{ item.teacherEmail }}</span></span>
+              <span class="text-sm text-base-content/70"
+                >{{ item.teacherName || '教师'
+                }}<span
+                  v-if="item.teacherEmail"
+                  class="ml-2 text-xs text-base-content/50"
+                  >{{ item.teacherEmail }}</span
+                ></span
+              >
             </div>
             <div class="dropdown dropdown-end">
               <div
@@ -297,13 +280,13 @@ onMounted(() => {
               class="btn btn-ghost btn-sm btn-circle text-primary hover:text-black"
               @click="copyCourseId(item.courseId)"
             >
-              <Copy 
-                theme="outline" 
-                size="16" 
-              />
+              <Copy theme="outline" size="16" />
             </button>
             <span>课程密码: {{ item.coursePassword || '无密码' }}</span>
-            <span>创建时间: {{ item.createdAt ? (item.createdAt.split('T')[0]) : '—' }}</span>
+            <span
+              >创建时间:
+              {{ item.createdAt ? item.createdAt.split('T')[0] : '—' }}</span
+            >
             <button
               class="btn btn-sm btn-outline btn-primary"
               @click="openEditModal(item)"
@@ -322,17 +305,11 @@ onMounted(() => {
         class="flex flex-wrap justify-center gap-5 items-center"
       >
         <div class="btn btn-sm">
-          <div
-            aria-label="status"
-            class="status status-primary"
-          />
+          <div aria-label="status" class="status status-primary" />
           <span>总计课程数：</span>{{ total }}
         </div>
 
-        <div
-          v-if="totalPages > 0"
-          class="join"
-        >
+        <div v-if="totalPages > 0" class="join">
           <button
             class="join-item btn btn-sm"
             :disabled="currentPage === 1"
@@ -361,24 +338,16 @@ onMounted(() => {
     </div>
 
     <!-- 新建课程弹窗 -->
-    <dialog
-      class="modal"
-      :open="showCreateModal"
-    >
-      <form
-        method="dialog"
-        class="modal-box w-96 rounded-xl shadow-lg"
-      >
-        <h3 class="font-bold text-lg mb-4">
-          新建课程
-        </h3>
+    <dialog class="modal" :open="showCreateModal">
+      <form method="dialog" class="modal-box w-96 rounded-xl shadow-lg">
+        <h3 class="font-bold text-lg mb-4">新建课程</h3>
         <div class="form-control mb-2">
           <label class="label">课程名称<span class="text-error">*</span></label>
           <input
             v-model="newCourse.className"
             class="input input-bordered"
             placeholder="请输入课程名称"
-          >
+          />
         </div>
         <div class="form-control mb-2">
           <label class="label">课程介绍</label>
@@ -395,10 +364,7 @@ onMounted(() => {
           >
             取消
           </button>
-          <button
-            class="btn btn-primary"
-            @click.prevent="handleCreateCourse"
-          >
+          <button class="btn btn-primary" @click.prevent="handleCreateCourse">
             确认创建
           </button>
         </div>
@@ -406,23 +372,12 @@ onMounted(() => {
     </dialog>
 
     <!-- 编辑课程弹窗 -->
-    <dialog
-      class="modal"
-      :open="showEditModal"
-    >
-      <form
-        method="dialog"
-        class="modal-box w-96 rounded-xl shadow-lg"
-      >
-        <h3 class="font-bold text-lg mb-4">
-          编辑课程
-        </h3>
+    <dialog class="modal" :open="showEditModal">
+      <form method="dialog" class="modal-box w-96 rounded-xl shadow-lg">
+        <h3 class="font-bold text-lg mb-4">编辑课程</h3>
         <div class="form-control mb-2">
           <label class="label">课程名称<span class="text-error">*</span></label>
-          <input
-            v-model="editForm.className"
-            class="input input-bordered"
-          >
+          <input v-model="editForm.className" class="input input-bordered" />
         </div>
         <div class="form-control mb-2">
           <label class="label">课程介绍</label>
@@ -437,33 +392,20 @@ onMounted(() => {
             v-model="editForm.coursePassword"
             class="input input-bordered"
             readonly
-          >
+          />
         </div>
         <div class="form-control mb-2">
           <label class="label">状态</label>
-          <select
-            v-model="editForm.status"
-            class="select select-bordered"
-          >
-            <option :value="true">
-              启用
-            </option>
-            <option :value="false">
-              停用
-            </option>
+          <select v-model="editForm.status" class="select select-bordered">
+            <option :value="true">启用</option>
+            <option :value="false">停用</option>
           </select>
         </div>
         <div class="modal-action">
-          <button
-            class="btn btn-ghost"
-            @click.prevent="showEditModal = false"
-          >
+          <button class="btn btn-ghost" @click.prevent="showEditModal = false">
             取消
           </button>
-          <button
-            class="btn btn-primary"
-            @click.prevent="handleEditCourse"
-          >
+          <button class="btn btn-primary" @click.prevent="handleEditCourse">
             确认保存
           </button>
         </div>

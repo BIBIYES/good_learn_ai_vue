@@ -3,34 +3,34 @@ import { computed } from 'vue'
 
 // Define the component name for Vue linting rules
 defineOptions({
-  name: 'AppPagination'
+  name: 'AppPagination',
 })
 
 const props = defineProps({
   currentPage: {
     type: Number,
-    required: true
+    required: true,
   },
   totalPages: {
     type: Number,
-    required: true
+    required: true,
   },
   total: {
     type: Number,
-    default: 0
+    default: 0,
   },
   pageSize: {
     type: Number,
-    default: 10
+    default: 10,
   },
   showSizeChanger: {
     type: Boolean,
-    default: true
+    default: true,
   },
   pageSizeOptions: {
     type: Array,
-    default: () => [5, 10, 20, 50]
-  }
+    default: () => [5, 10, 20, 50],
+  },
 })
 
 const emit = defineEmits(['change', 'sizeChange'])
@@ -49,7 +49,7 @@ const pageNumbers = computed(() => {
     // 否则显示当前页附近的页码
     let startPage = Math.max(
       1,
-      props.currentPage - Math.floor(maxVisiblePages / 2)
+      props.currentPage - Math.floor(maxVisiblePages / 2),
     )
     let endPage = Math.min(props.totalPages, startPage + maxVisiblePages - 1)
 
@@ -83,13 +83,13 @@ const pageNumbers = computed(() => {
   return result
 })
 
-const changePage = (page) => {
+const changePage = page => {
   if (page >= 1 && page <= props.totalPages && page !== props.currentPage) {
     emit('change', page)
   }
 }
 
-const changePageSize = (event) => {
+const changePageSize = event => {
   emit('sizeChange', Number(event.target.value))
 }
 
@@ -125,7 +125,7 @@ const recordRange = computed(() => {
           class="btn btn-sm"
           :class="{
             'btn-active': currentPage === page,
-            'pointer-events-none': page === '...'
+            'pointer-events-none': page === '...',
           }"
           @click="changePage(page)"
         >
@@ -134,7 +134,7 @@ const recordRange = computed(() => {
         <button
           class="btn btn-sm"
           :class="{
-            'btn-disabled': currentPage === totalPages || totalPages === 0
+            'btn-disabled': currentPage === totalPages || totalPages === 0,
           }"
           :disabled="currentPage === totalPages || totalPages === 0"
           @click="changePage(currentPage + 1)"
@@ -148,11 +148,7 @@ const recordRange = computed(() => {
         class="select select-sm select-bordered w-24"
         @change="changePageSize"
       >
-        <option
-          v-for="size in pageSizeOptions"
-          :key="size"
-          :value="size"
-        >
+        <option v-for="size in pageSizeOptions" :key="size" :value="size">
           {{ size }}条/页
         </option>
       </select>

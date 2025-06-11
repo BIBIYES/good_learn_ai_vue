@@ -57,9 +57,9 @@ const AIStreamClient = {
         signal,
         headers: {
           Authorization: currentToken || token,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: message
+        body: message,
       })
 
       if (!response.ok) {
@@ -91,7 +91,7 @@ const AIStreamClient = {
         const lines = buffer.split('\n')
         buffer = lines.pop() || '' // 保留不完整的行在缓冲区
 
-        lines.forEach((line) => {
+        lines.forEach(line => {
           if (line.trim() !== '') {
             const jsonString = line.replace(/^data:/, '')
             try {
@@ -152,7 +152,7 @@ const AIStreamClient = {
    */
   get controller() {
     return controller
-  }
+  },
 }
 
 export default AIStreamClient

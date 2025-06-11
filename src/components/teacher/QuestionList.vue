@@ -4,18 +4,18 @@ import { Edit, Delete } from '@icon-park/vue-next'
 defineProps({
   questions: {
     type: Array,
-    default: () => []
+    default: () => [],
   },
   loading: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['edit', 'delete', 'page-change', 'size-change'])
 
 // 格式化日期
-const formatDate = (dateString) => {
+const formatDate = dateString => {
   try {
     const date = new Date(dateString)
     return date.toLocaleString()
@@ -26,7 +26,7 @@ const formatDate = (dateString) => {
 }
 
 // 获取难度标签样式
-const getDifficultyStyle = (difficulty) => {
+const getDifficultyStyle = difficulty => {
   switch (difficulty) {
     case '1':
     case 'EASY':
@@ -49,14 +49,14 @@ const difficultyMap = {
   3: '困难',
   EASY: '简单',
   MEDIUM: '中等',
-  HARD: '困难'
+  HARD: '困难',
 }
 
-const handleEdit = (question) => {
+const handleEdit = question => {
   emit('edit', question)
 }
 
-const handleDelete = (question) => {
+const handleDelete = question => {
   emit('delete', question)
 }
 </script>
@@ -64,10 +64,7 @@ const handleDelete = (question) => {
 <template>
   <div>
     <!-- Loading State - Skeleton -->
-    <div
-      v-if="loading"
-      class="w-full"
-    >
+    <div v-if="loading" class="w-full">
       <!-- Table header skeleton -->
       <div class="flex mb-4 p-3 bg-base-200/50 rounded-t-lg">
         <div class="w-12 skeleton h-6 mr-6" />
@@ -108,42 +105,25 @@ const handleDelete = (question) => {
     >
       <slot name="empty">
         <div class="text-center">
-          <p class="text-base-content/70 text-lg">
-            暂无题目数据
-          </p>
+          <p class="text-base-content/70 text-lg">暂无题目数据</p>
         </div>
       </slot>
     </div>
 
     <!-- Questions Table -->
-    <div
-      v-else
-      class="overflow-x-auto w-full"
-    >
+    <div v-else class="overflow-x-auto w-full">
       <div class="rounded-lg overflow-hidden animate__animated animate__fadeIn">
         <table class="table table-zebra w-full bg-base-100">
           <!-- Table head -->
           <thead class="bg-base-200/50">
             <tr>
-              <th class="text-center w-16">
-                ID
-              </th>
-              <th class="w-48">
-                标题
-              </th>
+              <th class="text-center w-16">ID</th>
+              <th class="w-48">标题</th>
               <th>题目内容</th>
-              <th class="text-center">
-                难度
-              </th>
-              <th class="text-center">
-                状态
-              </th>
-              <th class="text-center">
-                创建时间
-              </th>
-              <th class="text-center w-24">
-                操作
-              </th>
+              <th class="text-center">难度</th>
+              <th class="text-center">状态</th>
+              <th class="text-center">创建时间</th>
+              <th class="text-center w-24">操作</th>
             </tr>
           </thead>
           <tbody>
@@ -208,21 +188,14 @@ const handleDelete = (question) => {
                     title="编辑题目"
                     @click="handleEdit(question)"
                   >
-                    <Edit
-                      theme="outline"
-                      size="16"
-                    />
+                    <Edit theme="outline" size="16" />
                   </button>
                   <button
                     class="btn btn-sm btn-circle bg-error/10 border-none hover:bg-error/10"
                     title="删除题目"
                     @click="handleDelete(question)"
                   >
-                    <Delete
-                      theme="outline"
-                      class="text-error"
-                      size="16"
-                    />
+                    <Delete theme="outline" class="text-error" size="16" />
                   </button>
                 </div>
               </td>

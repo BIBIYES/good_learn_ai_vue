@@ -11,17 +11,17 @@ const props = defineProps({
       title: '',
       content: '',
       answer: '',
-      difficulty: 'EASY'
-    })
+      difficulty: 'EASY',
+    }),
   },
   loading: {
     type: Boolean,
-    default: false
+    default: false,
   },
   isEdit: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['submit', 'cancel'])
@@ -31,7 +31,7 @@ const formData = reactive({
   title: props.questionData.title || '',
   content: props.questionData.content || '',
   answer: props.questionData.answer || '',
-  difficulty: props.questionData.difficulty || 'EASY'
+  difficulty: props.questionData.difficulty || 'EASY',
 })
 
 // 映射后端使用的难度值到UI显示值
@@ -41,21 +41,21 @@ const difficultyMap = {
   HARD: '3',
   1: 'EASY',
   2: 'MEDIUM',
-  3: 'HARD'
+  3: 'HARD',
 }
 
 // UI显示的难度值
 const uiDifficulty = ref(difficultyMap[formData.difficulty] || '1')
 
 // 监听UI难度变化，更新formData
-watch(uiDifficulty, (newValue) => {
+watch(uiDifficulty, newValue => {
   formData.difficulty = difficultyMap[newValue] || 'EASY'
 })
 
 // 监听props变化，更新表单数据
 watch(
   () => props.questionData,
-  (newData) => {
+  newData => {
     if (newData) {
       formData.bankId = newData.bankId || formData.bankId
       formData.title = newData.title || ''
@@ -65,7 +65,7 @@ watch(
       uiDifficulty.value = difficultyMap[formData.difficulty] || '1'
     }
   },
-  { deep: true }
+  { deep: true },
 )
 
 const handleSubmit = () => {
@@ -97,19 +97,23 @@ const handleCancel = () => {
   <div class="question-form">
     <div class="form-control mb-4">
       <label class="label">
-        <span class="label-text">题目标题<span class="text-error">*</span></span>
+        <span class="label-text"
+          >题目标题<span class="text-error">*</span></span
+        >
       </label>
       <input
         v-model="formData.title"
         type="text"
         class="input input-bordered"
         placeholder="请输入题目标题"
-      >
+      />
     </div>
 
     <div class="form-control mb-4">
       <label class="label">
-        <span class="label-text">题目内容<span class="text-error">*</span></span>
+        <span class="label-text"
+          >题目内容<span class="text-error">*</span></span
+        >
       </label>
       <RichTextEditor
         v-model="formData.content"
@@ -120,7 +124,9 @@ const handleCancel = () => {
 
     <div class="form-control mb-4">
       <label class="label">
-        <span class="label-text">题目答案<span class="text-error">*</span></span>
+        <span class="label-text"
+          >题目答案<span class="text-error">*</span></span
+        >
       </label>
       <textarea
         v-model="formData.answer"
@@ -131,7 +137,9 @@ const handleCancel = () => {
 
     <div class="form-control mb-4">
       <label class="label">
-        <span class="label-text">难度等级<span class="text-error">*</span></span>
+        <span class="label-text"
+          >难度等级<span class="text-error">*</span></span
+        >
       </label>
       <div class="rating rating-lg">
         <input
@@ -140,28 +148,28 @@ const handleCancel = () => {
           name="difficulty-rating"
           class="mask mask-star-2 bg-green-500"
           value="1"
-        >
+        />
         <input
           v-model="uiDifficulty"
           type="radio"
           name="difficulty-rating"
           class="mask mask-star-2 bg-yellow-500"
           value="2"
-        >
+        />
         <input
           v-model="uiDifficulty"
           type="radio"
           name="difficulty-rating"
           class="mask mask-star-2 bg-red-500"
           value="3"
-        >
+        />
       </div>
       <div class="text-sm mt-2">
         <span
           :class="{
             'text-green-500': uiDifficulty === '1',
             'text-yellow-500': uiDifficulty === '2',
-            'text-red-500': uiDifficulty === '3'
+            'text-red-500': uiDifficulty === '3',
           }"
         >
           {{
@@ -176,21 +184,9 @@ const handleCancel = () => {
     </div>
 
     <div class="flex justify-end gap-2 mt-6">
-      <button
-        class="btn btn-ghost"
-        @click="handleCancel"
-      >
-        取消
-      </button>
-      <button
-        class="btn btn-primary"
-        :disabled="loading"
-        @click="handleSubmit"
-      >
-        <span
-          v-if="loading"
-          class="loading loading-spinner loading-xs"
-        />
+      <button class="btn btn-ghost" @click="handleCancel">取消</button>
+      <button class="btn btn-primary" :disabled="loading" @click="handleSubmit">
+        <span v-if="loading" class="loading loading-spinner loading-xs" />
         {{ isEdit ? '保存修改' : '确认添加' }}
       </button>
     </div>

@@ -19,12 +19,12 @@ import 'highlight.js/lib/languages/yaml'
 const props = defineProps({
   content: {
     type: String,
-    default: ''
+    default: '',
   },
   theme: {
     type: String,
-    default: 'light'
-  }
+    default: 'light',
+  },
 })
 
 // 创建marked实例并配置
@@ -34,8 +34,8 @@ const marked = new Marked(
     highlight(code, lang) {
       const language = hljs.getLanguage(lang) ? lang : 'plaintext'
       return hljs.highlight(code, { language }).value
-    }
-  })
+    },
+  }),
 )
 
 // 转换markdown并进行XSS防护
@@ -44,7 +44,7 @@ const htmlContent = computed(() => {
   // 为代码块添加复制按钮
   parsed = parsed.replace(
     /<pre><code class="([^"]+)">/g,
-    '<div class="code-block-wrapper"><button class="copy-btn btn btn-xs btn-neutral">复制</button><pre><code class="$1">'
+    '<div class="code-block-wrapper"><button class="copy-btn btn btn-xs btn-neutral">复制</button><pre><code class="$1">',
   )
   parsed = parsed.replace(/<\/code><\/pre>/g, '</code></pre></div>')
   return parsed
@@ -53,7 +53,7 @@ const htmlContent = computed(() => {
 // 添加复制功能
 onMounted(() => {
   const copyButtons = document.querySelectorAll('.copy-btn')
-  copyButtons.forEach((button) => {
+  copyButtons.forEach(button => {
     button.addEventListener('click', async () => {
       const codeBlock = button.nextElementSibling.querySelector('code')
       const code = codeBlock.textContent
@@ -81,16 +81,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div
-    class="markdown-body w-full max-w-full px-4"
-    :class="theme"
-  >
+  <div class="markdown-body w-full max-w-full px-4" :class="theme">
     <!-- Using a slot element with v-html is safer when sanitization is handled upstream -->
-    <div
-      v-if="htmlContent"
-      v-bind="$attrs"
-      v-html="htmlContent"
-    />
+    <div v-if="htmlContent" v-bind="$attrs" v-html="htmlContent" />
     <slot v-else />
   </div>
 </template>

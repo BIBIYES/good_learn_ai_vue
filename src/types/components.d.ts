@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ChangePasswordForm: typeof import('./../components/form/ChangePasswordForm.vue')['default']
     ChatBox: typeof import('./../components/AI/ChatBox.vue')['default']
     ChatHome: typeof import('./../components/AI/ChatHome.vue')['default']
     ChatInput: typeof import('./../components/AI/ChatInput.vue')['default']
@@ -15,6 +16,7 @@ declare module 'vue' {
     CourseCard: typeof import('./../components/student/CourseCard.vue')['default']
     ExpandIcon: typeof import('./../components/icon/expand-icon.vue')['default']
     HistoryCard: typeof import('./../components/AI/HistoryCard.vue')['default']
+    LayoutView: typeof import('./../components/layout/LayoutView.vue')['default']
     LoadingState: typeof import('./../components/common/LoadingState.vue')['default']
     LoginForm: typeof import('./../components/form/LoginForm.vue')['default']
     MarkdBox: typeof import('./../components/common/MarkdBox.vue')['default']
@@ -34,5 +36,6 @@ declare module 'vue' {
     TeacherSideBarMenu: typeof import('./../components/teacher/TeacherSideBarMenu.vue')['default']
     TeacherStatsCharts: typeof import('./../components/teacher/TeacherStatsCharts.vue')['default']
     TitleBar: typeof import('./../components/common/TitleBar.vue')['default']
+    UserProfileMenu: typeof import('./../components/common/UserProfileMenu.vue')['default']
   }
 }

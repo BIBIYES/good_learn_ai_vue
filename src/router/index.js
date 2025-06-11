@@ -1,12 +1,18 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import HomeView from '../views/HomeView.vue'
+import HomeView from '../views/layouts/layoutView.vue'
 import { useUserStore } from '@/stores/user'
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
-      redirect: '/login' // 重定向到 /s
+      redirect: '/login', // 重定向到 /s
+    },
+    {
+      path: '/profile',
+      name: 'profile',
+      component: () => import('../views/ProfilePage.vue'),
+      meta: { requiresAuth: true },
     },
     {
       path: '/login',
@@ -17,14 +23,14 @@ const router = createRouter({
         {
           path: '',
           name: 'login', // 保持这个基础命名
-          component: () => import('@/components/form/LoginForm.vue')
+          component: () => import('@/components/form/LoginForm.vue'),
         },
         {
           path: '/register',
           name: 'register', // 保持这个基础命名
-          component: () => import('@/components/form/RegisterForm.vue')
-        }
-      ]
+          component: () => import('@/components/form/RegisterForm.vue'),
+        },
+      ],
     },
     // 老师路由
     {
@@ -36,12 +42,12 @@ const router = createRouter({
         {
           path: 'home',
           name: 'teacher-home-page',
-          component: () => import('@/views/teacher/HomePage.vue')
+          component: () => import('@/views/teacher/HomePage.vue'),
         },
         {
-          path:'course',
-          name:'teacher-course',
-          component: () => import('@/views/teacher/CourseView.vue')
+          path: 'course',
+          name: 'teacher-course',
+          component: () => import('@/views/teacher/CourseView.vue'),
         },
         {
           path: 'ai',
@@ -50,37 +56,37 @@ const router = createRouter({
             {
               path: '',
               name: 'teacher-ai-parent', // 修改为特定于老师的命名
-              redirect: '/t/ai/home'
+              redirect: '/t/ai/home',
             },
             {
               path: 'home',
               name: 'teacher-ai-chat-home', // 修改为特定于老师的命名
-              component: () => import('@/components/AI/ChatHome.vue')
+              component: () => import('@/components/AI/ChatHome.vue'),
             },
             {
               path: 'chat/:id',
               name: 'teacher-ai-chat-session', // 修改为特定于老师的命名
-              component: () => import('@/components/AI/ChatBox.vue')
-            }
-          ]
+              component: () => import('@/components/AI/ChatBox.vue'),
+            },
+          ],
         },
-        
+
         {
-          path:'question',
-          name:'teacher-question',
-          component: () => import('@/views/teacher/QuestionView.vue')
-        },
-        {
-          path:'question/:bankId',
-          name:'QuestionBankDetail',
-          component: () => import('@/views/teacher/QuestionBankDetail.vue')
+          path: 'question',
+          name: 'teacher-question',
+          component: () => import('@/views/teacher/QuestionView.vue'),
         },
         {
-         path: 'exam',
-         name: 'teacher-exam',
-         component: () => import('@/views/teacher/ExamView.vue') 
-        }
-      ]
+          path: 'question/:bankId',
+          name: 'QuestionBankDetail',
+          component: () => import('@/views/teacher/QuestionBankDetail.vue'),
+        },
+        {
+          path: 'exam',
+          name: 'teacher-exam',
+          component: () => import('@/views/teacher/ExamView.vue'),
+        },
+      ],
     },
     // 学生
     {
@@ -92,17 +98,17 @@ const router = createRouter({
         {
           path: 'home',
           name: 'student-home-page',
-          component: () => import('../views/student/HomePage.vue')
+          component: () => import('../views/student/HomePage.vue'),
         },
         {
           path: 'my-test-paper',
           name: 'student-test-paper',
-          component: () => import('../views/student/MyTestPaper.vue')
+          component: () => import('../views/student/MyTestPaper.vue'),
         },
         {
           path: 'my-course',
           name: 'student-course-list',
-          component: () => import('../views/student/MyCoursePage.vue')
+          component: () => import('../views/student/MyCoursePage.vue'),
         },
         {
           path: 'my-course/:courseId',
@@ -115,14 +121,16 @@ const router = createRouter({
             {
               path: 'sign-in',
               name: 'student-course-signin',
-              component: () => import('../views/student/Course/page/CourseSignInView.vue')
+              component: () =>
+                import('../views/student/Course/page/CourseSignInView.vue'),
             },
             {
-              path:'work',
-              name:'student-course-work',
-              component: () => import('../views/student/Course/page/CourseWorkView.vue')
-            }
-          ]
+              path: 'work',
+              name: 'student-course-work',
+              component: () =>
+                import('../views/student/Course/page/CourseWorkView.vue'),
+            },
+          ],
         },
         {
           path: 'ai',
@@ -131,33 +139,33 @@ const router = createRouter({
             {
               path: '',
               name: 'student-ai-parent', // 修改为特定于学生的命名
-              redirect: '/s/ai/home'
+              redirect: '/s/ai/home',
             },
             {
               path: 'home',
               name: 'student-ai-chat-home', // 修改为特定于学生的命名
-              component: () => import('@/components/AI/ChatHome.vue')
+              component: () => import('@/components/AI/ChatHome.vue'),
             },
             {
               path: 'chat/:id',
               name: 'student-ai-chat-session', // 修改为特定于学生的命名
-              component: () => import('@/components/AI/ChatBox.vue')
-            }
-          ]
-        }
-      ]
+              component: () => import('@/components/AI/ChatBox.vue'),
+            },
+          ],
+        },
+      ],
     },
     {
       path: '/about',
       name: 'about-page',
-      component: () => import('../views/AboutMePage.vue')
+      component: () => import('../views/AboutMePage.vue'),
     },
     {
       path: '/test',
       name: 'test-page',
-      component: () => import('../views/student/TestPage.vue')
-    }
-  ]
+      component: () => import('../views/student/TestPage.vue'),
+    },
+  ],
 })
 // 前置路由守卫
 router.beforeEach((to, from, next) => {
@@ -190,17 +198,31 @@ router.beforeEach((to, from, next) => {
     return
   }
 
+  // 允许访问个人资料页面
+  if (isLoggedIn && to.path === '/profile') {
+    next()
+    return
+  }
+
   // 角色权限检查
   if (isLoggedIn) {
     const isTeacherPath = to.path.startsWith('/t')
     const isStudentPath = to.path.startsWith('/s')
 
-    if (store.userInfo.role === 'teacher' && !isTeacherPath) {
+    if (
+      store.userInfo.role === 'teacher' &&
+      !isTeacherPath &&
+      to.path !== '/profile'
+    ) {
       next({ name: 'teacher-home-page' })
       return
     }
 
-    if (store.userInfo.role === 'student' && !isStudentPath) {
+    if (
+      store.userInfo.role === 'student' &&
+      !isStudentPath &&
+      to.path !== '/profile'
+    ) {
       next({ name: 'student-home-page' })
       return
     }

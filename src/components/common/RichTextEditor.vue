@@ -5,20 +5,20 @@ import Editor from '@tinymce/tinymce-vue'
 const props = defineProps({
   modelValue: {
     type: String,
-    default: ''
+    default: '',
   },
   height: {
     type: [Number, String],
-    default: 300
+    default: 300,
   },
   placeholder: {
     type: String,
-    default: '请输入内容...'
+    default: '请输入内容...',
   },
   disabled: {
     type: Boolean,
-    default: false
-  }
+    default: false,
+  },
 })
 
 const emit = defineEmits(['update:modelValue'])
@@ -27,14 +27,14 @@ const editorValue = ref(props.modelValue)
 
 watch(
   () => props.modelValue,
-  (newValue) => {
+  newValue => {
     if (newValue !== editorValue.value) {
       editorValue.value = newValue
     }
-  }
+  },
 )
 
-const handleEditorChange = (content) => {
+const handleEditorChange = content => {
   editorValue.value = content
   emit('update:modelValue', content)
 }
@@ -60,7 +60,7 @@ const editorInit = {
     'table',
     'code',
     'help',
-    'wordcount'
+    'wordcount',
   ],
   toolbar:
     'undo redo | bold italic underline strikethrough | ' +
@@ -75,7 +75,7 @@ const editorInit = {
     }
   `,
   placeholder: props.placeholder,
-  language: 'zh_CN'
+  language: 'zh_CN',
 }
 </script>
 

@@ -6,9 +6,9 @@ import { useUserStore } from '@/stores/user'
  */
 export const getAvatarPath = () => {
   const user = useUserStore()
-  if(user.userInfo.avatar){
+  if (user.userInfo.avatar) {
     return user.userInfo.avatar
-  }else{
-     return `http://q1.qlogo.cn/g?b=qq&nk=${user.userInfo.email}&s=100`
+  } else {
+    return `http://q1.qlogo.cn/g?b=qq&nk=${user.userInfo.email}&s=100`
   }
 }

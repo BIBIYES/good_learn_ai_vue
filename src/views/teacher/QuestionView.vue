@@ -6,7 +6,7 @@ import {
   getQuestionBankList,
   createQuestionBank,
   deleteQuestionBank,
-  updateQuestionBank
+  updateQuestionBank,
 } from '@/api/question'
 import message from '@/plugin/message.js'
 
@@ -63,7 +63,7 @@ const handleCreateBank = async () => {
   try {
     const res = await createQuestionBank({
       bankName: newBankName.value,
-      description: newBankDescription.value
+      description: newBankDescription.value,
     })
     if (res.code === 200) {
       message.success('创建成功')
@@ -85,7 +85,7 @@ const handleCreateBank = async () => {
   }
 }
 
-const handleEdit = (bank) => {
+const handleEdit = bank => {
   // 设置编辑表单的初始值
   editBankId.value = bank.bankId
   editBankName.value = bank.bankName
@@ -106,7 +106,7 @@ const handleUpdate = async () => {
     const res = await updateQuestionBank({
       bankId: editBankId.value,
       bankName: editBankName.value,
-      description: editBankDescription.value
+      description: editBankDescription.value,
     })
     if (res.code === 200) {
       message.success('更新成功')
@@ -126,7 +126,7 @@ const handleUpdate = async () => {
   }
 }
 
-const handleDelete = (bank) => {
+const handleDelete = bank => {
   // 设置要删除的题库信息
   deleteConfirmBankId.value = bank.bankId
   deleteConfirmBankName.value = bank.bankName
@@ -158,13 +158,13 @@ const confirmDelete = async () => {
   }
 }
 
-const changePage = (page) => {
+const changePage = page => {
   if (page >= 1 && page <= totalPages.value) {
     fetchQuestionBanks(page)
   }
 }
 
-const formatDate = (dateString) => {
+const formatDate = dateString => {
   try {
     const date = new Date(dateString)
     return date.toLocaleString() // More detailed format
@@ -174,11 +174,11 @@ const formatDate = (dateString) => {
   }
 }
 
-const viewBankDetail = (bank) => {
+const viewBankDetail = bank => {
   router.push({
     name: 'QuestionBankDetail',
     params: { bankId: bank.bankId },
-    query: { bankName: bank.bankName }
+    query: { bankName: bank.bankName },
   })
 }
 
@@ -192,21 +192,12 @@ onMounted(() => {
     <!-- Header with title and create button -->
     <TitleBar>
       <template #title>
-        <Garage
-          theme="outline"
-          size="38"
-        />
+        <Garage theme="outline" size="38" />
         <span>我的题库</span>
       </template>
       <template #module>
-        <label
-          for="create_bank_modal"
-          class="btn btn-primary btn-sm md:btn-md"
-        >
-          <Add
-            theme="outline"
-            size="18"
-          />
+        <label for="create_bank_modal" class="btn btn-primary btn-sm md:btn-md">
+          <Add theme="outline" size="18" />
           创建题库
         </label>
       </template>
@@ -249,23 +240,10 @@ onMounted(() => {
         class="flex flex-col items-center justify-center h-64"
       >
         <div class="text-center">
-          <Garage
-            theme="outline"
-            size="48"
-            class="text-base-content/30 mb-4"
-          />
-          <p class="text-base-content/70 text-lg">
-            暂无题库，快去创建一个吧！
-          </p>
-          <label
-            for="create_bank_modal"
-            class="btn btn-primary mt-4"
-          >
-            <Add
-              theme="outline"
-              size="18"
-              class="mr-1"
-            />
+          <Garage theme="outline" size="48" class="text-base-content/30 mb-4" />
+          <p class="text-base-content/70 text-lg">暂无题库，快去创建一个吧！</p>
+          <label for="create_bank_modal" class="btn btn-primary mt-4">
+            <Add theme="outline" size="18" class="mr-1" />
             创建第一个题库
           </label>
         </div>
@@ -329,19 +307,14 @@ onMounted(() => {
                 class="dropdown-content z-[1] menu menu-sm shadow bg-base-100 rounded-box w-32"
               >
                 <li>
-                  <a @click="handleEdit(bank)"><Edit
-                    theme="outline"
-                    size="14"
-                  /> 编辑</a>
+                  <a @click="handleEdit(bank)"
+                    ><Edit theme="outline" size="14" /> 编辑</a
+                  >
                 </li>
                 <li>
-                  <a
-                    class="text-error"
-                    @click="handleDelete(bank)"
-                  ><Delete
-                    theme="outline"
-                    size="14"
-                  /> 删除</a>
+                  <a class="text-error" @click="handleDelete(bank)"
+                    ><Delete theme="outline" size="14" /> 删除</a
+                  >
                 </li>
               </ul>
             </div>
@@ -371,15 +344,9 @@ onMounted(() => {
 
     <!-- Pagination - always at bottom -->
     <div class="mt-auto border-t border-base-200 p-4 bg-base-100">
-      <div
-        v-if="!loading"
-        class="flex justify-center space-x-5"
-      >
+      <div v-if="!loading" class="flex justify-center space-x-5">
         <div class="btn btn-sm">
-          <div
-            aria-label="status"
-            class="status status-primary"
-          />
+          <div aria-label="status" class="status status-primary" />
           <span>总计题库数：</span>{{ questionBanks.length }}
         </div>
         <div class="join">
@@ -411,29 +378,22 @@ onMounted(() => {
     </div>
 
     <!-- Create Question Bank Modal -->
-    <input
-      id="create_bank_modal"
-      type="checkbox"
-      class="modal-toggle"
-    >
-    <div
-      class="modal"
-      role="dialog"
-    >
+    <input id="create_bank_modal" type="checkbox" class="modal-toggle" />
+    <div class="modal" role="dialog">
       <div class="modal-box">
-        <h3 class="font-bold text-lg mb-4">
-          创建新题库
-        </h3>
+        <h3 class="font-bold text-lg mb-4">创建新题库</h3>
         <div class="form-control mb-2">
           <label class="label">
-            <span class="label-text">题库名称<span class="text-error">*</span></span>
+            <span class="label-text"
+              >题库名称<span class="text-error">*</span></span
+            >
           </label>
           <input
             v-model="newBankName"
             type="text"
             placeholder="例如：计算机网络期末考试"
             class="input input-bordered w-full"
-          >
+          />
         </div>
         <div class="form-control mb-4 flex flex-col">
           <label class="label">
@@ -446,14 +406,8 @@ onMounted(() => {
           />
         </div>
         <div class="modal-action">
-          <label
-            for="create_bank_modal"
-            class="btn btn-ghost"
-          >取消</label>
-          <button
-            class="btn btn-primary"
-            @click="handleCreateBank"
-          >
+          <label for="create_bank_modal" class="btn btn-ghost">取消</label>
+          <button class="btn btn-primary" @click="handleCreateBank">
             <span
               v-show="createLoading"
               class="loading loading-spinner loading-md"
@@ -462,36 +416,26 @@ onMounted(() => {
           </button>
         </div>
       </div>
-      <label
-        class="modal-backdrop"
-        for="create_bank_modal"
-      >Close</label>
+      <label class="modal-backdrop" for="create_bank_modal">Close</label>
     </div>
 
     <!-- Edit Question Bank Modal -->
-    <input
-      id="edit_bank_modal"
-      type="checkbox"
-      class="modal-toggle"
-    >
-    <div
-      class="modal"
-      role="dialog"
-    >
+    <input id="edit_bank_modal" type="checkbox" class="modal-toggle" />
+    <div class="modal" role="dialog">
       <div class="modal-box">
-        <h3 class="font-bold text-lg mb-4">
-          编辑题库
-        </h3>
+        <h3 class="font-bold text-lg mb-4">编辑题库</h3>
         <div class="form-control mb-2">
           <label class="label">
-            <span class="label-text">题库名称<span class="text-error">*</span></span>
+            <span class="label-text"
+              >题库名称<span class="text-error">*</span></span
+            >
           </label>
           <input
             v-model="editBankName"
             type="text"
             placeholder="例如：计算机网络期末考试"
             class="input input-bordered w-full"
-          >
+          />
         </div>
         <div class="form-control mb-4 flex flex-col">
           <label class="label">
@@ -504,14 +448,8 @@ onMounted(() => {
           />
         </div>
         <div class="modal-action">
-          <label
-            for="edit_bank_modal"
-            class="btn btn-ghost"
-          >取消</label>
-          <button
-            class="btn btn-primary"
-            @click="handleUpdate"
-          >
+          <label for="edit_bank_modal" class="btn btn-ghost">取消</label>
+          <button class="btn btn-primary" @click="handleUpdate">
             <span
               v-show="updateLoading"
               class="loading loading-spinner loading-md"
@@ -520,40 +458,22 @@ onMounted(() => {
           </button>
         </div>
       </div>
-      <label
-        class="modal-backdrop"
-        for="edit_bank_modal"
-      >Close</label>
+      <label class="modal-backdrop" for="edit_bank_modal">Close</label>
     </div>
 
     <!-- Delete Confirmation Modal -->
-    <input
-      id="delete_confirm_modal"
-      type="checkbox"
-      class="modal-toggle"
-    >
-    <div
-      class="modal"
-      role="dialog"
-    >
+    <input id="delete_confirm_modal" type="checkbox" class="modal-toggle" />
+    <div class="modal" role="dialog">
       <div class="modal-box">
-        <h3 class="font-bold text-lg mb-4">
-          确认删除
-        </h3>
+        <h3 class="font-bold text-lg mb-4">确认删除</h3>
         <p class="py-4">
           您确定要删除题库
           <span class="font-bold text-error">{{ deleteConfirmBankName }}</span>
           吗？此操作不可逆。
         </p>
         <div class="modal-action">
-          <label
-            for="delete_confirm_modal"
-            class="btn btn-ghost"
-          >取消</label>
-          <button
-            class="btn btn-error"
-            @click="confirmDelete"
-          >
+          <label for="delete_confirm_modal" class="btn btn-ghost">取消</label>
+          <button class="btn btn-error" @click="confirmDelete">
             <span
               v-show="deleteLoading"
               class="loading loading-spinner loading-md"
@@ -562,10 +482,7 @@ onMounted(() => {
           </button>
         </div>
       </div>
-      <label
-        class="modal-backdrop"
-        for="delete_confirm_modal"
-      >Close</label>
+      <label class="modal-backdrop" for="delete_confirm_modal">Close</label>
     </div>
   </div>
 </template>

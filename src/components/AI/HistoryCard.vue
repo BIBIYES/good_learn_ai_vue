@@ -1,5 +1,4 @@
 <script setup>
-
 // 导入Vue Router相关功能，用于路由导航和获取当前路由信息
 import { useRoute } from 'vue-router'
 import router from '@/router'
@@ -39,7 +38,7 @@ onMounted(() => {
 
 /**
  * 根据时间分组会话历史
- * 将聊天记录分为今天、昨天、三天前、七天前和更早的分组 
+ * 将聊天记录分为今天、昨天、三天前、七天前和更早的分组
  * @returns {Object} 按时间分组的会话对象
  */
 const groupedChats = computed(() => {
@@ -62,12 +61,12 @@ const groupedChats = computed(() => {
     yesterday: [],
     threeDaysAgo: [],
     sevenDaysAgo: [],
-    older: []
+    older: [],
   }
 
   // 遍历会话历史并根据创建时间分组
   if (ai.chatSessionHistory) {
-    ai.chatSessionHistory.forEach((chat) => {
+    ai.chatSessionHistory.forEach(chat => {
       const chatDate = new Date(chat.createTime)
       chatDate.setHours(0, 0, 0, 0)
 
@@ -94,7 +93,7 @@ const groupedChats = computed(() => {
  * @param {string} dateString - ISO格式的时间字符串
  * @returns {string} 格式化后的时间字符串 (HH:MM)
  */
-const formatDate = (dateString) => {
+const formatDate = dateString => {
   const date = new Date(dateString)
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
@@ -106,7 +105,7 @@ const formatDate = (dateString) => {
  * @param {string} sessionId - 会话ID
  * @returns {string} 完整的路由路径
  */
-const getSessionPath = (sessionId) => {
+const getSessionPath = sessionId => {
   const role = user.userInfo?.role || ''
   const basePath = role === 'teacher' ? '/t/ai/chat/' : '/s/ai/chat/'
   return basePath + sessionId
@@ -119,25 +118,16 @@ const getSessionPath = (sessionId) => {
     <ul class="menu rounded-box w-full h-full">
       <!-- 标题栏 -->
       <div class="flex items-center space-x-2">
-        <History
-          theme="outline"
-          size="20"
-          fill="#333"
-        />
+        <History theme="outline" size="20" fill="#333" />
         <span class="text-md font-bold">历史消息</span>
       </div>
       <!-- 加载状态指示器 -->
-      <div
-        v-if="isLoading"
-        class="flex justify-center items-center p-4"
-      >
+      <div v-if="isLoading" class="flex justify-center items-center p-4">
         <span class="loading loading-spinner" />
       </div>
       <!-- 今天的聊天记录 -->
       <li v-if="groupedChats.today.length > 0">
-        <h2 class="menu-title">
-          今天
-        </h2>
+        <h2 class="menu-title">今天</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.today"
@@ -160,11 +150,7 @@ const getSessionPath = (sessionId) => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More
-                      theme="outline"
-                      size="15"
-                      fill="#333"
-                    />
+                    <More theme="outline" size="15" fill="#333" />
                   </div>
                   <ul
                     tabindex="0"
@@ -176,7 +162,8 @@ const getSessionPath = (sessionId) => {
                           theme="outline"
                           size="20"
                           fill="#333"
-                        />修改名称</a>
+                        />修改名称</a
+                      >
                     </li>
                     <li>
                       <a class="text-red-500">
@@ -197,9 +184,7 @@ const getSessionPath = (sessionId) => {
 
       <!-- 昨天的聊天记录 -->
       <li v-if="groupedChats.yesterday.length > 0">
-        <h2 class="menu-title">
-          昨天
-        </h2>
+        <h2 class="menu-title">昨天</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.yesterday"
@@ -222,11 +207,7 @@ const getSessionPath = (sessionId) => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More
-                      theme="outline"
-                      size="15"
-                      fill="#333"
-                    />
+                    <More theme="outline" size="15" fill="#333" />
                   </div>
                   <ul
                     tabindex="0"
@@ -238,7 +219,8 @@ const getSessionPath = (sessionId) => {
                           theme="outline"
                           size="20"
                           fill="#333"
-                        />修改名称</a>
+                        />修改名称</a
+                      >
                     </li>
                     <li>
                       <a class="text-red-500">
@@ -259,9 +241,7 @@ const getSessionPath = (sessionId) => {
 
       <!-- 三天前的聊天记录 -->
       <li v-if="groupedChats.threeDaysAgo.length > 0">
-        <h2 class="menu-title">
-          三天前
-        </h2>
+        <h2 class="menu-title">三天前</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.threeDaysAgo"
@@ -283,11 +263,7 @@ const getSessionPath = (sessionId) => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More
-                      theme="outline"
-                      size="15"
-                      fill="#333"
-                    />
+                    <More theme="outline" size="15" fill="#333" />
                   </div>
                   <ul
                     tabindex="0"
@@ -299,7 +275,8 @@ const getSessionPath = (sessionId) => {
                           theme="outline"
                           size="20"
                           fill="#333"
-                        />修改名称</a>
+                        />修改名称</a
+                      >
                     </li>
                     <li>
                       <a class="text-red-500">
@@ -320,9 +297,7 @@ const getSessionPath = (sessionId) => {
 
       <!-- 七天前的聊天记录 -->
       <li v-if="groupedChats.sevenDaysAgo.length > 0">
-        <h2 class="menu-title">
-          七天前
-        </h2>
+        <h2 class="menu-title">七天前</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.sevenDaysAgo"
@@ -344,11 +319,7 @@ const getSessionPath = (sessionId) => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More
-                      theme="outline"
-                      size="15"
-                      fill="#333"
-                    />
+                    <More theme="outline" size="15" fill="#333" />
                   </div>
                   <ul
                     tabindex="0"
@@ -360,7 +331,8 @@ const getSessionPath = (sessionId) => {
                           theme="outline"
                           size="20"
                           fill="#333"
-                        />修改名称</a>
+                        />修改名称</a
+                      >
                     </li>
                     <li>
                       <a class="text-red-500">
@@ -381,9 +353,7 @@ const getSessionPath = (sessionId) => {
 
       <!-- 更早之前的聊天记录 -->
       <li v-if="groupedChats.older.length > 0">
-        <h2 class="menu-title">
-          更久之前
-        </h2>
+        <h2 class="menu-title">更久之前</h2>
         <ul>
           <li
             v-for="(item, index) in groupedChats.older"
@@ -405,11 +375,7 @@ const getSessionPath = (sessionId) => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More
-                      theme="outline"
-                      size="15"
-                      fill="#333"
-                    />
+                    <More theme="outline" size="15" fill="#333" />
                   </div>
                   <ul
                     tabindex="0"
@@ -421,7 +387,8 @@ const getSessionPath = (sessionId) => {
                           theme="outline"
                           size="20"
                           fill="#333"
-                        />修改名称</a>
+                        />修改名称</a
+                      >
                     </li>
                     <li>
                       <a class="text-red-500">

@@ -18,7 +18,8 @@ export const useAIStore = defineStore(
     const chatSessionHistory = ref([])
 
     return { input, aiLoading, chatSessionHistory }
-  },{
-    persist: true
-  }
+  },
+  {
+    persist: true,
+  },
 )
