@@ -104,7 +104,7 @@ onMounted(() => {
           登录
         </button>
         <button
-          class="tab tab-lg flex-1 transition-all font-medium"
+          class="tab tab-lg flex-1 transition-all font-medium border-gray-300"
           :class="{ 'tab-active': $route.path === '/register' }"
           @click="router.push('/register')"
         >

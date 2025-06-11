@@ -21,3 +21,12 @@ export const register = obj => {
 export const changePassword = obj => {
   return request.post('/users/change-password', obj)
 }
+
+/**
+ * @description 用户忘记密码的
+ * @param {*} obj
+ * @returns
+ */
+export const forGetPassword = obj => {
+  return request.post('/users/forgot-password', obj)
+}

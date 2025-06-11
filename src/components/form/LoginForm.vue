@@ -68,7 +68,9 @@ const handleLogin = async () => {
     <div class="form-control">
       <label class="label">
         <span class="label-text font-medium">密码</span>
-        <a href="#" class="label-text-alt link link-hover text-primary"
+        <a
+          class="label-text-alt link link-hover text-primary"
+          @click="router.push('/forgot-password')"
           >忘记密码?</a
         >
       </label>

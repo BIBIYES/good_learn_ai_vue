@@ -15,6 +15,7 @@ declare module 'vue' {
     CollapseIcon: typeof import('./../components/icon/collapse-icon.vue')['default']
     CourseCard: typeof import('./../components/student/CourseCard.vue')['default']
     ExpandIcon: typeof import('./../components/icon/expand-icon.vue')['default']
+    ForgotPasswordForm: typeof import('./../components/form/ForgotPasswordForm.vue')['default']
     HistoryCard: typeof import('./../components/AI/HistoryCard.vue')['default']
     LayoutView: typeof import('./../components/layout/LayoutView.vue')['default']
     LoadingState: typeof import('./../components/common/LoadingState.vue')['default']

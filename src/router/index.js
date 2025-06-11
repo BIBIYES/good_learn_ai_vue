@@ -30,6 +30,11 @@ const router = createRouter({
           name: 'register', // 保持这个基础命名
           component: () => import('@/components/form/RegisterForm.vue'),
         },
+        {
+          path: '/forgot-password',
+          name: 'forgot-password',
+          component: () => import('@/components/form/ForgotPasswordForm.vue'),
+        },
       ],
     },
     // 老师路由
@@ -173,7 +178,7 @@ router.beforeEach((to, from, next) => {
   const isLoggedIn = store.userInfo && store.userInfo.jwtToken
 
   // 登录相关页面路径
-  const authRoutes = ['/login', '/register']
+  const authRoutes = ['/login', '/register', '/forgot-password']
 
   // 公开页面
   const openRoutes = ['/about', '/test']
