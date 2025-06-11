@@ -11,12 +11,13 @@ const loginInfo = ref({
   password: '',
 })
 const handleLogin = async () => {
+  btnLoading.value = true
   const res = await login(loginInfo.value)
   if (res.code == 200) {
     console.log('登录成功')
     message.success(res.message)
     user.setUserInfo(res.data)
-
+    btnLoading.value = false
     if (res.data.role == 'student') {
       console.log('学生登录')
 
@@ -29,6 +30,8 @@ const handleLogin = async () => {
   }
   console.log(res)
 }
+
+const btnLoading = ref(false)
 </script>
 <template>
   <form class="space-y-6" @submit.prevent="handleLogin">
@@ -109,6 +112,7 @@ const handleLogin = async () => {
       type="submit"
       class="btn btn-primary w-full mt-8 text-lg font-semibold shadow-md hover:shadow-lg transition-all"
     >
+      <span v-if="btnLoading" class="loading loading-spinner"></span>
       <span>登录</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"

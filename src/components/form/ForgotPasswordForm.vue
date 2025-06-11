@@ -15,6 +15,7 @@ const forgotPasswordForm = ref({
 const isCodeSent = ref(false)
 const countdown = ref(0)
 const isLoading = ref(false)
+const btnLoading = ref(false)
 
 const sendVerificationCode = async () => {
   if (countdown.value > 0 || !forgotPasswordForm.value.email) {
@@ -52,6 +53,7 @@ const sendVerificationCode = async () => {
 
 const handleResetPassword = async () => {
   // 验证码检查
+  btnLoading.value = true
   if (!forgotPasswordForm.value.code) {
     message.error('请输入验证码')
     return
@@ -81,8 +83,10 @@ const handleResetPassword = async () => {
 
     if (res.code == 200) {
       message.success('密码重置成功')
+      btnLoading.value = false
       router.push('/login')
     }
+    btnLoading.value = false
   } catch (error) {
     console.error('密码重置失败:', error)
     message.error('密码重置失败，请稍后重试')
@@ -239,6 +243,7 @@ const handleResetPassword = async () => {
       type="submit"
       class="btn btn-primary w-full mt-8 text-lg font-semibold shadow-md hover:shadow-lg transition-all"
     >
+      <span v-if="btnLoading" class="loading loading-spinner"></span>
       <span>重置密码</span>
       <svg
         xmlns="http://www.w3.org/2000/svg"
