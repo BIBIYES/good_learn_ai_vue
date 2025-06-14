@@ -15,6 +15,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/TestPage.vue'),
+    },
+    {
       path: '/login',
       name: 'login-parent', // 保持这个特殊命名，因为是父路由
       component: () => import('../views/LoginPage.vue'),

@@ -7,7 +7,7 @@ import {
   updateTeacherCourse,
 } from '@/api/course'
 import message from '@/plugin/message'
-import { School, Add, Copy } from '@icon-park/vue-next'
+import { School, Add } from '@icon-park/vue-next'
 
 const router = useRouter()
 const loading = ref(true)
@@ -107,26 +107,6 @@ const openEditModal = course => {
   editForm.value = { ...course }
   showEditModal.value = true
 }
-
-const copyCourseId = async id => {
-  try {
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(id)
-      message.success('课程ID已复制')
-    } else {
-      const textArea = document.createElement('textarea')
-      textArea.value = id
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      message.success('课程ID已复制')
-    }
-  } catch (err) {
-    message.error(`复制失败: ${err.message}`)
-  }
-}
-
 const handleEditCourse = async () => {
   editLoading.value = true
   try {
@@ -180,7 +160,7 @@ onMounted(() => {
         v-if="loading"
         class="w-full h-full flex justify-center items-center"
       >
-        <span class="loading loading-spinner loading-lg"></span>
+        <DgLoadingText text="正在获取课程列表...."></DgLoadingText>
       </div>
 
       <!-- Empty State -->
@@ -278,21 +258,7 @@ onMounted(() => {
           >
             <div>{{ item.description || '暂无介绍' }}</div>
           </div>
-          <div
-            class="flex items-center justify-between mt-4 text-xs text-base-content/40 border-t pt-3"
-          >
-            <span>课程ID: {{ item.courseId }}</span>
-            <button
-              class="btn btn-ghost btn-sm btn-circle text-primary hover:text-black"
-              @click="copyCourseId(item.courseId)"
-            >
-              <Copy theme="outline" size="16" />
-            </button>
-            <span>课程密码: {{ item.coursePassword || '无密码' }}</span>
-            <span
-              >创建时间:
-              {{ item.createdAt ? item.createdAt.split('T')[0] : '—' }}</span
-            >
+          <div class="flex justify-end text-xs text-base-content/40 pt-3">
             <button
               class="btn btn-sm btn-outline btn-primary"
               @click.stop="router.push(`/t/course/${item.courseId}`)"

@@ -1,11 +1,12 @@
 <template>
   <div class="flex flex-col h-full p-4">
-    <!-- 页面标题和课程信息 -->
+    <!-- 页面标题 -->
     <TitleBar>
       <template #title>
         <div class="flex items-center gap-2">
           <div
-            class="bg-primary text-primary-content w-10 h-10 rounded-lg flex justify-center items-center text-xl font-bold"
+            class="btn bg-primary text-primary-content w-10 h-10 rounded-lg flex justify-center items-center text-xl font-bold cursor-pointer hover:bg-primary-focus"
+            @click="router.go(-1)"
           >
             {{ courseInfo.className ? courseInfo.className.charAt(0) : 'C' }}
           </div>
@@ -14,182 +15,244 @@
       </template>
       <template #module>
         <div class="flex items-center gap-2">
-          <span class="text-sm text-base-content/70"
-            >课程ID: {{ courseId }}</span
-          >
-          <div class="tabs tabs-boxed bg-base-200">
-            <a
-              class="tab"
-              :class="{ 'tab-active': activeTab === 'sign-in' }"
-              @click="activeTab = 'sign-in'"
-            >
-              签到管理
-            </a>
-            <a
-              class="tab"
-              :class="{ 'tab-active': activeTab === 'homework' }"
-              @click="activeTab = 'homework'"
-            >
-              作业管理
-            </a>
-          </div>
+          <!-- 移除此处的课程ID显示 -->
         </div>
       </template>
     </TitleBar>
-
     <!-- 主内容区域 -->
-    <div class="flex-1 overflow-y-auto p-4 md:p-6">
+    <div class="flex-1 overflow-y-auto p-4">
       <!-- 加载状态 -->
       <div
         v-if="loading"
-        class="w-full h-full flex justify-center items-center"
+        class="w-full h-full flex flex-col justify-center items-center"
       >
-        <span class="loading loading-spinner loading-lg"></span>
+        <DgLoadingText text="正在获取课程信息...."></DgLoadingText>
       </div>
 
-      <!-- 签到管理 -->
-      <div v-else-if="activeTab === 'sign-in'" class="w-full">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold">签到管理</h2>
-          <button class="btn btn-primary" @click="showCreateSignInModal = true">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            发布签到
-          </button>
-        </div>
-
-        <!-- 签到列表 -->
-        <div v-if="signInList.length === 0" class="text-center py-12">
-          <div class="text-4xl mb-4">📝</div>
-          <p class="text-base-content/70">
-            暂无签到记录，点击上方按钮发布新签到
-          </p>
-        </div>
-
-        <div
-          v-else
-          class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
-        >
-          <div
-            v-for="(item, index) in signInList"
-            :key="index"
-            class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300"
+      <div v-else class="flex flex-col gap-6 animate__animated animate__fadeIn">
+        <!-- 顶部卡片带视频背景 -->
+        <div class="relative rounded-2xl overflow-hidden">
+          <!-- 视频背景 -->
+          <video
+            class="absolute top-0 left-0 w-full h-full object-cover"
+            autoplay
+            loop
+            muted
+            playsinline
           >
-            <div class="card-body">
-              <div class="flex justify-between items-center">
-                <h3 class="card-title">{{ item.title }}</h3>
-                <div class="badge" :class="getStatusBadgeClass(item.status)">
-                  {{ getStatusText(item.status) }}
+            <source
+              src="../../../assets/videos/banner-bg.mp4"
+              type="video/mp4"
+            />
+          </video>
+
+          <!-- 遮罩层 -->
+          <div
+            class="absolute top-0 left-0 w-full h-full bg-base-100/80 backdrop-blur-xl"
+          ></div>
+
+          <!-- 卡片内容 -->
+          <div class="card-body relative z-10 p-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content">🪪 课程ID:</span>
+                  <span class="text-base-content">{{ courseId }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content"
+                    >📝 课程描述:</span
+                  >
+                  <span class="text-base-content">{{
+                    courseInfo.description || '暂无描述'
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content"
+                    >🚦 课程状态:</span
+                  >
+                  <GdTag :color="courseInfo.status ? 'primary' : 'error'">
+                    {{ courseInfo.status ? '已启用' : '已停用' }}
+                  </GdTag>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content"
+                    >🔑 课程密码:</span
+                  >
+                  <div class="flex items-center gap-2">
+                    <span class="text-base-content">{{
+                      showPassword
+                        ? courseInfo.coursePassword || '无'
+                        : '••••••'
+                    }}</span>
+                    <button
+                      class="btn btn-xs btn-ghost btn-circle"
+                      @click="showPassword = !showPassword"
+                    >
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="h-4 w-4"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          :d="
+                            showPassword
+                              ? 'M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7A9.97 9.97 0 014.02 8.971m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21'
+                              : 'M15 12a3 3 0 11-6 0 3 3 0 016 0z M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z'
+                          "
+                        />
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
-              <p>开始时间: {{ formatDateTime(item.startTime) }}</p>
-              <p>结束时间: {{ formatDateTime(item.endTime) }}</p>
-              <div class="card-actions justify-end mt-2">
-                <button
-                  class="btn btn-sm btn-outline"
-                  @click="viewSignInDetail(item)"
-                >
-                  查看详情
-                </button>
-                <button
-                  class="btn btn-sm btn-primary"
-                  :disabled="item.status === 'ended'"
-                  @click="toggleSignInStatus(item)"
-                >
-                  {{ item.status === 'active' ? '结束签到' : '开始签到' }}
-                </button>
+              <div class="flex flex-col gap-2">
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content"
+                    >📅 创建时间:</span
+                  >
+                  <span class="text-base-content">{{
+                    formatDateTime(courseInfo.createdAt)
+                  }}</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content"
+                    >🔄 最后更新:</span
+                  >
+                  <span class="text-base-content">{{
+                    formatDateTime(courseInfo.updatedAt)
+                  }}</span>
+                </div>
+
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content">👤 班长ID:</span>
+                  <span class="text-base-content">{{
+                    courseInfo.monitorId || '未设置'
+                  }}</span>
+                  <button
+                    class="btn btn-xs btn-circle btn-ghost"
+                    title="设置班长"
+                    disabled
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+                      />
+                    </svg>
+                  </button>
+                </div>
+                <div class="flex items-center gap-2">
+                  <span class="font-medium text-base-content"
+                    >👥 学生人数:</span
+                  >
+                  <span class="text-base-content"
+                    >{{ courseInfo.totalStudents || 0 }} 人</span
+                  >
+                  <LoadingState v-if="avatarLoading" />
+                  <div>
+                    <GdStack
+                      :course-student-list="courseStudentList"
+                      size="5"
+                      spacing="3"
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <!-- 作业管理 -->
-      <div v-else-if="activeTab === 'homework'" class="w-full">
-        <div class="flex justify-between items-center mb-6">
-          <h2 class="text-xl font-bold">作业管理</h2>
-          <button class="btn btn-primary" disabled>
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              class="h-5 w-5 mr-1"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M12 4v16m8-8H4"
-              />
-            </svg>
-            发布作业
-          </button>
+        <div role="tablist" class="tabs tabs-box">
+          <a
+            role="tab"
+            class="tab"
+            :class="{ 'tab-active': activeTab === 'sign-in' }"
+            @click="activeTab = 'sign-in'"
+          >
+            签到管理
+          </a>
+          <a
+            role="tab"
+            class="tab"
+            :class="{ 'tab-active': activeTab === 'homework' }"
+            @click="activeTab = 'homework'"
+          >
+            作业管理
+          </a>
         </div>
 
-        <!-- 占位内容 -->
-        <div class="text-center py-12">
-          <div class="text-4xl mb-4">📚</div>
-          <p class="text-base-content/70">作业管理功能正在开发中...</p>
-        </div>
+        <!-- 动态组件区域 -->
+        <transition name="fade" mode="out-in">
+          <component
+            :is="currentTabComponent"
+            :key="activeTab"
+            :course-id="courseId"
+          />
+        </transition>
       </div>
     </div>
-
-    <!-- 创建签到模态框 -->
-    <dialog class="modal" :open="showCreateSignInModal">
-      <div class="modal-box w-11/12 max-w-md">
-        <h3 class="font-bold text-lg mb-4">发布新签到</h3>
-        <CreateSignInForm
-          :course-id="courseId"
-          @close="showCreateSignInModal = false"
-          @created="handleSignInCreated"
-        />
-      </div>
-      <form method="dialog" class="modal-backdrop">
-        <button @click="showCreateSignInModal = false">关闭</button>
-      </form>
-    </dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
-import { useRoute } from 'vue-router'
-import { getCourseDetail } from '@/api/course'
+import { useRoute, useRouter } from 'vue-router'
+import { getCourseDetail, getCourseList } from '@/api/course'
 import message from '@/plugin/message'
-import CreateSignInForm from './components/CreateSignInForm.vue'
+import GdTag from '@/components/common/GdTag.vue'
+import SignInManagement from './components/SignInManagement.vue'
+import HomeworkManagement from './components/HomeworkManagement.vue'
+import GdStack from '@/components/common/GdStack.vue'
+import DgLoadingText from '@/components/common/GdLoadingText.vue'
+import LoadingState from '@/components/common/LoadingState.vue'
 
+const avatarLoading = ref(true)
 const route = useRoute()
+const router = useRouter()
 const courseId = computed(() => route.params.courseId)
 
 // 页面状态
 const loading = ref(true)
 const activeTab = ref('sign-in') // 默认显示签到管理
-const showCreateSignInModal = ref(false)
+const showPassword = ref(false) // 密码显示控制
 
 // 课程信息
 const courseInfo = ref({})
-const signInList = ref([])
+const courseStudentList = ref([]) // 课程学生列表
+
+// 当前组件
+const currentTabComponent = computed(() => {
+  switch (activeTab.value) {
+    case 'sign-in':
+      return SignInManagement
+    case 'homework':
+      return HomeworkManagement
+    default:
+      return SignInManagement
+  }
+})
 
 // 获取课程详情
 const fetchCourseDetail = async () => {
   loading.value = true
   try {
-    const res = await getCourseDetail(courseId.value)
-    if (res.code === 200) {
-      courseInfo.value = res.data
+    const res = await getCourseDetail({ courseId: courseId.value })
+    if (res.code === 200 && res.data && res.data.length > 0) {
+      courseInfo.value = res.data[0] // 获取数组中的第一个课程
     }
   } catch (error) {
     message.error('获取课程信息失败')
@@ -199,85 +262,20 @@ const fetchCourseDetail = async () => {
   }
 }
 
-// 模拟数据 - 实际项目中应该从API获取
-const fetchSignInList = async () => {
-  // 这里应该调用实际的API
-  // 目前使用模拟数据
-  signInList.value = [
-    {
-      id: 1,
-      title: '第一周课堂签到',
-      status: 'ended', // active, pending, ended
-      startTime: new Date(Date.now() - 7 * 24 * 60 * 60 * 1000),
-      endTime: new Date(Date.now() - 6 * 24 * 60 * 60 * 1000),
-      participantCount: 42,
-      totalCount: 50,
-    },
-    {
-      id: 2,
-      title: '第二周课堂签到',
-      status: 'active',
-      startTime: new Date(),
-      endTime: new Date(Date.now() + 2 * 60 * 60 * 1000),
-      participantCount: 35,
-      totalCount: 50,
-    },
-  ]
-}
-
-// 查看签到详情
-const viewSignInDetail = item => {
-  console.log('查看签到详情', item)
-  // 这里可以跳转到详情页或者打开详情模态框
-}
-
-// 切换签到状态
-const toggleSignInStatus = item => {
-  console.log('切换签到状态', item)
-  // 实际项目中应该调用API
-  if (item.status === 'active') {
-    item.status = 'ended'
-    message.success('签到已结束')
-  } else if (item.status === 'pending') {
-    item.status = 'active'
-    message.success('签到已开始')
+// 获取学生列表
+const fetchStudentList = async () => {
+  try {
+    const res = await getCourseList(courseId.value)
+    if (res.code === 200 && res.data) {
+      courseStudentList.value = res.data
+      avatarLoading.value = false
+    }
+  } catch (error) {
+    console.error('获取学生列表失败:', error)
   }
 }
 
-// 处理新建签到
-const handleSignInCreated = newSignIn => {
-  signInList.value.unshift(newSignIn)
-  showCreateSignInModal.value = false
-  message.success('签到创建成功')
-}
-
-// 辅助函数
-const getStatusBadgeClass = status => {
-  switch (status) {
-    case 'active':
-      return 'badge-success'
-    case 'pending':
-      return 'badge-warning'
-    case 'ended':
-      return 'badge-ghost'
-    default:
-      return 'badge-info'
-  }
-}
-
-const getStatusText = status => {
-  switch (status) {
-    case 'active':
-      return '进行中'
-    case 'pending':
-      return '未开始'
-    case 'ended':
-      return '已结束'
-    default:
-      return '未知'
-  }
-}
-
+// 日期时间格式化
 const formatDateTime = date => {
   if (!date) return '未设置'
   if (typeof date === 'string') {
@@ -294,7 +292,7 @@ const formatDateTime = date => {
 
 onMounted(() => {
   fetchCourseDetail()
-  fetchSignInList()
+  fetchStudentList()
 })
 </script>
 
@@ -303,5 +301,16 @@ onMounted(() => {
 .tabs-boxed .tab-active {
   background-color: hsl(var(--p));
   color: hsl(var(--pc));
+}
+
+/* 过渡动画 */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 </style>

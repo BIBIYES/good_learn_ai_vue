@@ -54,7 +54,7 @@ export const updateTeacherCourse = obj => {
 
 /**
  * 老师发起签到
- * @param {classId:number} obj
+ * @param {Object} obj - 包含courseId, type和可选的pinCode
  * @returns 返回发起成功或者失败
  */
 export const initiateSignIn = obj => {
@@ -71,10 +71,33 @@ export const getSignInInfo = courseId => {
 }
 
 /**
+ * 停止签到
+ * @param {number} courseId
+ * @returns
+ */
+export const stopSignIn = attendanceId => {
+  return request.put(`/course-attendance/stop-check-in`, { attendanceId })
+}
+
+/**
  * 获取课程详情
- * @param {课程ID} courseId
+ * @param {Object} obj - 包含courseId的对象
  * @returns 课程详情
  */
-export const getCourseDetail = courseId => {
-  return request.get(`/course/getCourseById/${courseId}`)
+export const getCourseDetail = obj => {
+  return request.post(`/course/get-coursems`, obj)
+}
+
+/**
+ * 获取课程中的学生列表
+ * @param {number} courseId 课程id
+ * @param {string} username 学生姓名 默认空
+ * @returns
+ */
+export const getCourseList = (courseId, username) => {
+  return request.get(`/course/get-students/${courseId}`, {
+    params: {
+      username,
+    },
+  })
 }
