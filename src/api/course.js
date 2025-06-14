@@ -30,15 +30,15 @@ export const createCourse = obj => {
 
 /**
  * 获取老师创建的所有课程，支持分页
- * @param {Number} page 页码，默认第1页
- * @param {Number} pageSize 每页条数，默认10条
+ * @param {Number} current 页码，默认第1页
+ * @param {Number} size 每页条数，默认10条
  * @returns 返回老师创建的所有课程
  */
-export const getTeacherCourse = (page = 1, pageSize = 10) => {
+export const getTeacherCourse = (current = 1, size = 10) => {
   return request.get('/course/get-course', {
     params: {
-      page,
-      pageSize,
+      current,
+      size,
     },
   })
 }
@@ -50,4 +50,31 @@ export const getTeacherCourse = (page = 1, pageSize = 10) => {
  */
 export const updateTeacherCourse = obj => {
   return request.put('/course/compile-course', obj)
+}
+
+/**
+ * 老师发起签到
+ * @param {classId:number} obj
+ * @returns 返回发起成功或者失败
+ */
+export const initiateSignIn = obj => {
+  return request.post(`/course-attendance/initiate-check-in`, obj)
+}
+
+/**
+ * 获取当前课程中的签到信息
+ * @param {number} courseId
+ * @returns
+ */
+export const getSignInInfo = courseId => {
+  return request.get(`/course-attendance/get-attendance-info/${courseId}`)
+}
+
+/**
+ * 获取课程详情
+ * @param {课程ID} courseId
+ * @returns 课程详情
+ */
+export const getCourseDetail = courseId => {
+  return request.get(`/course/getCourseById/${courseId}`)
 }
