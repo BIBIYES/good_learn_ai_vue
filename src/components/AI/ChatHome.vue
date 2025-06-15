@@ -3,6 +3,8 @@ import { v4 as uuidv4 } from 'uuid'
 import { useAIStore } from '@/stores/ai'
 import router from '@/router'
 import { useUserStore } from '@/stores/user'
+import { useComponentsStore } from '@/stores/components'
+const componentsStore = useComponentsStore()
 
 const ai = useAIStore()
 const user = useUserStore()
@@ -64,10 +66,20 @@ const handleShortcutClick = prompt => {
 
 <template>
   <div
-    class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md space-y-2.5"
+    class="flex flex-col h-full w-full items-center bg-base-100 rounded-md space-y-2.5 pt-5"
   >
+    <!-- 展开侧边栏 -->
+    <div class="self-start ml-5 items-start mb-5">
+      <ExpandIcon
+        :class="{
+          hidden: !componentsStore.aiSideBarStatus,
+        }"
+        class=""
+        @click="componentsStore.toggleAiSideBar()"
+      />
+    </div>
     <!-- 聊天内容区域 -->
-    <div class="overflow-y-auto p-4">
+    <div class="overflow-y-auto p-4 mt-30">
       <div class="chat-container h-full">
         <!-- 这里可以放置聊天消息内容 -->
         <div class="flex justify-center items-center h-full">

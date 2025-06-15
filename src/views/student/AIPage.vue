@@ -7,7 +7,7 @@ const componentsStore = useComponentsStore()
     <div
       class="w-65"
       :class="{
-        hidden: componentsStore.aiSiderBarStatus,
+        hidden: componentsStore.aiSideBarStatus,
       }"
     >
       <SiderBarMenu />

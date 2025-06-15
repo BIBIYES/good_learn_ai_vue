@@ -250,9 +250,9 @@ const handleSendMessage = async message => {
     <div class="self-start flex items-center space-x-3 ml-5">
       <ExpandIcon
         :class="{
-          hidden: !componentsStore.aiSiderBarStatus,
+          hidden: !componentsStore.aiSideBarStatus,
         }"
-        @click="componentsStore.toggleAiSiderBar()"
+        @click="componentsStore.toggleAiSideBar()"
       />
       <div class="dropdown self-start">
         <div tabindex="0" role="button" class="btn m-1 bg-base-100">
