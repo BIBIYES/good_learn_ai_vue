@@ -12,3 +12,11 @@ export const getAvatarPath = () => {
     return `http://q1.qlogo.cn/g?b=qq&nk=${user.userInfo.email}&s=100`
   }
 }
+
+/**
+ * 此方法会获取用户的信息来返回头像路径
+ * @returns 返回头像的路径
+ */
+export const getEmailAvatarPath = email => {
+  return `http://q1.qlogo.cn/g?b=qq&nk=${email}&s=100`
+}

@@ -1,7 +1,8 @@
 <script setup>
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ref, onMounted, nextTick } from 'vue'
+import { ref, onMounted } from 'vue'
+import { getEmailAvatarPath } from '@/utils/avatarPath'
 gsap.registerPlugin(ScrollTrigger)
 
 const isLoading = ref(true)
@@ -101,34 +102,40 @@ const teamMembers = [
   {
     name: '骆子豪',
     role: '前端架构',
-    intro: '负责前端架构整体开发，精通Vue前端框架，拥有丰富的大型应用开发经验。',
+    intro:
+      '负责前端架构整体开发，精通Vue前端框架，拥有丰富的大型应用开发经验。',
     skills: ['Vue', 'JavaScript', 'TypeScript', 'Flushbonading'],
     github: 'https://github.com/BIBIYES',
-    email: '3203727672@qq.com'
+    email: '3203727672@qq.com',
+    avatar: getEmailAvatarPath('3203727672@qq.com'),
   },
   {
     name: '李豪',
     role: '数据算法',
-    intro: '负责系统数据分析与算法优化，专注于机器学习和数据可视化，具备扎实的数学功底。',
+    intro:
+      '负责系统数据分析与算法优化，专注于机器学习和数据可视化，具备扎实的数学功底。',
     skills: ['Python', 'TensorFlow', 'Data Analysis', 'Machine Learning'],
-    github: '#',
-    email: '2969004227@qq.com'
+    github: 'https://github.com/LeastBit',
+    email: '2969004227@qq.com',
+    avatar: getEmailAvatarPath('2969004227@qq.com'),
   },
   {
     name: '陈克岚',
     role: '视觉开发',
     intro: '负责交互设计与前端视觉开发，美术功底深厚，擅长科技与艺术融合。',
-    skills: ['React', 'Pan-Design', 'Figma', 'CSS' ],
+    skills: ['React', 'Pan-Design', 'Figma', 'CSS'],
     github: 'https://github.com/lingfeng11111',
-    email: '3374080053@qq.com'
+    email: '3374080053@qq.com',
+    avatar: getEmailAvatarPath('3374080053@qq.com'),
   },
   {
     name: '曾志翔',
     role: '后端运维',
     intro: '负责后端开发与系统运维，精通Doker以及部署等。',
-    skills: ['Java', 'Lunix', 'Docker', 'MySQL'],
+    skills: ['Java', 'Linux', 'Docker', 'MySQL'],
     github: 'https://github.com/dsfeiji',
-    email: '2315124408@qq.com'
+    email: '2315124408@qq.com',
+    avatar: getEmailAvatarPath('2315124408@qq.com'),
   },
   {
     name: '王斐霓',
@@ -136,7 +143,8 @@ const teamMembers = [
     intro: '负责前端功能实现与组件开发，对新技术有强烈的探索精神。',
     skills: ['Vue', 'JavaScript', 'Webpack'],
     github: 'https://github.com/IC-1318',
-    email: '1547689028@qq.com'
+    email: '1547689028@qq.com',
+    avatar: getEmailAvatarPath('1547689028@qq.com'),
   },
   {
     name: '王诗琪',
@@ -144,8 +152,9 @@ const teamMembers = [
     intro: '负责后端服务开发，具备优秀的系统架构设计能力。',
     skills: ['Java', 'Spring Boot', 'MySQL'],
     github: 'https://github.com/Netlibata',
-    email: '3160054387@qq.com'
-  }
+    email: '3160054387@qq.com',
+    avatar: getEmailAvatarPath('3160054387@qq.com'),
+  },
 ]
 
 // 当前选中的成员索引
@@ -154,7 +163,7 @@ const activeIndex = ref(null)
 const showDialog = ref(false)
 
 // 显示成员详情
-const showMemberDetail = (index) => {
+const showMemberDetail = index => {
   activeIndex.value = index
   showDialog.value = true
 }
@@ -176,7 +185,7 @@ const animation = () => {
     duration: 0.8,
     delay: 0.3,
   })
-  
+
   // 闪电标志动画
   gsap.fromTo(
     '.lightning',
@@ -214,7 +223,7 @@ const animation = () => {
       },
     })
   }
-  
+
   // 整体团队区域动画
   gsap.from('.team-grid', {
     y: 50,
@@ -227,79 +236,138 @@ const animation = () => {
       toggleActions: 'restart none none reset',
       scrub: false,
       once: false,
-    }
-  });
-}
-
-const activeMemberIndex = ref(null)
-
-const handleShowMember = idx => {
-  activeMemberIndex.value = idx
-  nextTick(() => {
-    const imgs = document.querySelectorAll('.team-member-img img')
-    imgs.forEach((img, i) => {
-      if (i === idx) {
-        img.classList.add('active')
-      } else {
-        img.classList.remove('active')
-      }
-    })
+    },
   })
-  // 这里可以弹窗或做其他操作
 }
 
-const handleHideMember = () => {
-  activeMemberIndex.value = null
-  const imgs = document.querySelectorAll('.team-member-img img')
-  imgs.forEach(img => img.classList.remove('active'))
-}
+// const activeMemberIndex = ref(null)
+
+// const handleShowMember = idx => {
+//   activeMemberIndex.value = idx
+//   nextTick(() => {
+//     const imgs = document.querySelectorAll('.team-member-img img')
+//     imgs.forEach((img, i) => {
+//       if (i === idx) {
+//         img.classList.add('active')
+//       } else {
+//         img.classList.remove('active')
+//       }
+//     })
+//   })
+//   // 这里可以弹窗或做其他操作
+// }
+
+// const handleHideMember = () => {
+//   activeMemberIndex.value = null
+//   const imgs = document.querySelectorAll('.team-member-img img')
+//   imgs.forEach(img => img.classList.remove('active'))
+// }
 </script>
 
 <template>
   <div class="app flex flex-col h-screen w-full">
     <!-- 成员详情弹窗 -->
-    <div v-if="showDialog" class="fixed inset-0 flex items-center justify-center z-50">
+    <div
+      v-if="showDialog"
+      class="fixed inset-0 flex items-center justify-center z-50"
+    >
       <div class="fixed inset-0 bg-black opacity-50" @click="closeDialog"></div>
-      <div v-if="activeIndex !== null" 
-           class="member-profile-card bg-base-100 p-6 rounded-lg shadow-xl z-50 w-11/12 max-w-md transform transition-all glass-dark">
+      <div
+        v-if="activeIndex !== null"
+        class="member-profile-card bg-base-100 p-6 rounded-lg shadow-xl z-50 w-11/12 max-w-md transform transition-all glass-dark"
+      >
         <div class="flex justify-between items-start mb-4">
-          <h3 class="text-2xl font-bold text-white w-full">{{ teamMembers[activeIndex].name }}</h3>
-          <button @click="closeDialog" class="btn btn-sm btn-circle text-white bg-transparent border-none hover:bg-gray-700">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+          <h3 class="text-2xl font-bold text-white w-full">
+            {{ teamMembers[activeIndex].name }}
+          </h3>
+          <button
+            class="btn btn-sm btn-circle text-white bg-transparent border-none hover:bg-gray-700"
+            @click="closeDialog"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-6 w-6"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
         </div>
-        
+
         <div class="flex flex-col">
           <div class="flex flex-col text-white">
-            <div :class="['member-role-badge', `member-role-${activeIndex}`]">
-              {{ teamMembers[activeIndex].role }}
+            <div class="flex items-center space-x-3">
+              <img
+                :src="teamMembers[activeIndex].avatar"
+                :alt="teamMembers[activeIndex].name"
+                class="w-8 rounded-[50%]"
+              />
+              <div
+                :class="['member-role-badge', `member-role-${activeIndex}`]"
+                class="flex-1"
+              >
+                {{ teamMembers[activeIndex].role }}
+              </div>
             </div>
-            
+
             <p class="my-3 text-sm">{{ teamMembers[activeIndex].intro }}</p>
-            
+
             <div class="mt-2">
               <h4 class="font-semibold mb-1">技能专长</h4>
               <div class="flex flex-wrap gap-2">
-                <span v-for="(skill, i) in teamMembers[activeIndex].skills" :key="i"
-                    class="badge badge-outline px-2 py-1 text-white border-white/50">
+                <span
+                  v-for="(skill, i) in teamMembers[activeIndex].skills"
+                  :key="i"
+                  class="badge badge-outline px-2 py-1 text-white border-white/50"
+                >
                   {{ skill }}
                 </span>
               </div>
             </div>
-            
+
             <div class="flex gap-4 mt-4">
-              <a :href="teamMembers[activeIndex].github" target="_blank" rel="noopener noreferrer" 
-                class="btn btn-sm btn-outline text-white border-white/50 hover:bg-white/20">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1" viewBox="0 0 16 16">
-                  <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/>
+              <a
+                :href="teamMembers[activeIndex].github"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="btn btn-sm btn-outline text-white border-white/50 hover:bg-white/20"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="mr-1"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"
+                  />
                 </svg>
                 GitHub
               </a>
-              <a :href="`mailto:${teamMembers[activeIndex].email}`" class="btn btn-sm btn-outline text-white border-white/50 hover:bg-white/20">
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="mr-1" viewBox="0 0 16 16">
-                  <path d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"/>
+              <a
+                :href="`mailto:${teamMembers[activeIndex].email}`"
+                class="btn btn-sm btn-outline text-white border-white/50 hover:bg-white/20"
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  fill="currentColor"
+                  class="mr-1"
+                  viewBox="0 0 16 16"
+                >
+                  <path
+                    d="M.05 3.555A2 2 0 0 1 2 2h12a2 2 0 0 1 1.95 1.555L8 8.414.05 3.555ZM0 4.697v7.104l5.803-3.558L0 4.697ZM6.761 8.83l-6.57 4.027A2 2 0 0 0 2 14h12a2 2 0 0 0 1.808-1.144l-6.57-4.027L8 9.586l-1.239-.757Zm3.436-.586L16 11.801V4.697l-5.803 3.546Z"
+                  />
                 </svg>
                 邮件
               </a>
@@ -588,12 +656,17 @@ const handleHideMember = () => {
           <div class="text-5xl font-bold text-white">
             <span class="lightning">⚡</span>Team&nbsp;&nbsp;&nbsp;&nbsp;
           </div>
-          <div class="author-card grid grid-cols-6 gap-10 w-full p-10 box-border team-grid">
-            <div class="card team-card-0 bg-base-100 shadow-sm team-member-card cursor-pointer" @click="showMemberDetail(0)">
+          <div
+            class="author-card grid grid-cols-6 gap-10 w-full p-10 box-border team-grid"
+          >
+            <div
+              class="card team-card-0 bg-base-100 shadow-sm team-member-card cursor-pointer"
+              @click="showMemberDetail(0)"
+            >
               <figure class="team-member-img">
                 <img
                   class="w-full grayscale transition-all duration-300"
-                  src="@/assets/author/lzh.PNG"
+                  src="@/assets/author/lzh.png"
                   alt="Shoes"
                 />
               </figure>
@@ -604,9 +677,16 @@ const handleHideMember = () => {
                 </div>
               </div>
             </div>
-            <div class="card team-card-1 bg-base-100 shadow-sm team-member-card cursor-pointer" @click="showMemberDetail(1)">
+            <div
+              class="card team-card-1 bg-base-100 shadow-sm team-member-card cursor-pointer"
+              @click="showMemberDetail(1)"
+            >
               <figure class="team-member-img">
-                <img src="@/assets/author/lh.PNG" alt="Shoes" class="w-full grayscale transition-all duration-300" />
+                <img
+                  src="@/assets/author/lh.PNG"
+                  alt="Shoes"
+                  class="w-full grayscale transition-all duration-300"
+                />
               </figure>
               <div class="card-body">
                 <h2 class="card-title team-member-name">李豪</h2>
@@ -615,9 +695,16 @@ const handleHideMember = () => {
                 </div>
               </div>
             </div>
-            <div class="card team-card-2 bg-base-100 shadow-sm team-member-card cursor-pointer" @click="showMemberDetail(2)">
+            <div
+              class="card team-card-2 bg-base-100 shadow-sm team-member-card cursor-pointer"
+              @click="showMemberDetail(2)"
+            >
               <figure class="team-member-img">
-                <img src="@/assets/author/ckl.PNG" alt="Shoes" class="w-full grayscale transition-all duration-300" />
+                <img
+                  src="@/assets/author/ckl.PNG"
+                  alt="Shoes"
+                  class="w-full grayscale transition-all duration-300"
+                />
               </figure>
               <div class="card-body">
                 <h2 class="card-title team-member-name">陈克岚</h2>
@@ -626,9 +713,16 @@ const handleHideMember = () => {
                 </div>
               </div>
             </div>
-            <div class="card team-card-3 bg-base-100 shadow-sm team-member-card cursor-pointer" @click="showMemberDetail(3)">
+            <div
+              class="card team-card-3 bg-base-100 shadow-sm team-member-card cursor-pointer"
+              @click="showMemberDetail(3)"
+            >
               <figure class="team-member-img">
-                <img src="@/assets/author/zzx.PNG" alt="Shoes" class="w-full grayscale transition-all duration-300" />
+                <img
+                  src="@/assets/author/zzx.PNG"
+                  alt="Shoes"
+                  class="w-full grayscale transition-all duration-300"
+                />
               </figure>
               <div class="card-body">
                 <h2 class="card-title team-member-name">曾志翔</h2>
@@ -637,9 +731,16 @@ const handleHideMember = () => {
                 </div>
               </div>
             </div>
-            <div class="card team-card-4 bg-base-100 shadow-sm team-member-card cursor-pointer" @click="showMemberDetail(4)">
+            <div
+              class="card team-card-4 bg-base-100 shadow-sm team-member-card cursor-pointer"
+              @click="showMemberDetail(4)"
+            >
               <figure class="team-member-img">
-                <img src="@/assets/author/wfn.PNG" alt="Shoes" class="w-full grayscale transition-all duration-300" />
+                <img
+                  src="@/assets/author/wfn.PNG"
+                  alt="Shoes"
+                  class="w-full grayscale transition-all duration-300"
+                />
               </figure>
               <div class="card-body">
                 <h2 class="card-title team-member-name">王斐霓</h2>
@@ -648,9 +749,16 @@ const handleHideMember = () => {
                 </div>
               </div>
             </div>
-            <div class="card team-card-5 bg-base-100 shadow-sm team-member-card cursor-pointer" @click="showMemberDetail(5)">
+            <div
+              class="card team-card-5 bg-base-100 shadow-sm team-member-card cursor-pointer"
+              @click="showMemberDetail(5)"
+            >
               <figure class="team-member-img">
-                <img src="@/assets/author/wsq.PNG" alt="Shoes" class="w-full grayscale transition-all duration-300" />
+                <img
+                  src="@/assets/author/wsq.PNG"
+                  alt="Shoes"
+                  class="w-full grayscale transition-all duration-300"
+                />
               </figure>
               <div class="card-body">
                 <h2 class="card-title team-member-name">王诗琪</h2>
@@ -699,7 +807,7 @@ const handleHideMember = () => {
 .team-member-card:hover {
   transform: translateY(-15px) scale(1.05) rotateX(5deg);
   box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
-  transition: 
+  transition:
     transform 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
     background 0.8s cubic-bezier(0.2, 0.8, 0.2, 1),
     box-shadow 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
@@ -741,22 +849,28 @@ const handleHideMember = () => {
 
 /* 为每个卡片设置不同的初始颜色滤镜 */
 .team-card-0 .team-member-img img {
-  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(0deg) saturate(0.4); /* 红色调 */
+  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(0deg)
+    saturate(0.4); /* 红色调 */
 }
 .team-card-1 .team-member-img img {
-  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(20deg) saturate(0.4); /* 橙色调 */
+  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(20deg)
+    saturate(0.4); /* 橙色调 */
 }
 .team-card-2 .team-member-img img {
-  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(50deg) saturate(0.4); /* 黄色调 */
+  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(50deg)
+    saturate(0.4); /* 黄色调 */
 }
 .team-card-3 .team-member-img img {
-  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(90deg) saturate(0.4); /* 绿色调 */
+  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(90deg)
+    saturate(0.4); /* 绿色调 */
 }
 .team-card-4 .team-member-img img {
-  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(180deg) saturate(0.4); /* 蓝色调 */
+  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(180deg)
+    saturate(0.4); /* 蓝色调 */
 }
 .team-card-5 .team-member-img img {
-  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(270deg) saturate(0.4); /* 紫色调 */
+  filter: grayscale(0.85) brightness(0.9) sepia(0.2) hue-rotate(270deg)
+    saturate(0.4); /* 紫色调 */
 }
 
 @keyframes imageReveal {
@@ -779,19 +893,24 @@ const handleHideMember = () => {
   filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1) hue-rotate(0deg);
 }
 .team-card-1:hover .team-member-img img {
-  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1) hue-rotate(20deg);
+  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1)
+    hue-rotate(20deg);
 }
 .team-card-2:hover .team-member-img img {
-  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1) hue-rotate(50deg);
+  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1)
+    hue-rotate(50deg);
 }
 .team-card-3:hover .team-member-img img {
-  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1) hue-rotate(90deg);
+  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1)
+    hue-rotate(90deg);
 }
 .team-card-4:hover .team-member-img img {
-  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1) hue-rotate(180deg);
+  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1)
+    hue-rotate(180deg);
 }
 .team-card-5:hover .team-member-img img {
-  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1) hue-rotate(270deg);
+  filter: grayscale(0) brightness(1.1) saturate(1.1) sepia(0.1)
+    hue-rotate(270deg);
 }
 
 .team-member-card:hover .team-member-img {
@@ -964,7 +1083,9 @@ const handleHideMember = () => {
 
 /* 设置卡片悬浮时的层级优先级 */
 .team-grid .team-member-card {
-  transition: all 0.3s ease, z-index 0s;
+  transition:
+    all 0.3s ease,
+    z-index 0s;
 }
 
 .team-grid .team-member-card:hover {
@@ -1031,7 +1152,7 @@ const handleHideMember = () => {
 }
 
 .team-card-0:hover .role-tag-0::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1050,7 +1171,7 @@ const handleHideMember = () => {
 }
 
 .team-card-1:hover .role-tag-1::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1069,7 +1190,7 @@ const handleHideMember = () => {
 }
 
 .team-card-2:hover .role-tag-2::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1088,7 +1209,7 @@ const handleHideMember = () => {
 }
 
 .team-card-3:hover .role-tag-3::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1107,7 +1228,7 @@ const handleHideMember = () => {
 }
 
 .team-card-4:hover .role-tag-4::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1126,7 +1247,7 @@ const handleHideMember = () => {
 }
 
 .team-card-5:hover .role-tag-5::before {
-  content: "";
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
@@ -1167,7 +1288,6 @@ const handleHideMember = () => {
   border-radius: 12px;
   font-size: 0.875rem;
   font-weight: 500;
-  margin-bottom: 8px;
 }
 
 .member-role-0 {
@@ -1205,6 +1325,4 @@ const handleHideMember = () => {
   color: white;
   box-shadow: 0 2px 10px rgba(148, 0, 211, 0.3);
 }
-
-
 </style>
