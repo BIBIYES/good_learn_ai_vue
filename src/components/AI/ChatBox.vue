@@ -27,6 +27,7 @@ const chatList = ref([])
 const chatContainer = ref(null)
 const sessionName = ref('')
 const isFirstLoad = ref(false) // 添加标志位控制首次加载
+const isLoading = ref(true) // 添加加载状态
 
 // 检查路由中是否有消息
 const checkRoute = () => {
@@ -60,6 +61,8 @@ const unWatch = () => {
         }
         // 清空聊天列表
         chatList.value = []
+        // 显示加载状态
+        isLoading.value = true
         // 重新获取消息
         handleGetChat()
       }
@@ -101,9 +104,15 @@ const scrollToBottom = () => {
  * 获取历史聊天消息
  */
 const handleGetChat = async () => {
-  const res = await getChat(sessionId)
-  chatList.value = res.data
-  scrollToBottom()
+  try {
+    const res = await getChat(sessionId)
+    chatList.value = res.data
+    scrollToBottom()
+  } catch (error) {
+    console.error('获取消息失败:', error)
+  } finally {
+    isLoading.value = false
+  }
 }
 
 /**
@@ -244,15 +253,13 @@ const handleSendMessage = async message => {
 </script>
 
 <template>
-  <div
-    class="flex flex-col h-full w-full items-center justify-center bg-base-100 rounded-md pb-10 pt-2"
-  >
-    <div class="self-start flex items-center space-x-3 ml-5">
+  <div class="flex flex-col h-full w-full bg-base-100 rounded-md pb-10 pt-2">
+    <div class="px-5 self-start flex items-center space-x-3">
       <ExpandIcon
         :class="{
-          hidden: !componentsStore.aiSiderBarStatus,
+          hidden: !componentsStore.aiSideBarStatus,
         }"
-        @click="componentsStore.toggleAiSiderBar()"
+        @click="componentsStore.toggleAiSideBar()"
       />
       <div class="dropdown self-start">
         <div tabindex="0" role="button" class="btn m-1 bg-base-100">
@@ -261,7 +268,7 @@ const handleSendMessage = async message => {
         </div>
         <ul
           tabindex="0"
-          class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
+          class="dropdown-content menu bg-base-100 rounded-box z-[1] w-52 p-2 shadow-sm"
         >
           <li class="flex">
             <a> <Edit theme="outline" size="20" fill="#333" />修改名称</a>
@@ -277,16 +284,19 @@ const handleSendMessage = async message => {
 
     <!-- 聊天内容区域 -->
     <div ref="chatContainer" class="flex-1 overflow-y-auto p-4 w-full">
+      <!-- 真实内容渲染 -->
       <div
-        class="chat-container space-y-3 h-full overflow-y-auto flex flex-col pl-50 pr-50"
+        v-if="!isLoading"
+        class="chat-container animate__animated animate__fadeIn space-y-3 flex flex-col max-w-4xl mx-auto px-4 sm:px-6 md:px-8"
       >
         <div
           v-for="(item, index) in chatList"
           :key="item.historyId"
-          class="flex flex-col"
+          class="flex flex-col w-full"
         >
           <div
             :class="item.role === 'user' ? 'chat chat-end' : 'chat chat-start'"
+            class="w-full"
           >
             <div class="chat-image avatar">
               <div class="w-10 rounded-full p-1">
@@ -322,11 +332,100 @@ const handleSendMessage = async message => {
           </div>
         </div>
       </div>
+
+      <!-- 加载骨架屏 -->
+      <div
+        v-if="isLoading"
+        class="chat-container space-y-3 flex flex-col max-w-4xl mx-auto px-4 sm:px-6 md:px-8"
+      >
+        <!-- 用户消息骨架屏 -->
+        <div class="flex flex-col w-full animate-pulse">
+          <div class="chat chat-end w-full">
+            <div class="chat-image avatar">
+              <div class="w-10 rounded-full bg-base-300"></div>
+            </div>
+            <div class="chat-header">
+              <div class="h-4 w-24 bg-base-300 rounded"></div>
+            </div>
+            <div class="rounded-lg border-2 border-base-200 p-2 chat-box">
+              <div class="h-4 w-40 bg-base-300 rounded mb-2"></div>
+              <div class="h-4 w-28 bg-base-300 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AI消息骨架屏 -->
+        <div class="flex flex-col w-full animate-pulse">
+          <div class="chat chat-start w-full">
+            <div class="chat-image avatar">
+              <div class="w-10 rounded-full bg-base-300"></div>
+            </div>
+            <div class="chat-header">
+              <div class="h-4 w-24 bg-base-300 rounded"></div>
+            </div>
+            <div class="rounded-lg border-2 border-base-200 p-2 chat-box">
+              <div class="h-4 w-64 bg-base-300 rounded mb-2"></div>
+              <div class="h-4 w-48 bg-base-300 rounded mb-2"></div>
+              <div class="h-4 w-32 bg-base-300 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 再添加一组对话骨架屏 -->
+        <div class="flex flex-col w-full animate-pulse">
+          <div class="chat chat-end w-full">
+            <div class="chat-image avatar">
+              <div class="w-10 rounded-full bg-base-300"></div>
+            </div>
+            <div class="chat-header">
+              <div class="h-4 w-24 bg-base-300 rounded"></div>
+            </div>
+            <div class="rounded-lg border-2 border-base-200 p-2 chat-box">
+              <div class="h-4 w-36 bg-base-300 rounded"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-col w-full animate-pulse">
+          <div class="chat chat-start w-full">
+            <div class="chat-image avatar">
+              <div class="w-10 rounded-full bg-base-300"></div>
+            </div>
+            <div class="chat-header">
+              <div class="h-4 w-24 bg-base-300 rounded"></div>
+            </div>
+            <div class="rounded-lg border-2 border-base-200 p-2 chat-box">
+              <div class="h-4 w-56 bg-base-300 rounded mb-2"></div>
+              <div class="h-4 w-40 bg-base-300 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
+
     <!-- 底部输入框 -->
-    <div class="flex w-full justify-center">
+    <div class="w-full px-4 sm:px-6 md:px-8 max-w-4xl mx-auto">
       <ChatInput class="w-full" @send="handleSendMessage" />
     </div>
   </div>
 </template>
-<style scoped></style>
+
+<style scoped>
+.chat-container {
+  width: 100%;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+.animate-pulse {
+  animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+</style>

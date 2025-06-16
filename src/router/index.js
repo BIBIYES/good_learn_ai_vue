@@ -15,6 +15,11 @@ const router = createRouter({
       meta: { requiresAuth: true },
     },
     {
+      path: '/test',
+      name: 'test',
+      component: () => import('../views/TestPage.vue'),
+    },
+    {
       path: '/login',
       name: 'login-parent', // 保持这个特殊命名，因为是父路由
       component: () => import('../views/LoginPage.vue'),
@@ -53,6 +58,12 @@ const router = createRouter({
           path: 'course',
           name: 'teacher-course',
           component: () => import('@/views/teacher/CourseView.vue'),
+        },
+        {
+          path: 'course/:courseId',
+          name: 'teacher-course-detail',
+          component: () =>
+            import('@/views/teacher/CourseDetailView/CourseDetailView.vue'),
         },
         {
           path: 'ai',

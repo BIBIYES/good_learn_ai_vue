@@ -114,21 +114,23 @@ const getSessionPath = sessionId => {
 
 <template>
   <!-- 历史消息容器 -->
-  <div class="app w-full h-full overflow-y-auto">
-    <ul class="menu rounded-box w-full h-full">
-      <!-- 标题栏 -->
-      <div class="flex items-center space-x-2">
-        <History theme="outline" size="20" fill="#333" />
-        <span class="text-md font-bold">历史消息</span>
-      </div>
-      <!-- 加载状态指示器 -->
-      <div v-if="isLoading" class="flex justify-center items-center p-4">
-        <span class="loading loading-spinner" />
-      </div>
+  <div class="w-full">
+    <!-- 标题栏 -->
+    <div class="flex items-center space-x-2 px-2 py-1">
+      <History theme="outline" size="20" fill="#333" />
+      <span class="text-md font-bold">历史消息</span>
+    </div>
+
+    <!-- 加载状态指示器 -->
+    <div v-if="isLoading" class="flex justify-center items-center p-4">
+      <span class="loading loading-spinner" />
+    </div>
+
+    <div v-else class="w-full flex flex-col space-y-2">
       <!-- 今天的聊天记录 -->
-      <li v-if="groupedChats.today.length > 0">
-        <h2 class="menu-title">今天</h2>
-        <ul>
+      <div v-if="groupedChats.today.length > 0" class="w-full">
+        <h2 class="menu-title px-2">今天</h2>
+        <ul class="menu menu-sm w-full">
           <li
             v-for="(item, index) in groupedChats.today"
             :key="'today-' + index"
@@ -180,12 +182,12 @@ const getSessionPath = sessionId => {
             </a>
           </li>
         </ul>
-      </li>
+      </div>
 
       <!-- 昨天的聊天记录 -->
-      <li v-if="groupedChats.yesterday.length > 0">
-        <h2 class="menu-title">昨天</h2>
-        <ul>
+      <div v-if="groupedChats.yesterday.length > 0" class="w-full">
+        <h2 class="menu-title px-2">昨天</h2>
+        <ul class="menu menu-sm w-full">
           <li
             v-for="(item, index) in groupedChats.yesterday"
             :key="'yesterday-' + index"
@@ -237,12 +239,12 @@ const getSessionPath = sessionId => {
             </a>
           </li>
         </ul>
-      </li>
+      </div>
 
       <!-- 三天前的聊天记录 -->
-      <li v-if="groupedChats.threeDaysAgo.length > 0">
-        <h2 class="menu-title">三天前</h2>
-        <ul>
+      <div v-if="groupedChats.threeDaysAgo.length > 0" class="w-full">
+        <h2 class="menu-title px-2">三天前</h2>
+        <ul class="menu menu-sm w-full">
           <li
             v-for="(item, index) in groupedChats.threeDaysAgo"
             :key="'threeDays-' + index"
@@ -293,12 +295,12 @@ const getSessionPath = sessionId => {
             </a>
           </li>
         </ul>
-      </li>
+      </div>
 
       <!-- 七天前的聊天记录 -->
-      <li v-if="groupedChats.sevenDaysAgo.length > 0">
-        <h2 class="menu-title">七天前</h2>
-        <ul>
+      <div v-if="groupedChats.sevenDaysAgo.length > 0" class="w-full">
+        <h2 class="menu-title px-2">七天前</h2>
+        <ul class="menu menu-sm w-full">
           <li
             v-for="(item, index) in groupedChats.sevenDaysAgo"
             :key="'sevenDays-' + index"
@@ -349,12 +351,12 @@ const getSessionPath = sessionId => {
             </a>
           </li>
         </ul>
-      </li>
+      </div>
 
       <!-- 更早之前的聊天记录 -->
-      <li v-if="groupedChats.older.length > 0">
-        <h2 class="menu-title">更久之前</h2>
-        <ul>
+      <div v-if="groupedChats.older.length > 0" class="w-full">
+        <h2 class="menu-title px-2">更久之前</h2>
+        <ul class="menu menu-sm w-full">
           <li
             v-for="(item, index) in groupedChats.older"
             :key="'older-' + index"
@@ -405,7 +407,7 @@ const getSessionPath = sessionId => {
             </a>
           </li>
         </ul>
-      </li>
-    </ul>
+      </div>
+    </div>
   </div>
 </template>

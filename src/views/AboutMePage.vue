@@ -1,9 +1,12 @@
 <script setup>
 import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
 import { getEmailAvatarPath } from '@/utils/avatarPath'
 gsap.registerPlugin(ScrollTrigger)
+
+const router = useRouter()
 
 const isLoading = ref(true)
 

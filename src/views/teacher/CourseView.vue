@@ -1,27 +1,33 @@
 <script setup>
 import { ref, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
 import {
   getTeacherCourse,
   createCourse,
   updateTeacherCourse,
 } from '@/api/course'
 import message from '@/plugin/message'
-import { School, Add, Copy } from '@icon-park/vue-next'
-
+import { School, Add } from '@icon-park/vue-next'
+import DgLoadingText from '@/components/common/GdLoadingText.vue'
+const router = useRouter()
 const loading = ref(true)
 const showCreateModal = ref(false)
 const showEditModal = ref(false)
+const createLoading = ref(false)
+const editLoading = ref(false)
 
 // 添加分页相关状态
 const courses = ref([])
 const currentPage = ref(1)
 const totalPages = ref(1)
-const pageSize = ref(10)
+const pageSize = ref(9)
+const pageSizeOptions = [6, 9, 12, 15]
 const total = ref(0)
 
 const newCourse = ref({
   className: '',
   description: '',
+  coursePassword: '',
 })
 
 const editForm = ref({
@@ -42,10 +48,9 @@ const handleGetCourses = async (page = 1) => {
         ...course,
         monitorName: course.monitorName || '无', // 如果 monitorName 为空，显示 '无'
       }))
-      total.value = res.data.total // 假设接口返回总课程数
-      totalPages.value = res.data.pages // 计算总页数
-      currentPage.value = res.data.current // 更新当前页码
-      loading.value = false
+      total.value = res.data.total
+      totalPages.value = Math.ceil(res.data.total / pageSize.value)
+      currentPage.value = page
     }
   } catch (err) {
     console.error('获取课程列表失败', err.message)
@@ -55,7 +60,12 @@ const handleGetCourses = async (page = 1) => {
   }
 }
 
-// 在分页切换时传递 pageSize
+const handlePageSizeChange = size => {
+  pageSize.value = size
+  currentPage.value = 1
+  handleGetCourses(1)
+}
+
 const handlePageChange = page => {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page
@@ -68,19 +78,28 @@ const handleCreateCourse = async () => {
     message.error('课程名称不能为空')
     return
   }
+  if (!newCourse.value.coursePassword) {
+    message.error('课程密码不能为空')
+    return
+  }
+
+  createLoading.value = true
   try {
     const res = await createCourse({
       className: newCourse.value.className,
       description: newCourse.value.description,
+      coursePassword: newCourse.value.coursePassword,
     })
     if (res.code === 200) {
       message.success('创建成功')
       showCreateModal.value = false
-      newCourse.value = { className: '', description: '' }
-      handleGetCourses(1) // 创建成功后返回第一页
+      newCourse.value = { className: '', description: '', coursePassword: '' }
+      handleGetCourses(1)
     }
   } catch (err) {
     message.error(err.message)
+  } finally {
+    createLoading.value = false
   }
 }
 
@@ -88,27 +107,8 @@ const openEditModal = course => {
   editForm.value = { ...course }
   showEditModal.value = true
 }
-
-const copyCourseId = async id => {
-  try {
-    if (navigator.clipboard) {
-      await navigator.clipboard.writeText(id)
-      message.success('课程ID已复制')
-    } else {
-      const textArea = document.createElement('textarea')
-      textArea.value = id
-      document.body.appendChild(textArea)
-      textArea.select()
-      document.execCommand('copy')
-      document.body.removeChild(textArea)
-      message.success('课程ID已复制')
-    }
-  } catch (err) {
-    message.error(`复制失败: ${err.message}`)
-  }
-}
-
 const handleEditCourse = async () => {
+  editLoading.value = true
   try {
     const res = await updateTeacherCourse({
       courseId: editForm.value.courseId,
@@ -121,10 +121,12 @@ const handleEditCourse = async () => {
     if (res.code === 200) {
       message.success('编辑成功')
       showEditModal.value = false
-      handleGetCourses(currentPage.value) // 编辑后刷新当前页
+      handleGetCourses(currentPage.value)
     }
   } catch (err) {
     message.error(err.message)
+  } finally {
+    editLoading.value = false
   }
 }
 
@@ -152,33 +154,13 @@ onMounted(() => {
     </TitleBar>
 
     <!-- Main content area -->
-    <div class="flex-1 overflow-y-auto p-4 md:p-6">
-      <!-- Loading State - Skeleton -->
+    <div class="flex-1 overflow-y-auto p-4 md:p-4">
+      <!-- Loading State - Simple Spinner -->
       <div
         v-if="loading"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+        class="w-full h-full flex justify-center items-center"
       >
-        <!-- Skeleton Cards - repeat 6 skeletons -->
-        <div
-          v-for="i in 6"
-          :key="i"
-          class="card bg-base-100 shadow-lg rounded-2xl p-6"
-        >
-          <div class="flex items-center gap-3 mb-4">
-            <div class="skeleton w-12 h-12 rounded-lg" />
-            <div class="flex-1">
-              <div class="skeleton h-5 w-2/3 mb-2" />
-              <div class="skeleton h-3 w-1/3" />
-            </div>
-            <div class="skeleton w-6 h-6 rounded-full" />
-          </div>
-          <div class="skeleton h-20 w-full mb-4 rounded" />
-          <div class="flex justify-between mt-4 pt-3 border-t">
-            <div class="skeleton h-3 w-1/4" />
-            <div class="skeleton h-3 w-1/4" />
-            <div class="skeleton h-6 w-16 rounded" />
-          </div>
-        </div>
+        <DgLoadingText text="正在获取课程列表...."></DgLoadingText>
       </div>
 
       <!-- Empty State -->
@@ -204,40 +186,11 @@ onMounted(() => {
         <div
           v-for="item in courses"
           :key="item.courseId"
-          class="relative group bg-base-100 rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-base-200 hover:shadow-2xl transition-all animate__animated animate__fadeIn"
+          class="relative group bg-base-100 rounded-2xl shadow-md p-6 flex flex-col gap-3 border border-base-200 hover:shadow-lg transition-all duration-300 ease-in-out animate__animated animate__fadeIn"
         >
-          <div class="flex items-center gap-3 mb-2">
-            <div
-              class="bg-primary text-primary-content w-12 h-12 rounded-lg flex justify-center items-center text-2xl font-bold"
-            >
-              {{ item.className.charAt(0) }}
-            </div>
-            <div class="flex-1">
-              <span
-                class="text-lg font-bold text-base-content flex items-center gap-2"
-              >
-                {{ item.className }}
-                <span
-                  class="ml-2 px-2 py-0.5 rounded text-xs font-medium"
-                  :class="
-                    item.status
-                      ? 'bg-success/10 text-success'
-                      : 'bg-base-200 text-base-content/50'
-                  "
-                >
-                  {{ item.status ? '启用' : '停用' }}
-                </span>
-              </span>
-              <span class="text-sm text-base-content/70"
-                >{{ item.teacherName || '教师'
-                }}<span
-                  v-if="item.teacherEmail"
-                  class="ml-2 text-xs text-base-content/50"
-                  >{{ item.teacherEmail }}</span
-                ></span
-              >
-            </div>
-            <div class="dropdown dropdown-end">
+          <div class="relative">
+            <!-- Dropdown menu in absolute position at top right -->
+            <div class="dropdown dropdown-end absolute top-0 right-0 z-10">
               <div
                 tabindex="0"
                 role="button"
@@ -266,32 +219,51 @@ onMounted(() => {
                 </li>
               </ul>
             </div>
+
+            <div class="flex items-center gap-3 mb-2 pr-8">
+              <div
+                class="bg-primary text-primary-content w-12 h-12 rounded-lg flex justify-center items-center text-2xl font-bold"
+              >
+                {{ item.className.charAt(0) }}
+              </div>
+              <div class="flex-1">
+                <span
+                  class="text-lg font-bold text-base-content flex items-center gap-2"
+                >
+                  {{ item.className }}
+                  <span
+                    class="ml-2 px-2 py-0.5 rounded text-xs font-medium"
+                    :class="
+                      item.status
+                        ? 'bg-success/10 text-success'
+                        : 'bg-base-200 text-base-content/50'
+                    "
+                  >
+                    {{ item.status ? '启用' : '停用' }}
+                  </span>
+                </span>
+                <span class="text-sm text-base-content/70"
+                  >{{ item.teacherName || '教师'
+                  }}<span
+                    v-if="item.teacherEmail"
+                    class="ml-2 text-xs text-base-content/50"
+                    >{{ item.teacherEmail }}</span
+                  ></span
+                >
+              </div>
+            </div>
           </div>
           <div
             class="text-base-content/60 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-primary/20 pl-3 bg-base-200/30 rounded"
           >
             <div>{{ item.description || '暂无介绍' }}</div>
           </div>
-          <div
-            class="flex items-center justify-between mt-4 text-xs text-base-content/40 border-t pt-3"
-          >
-            <span>课程ID: {{ item.courseId }}</span>
-            <button
-              class="btn btn-ghost btn-sm btn-circle text-primary hover:text-black"
-              @click="copyCourseId(item.courseId)"
-            >
-              <Copy theme="outline" size="16" />
-            </button>
-            <span>课程密码: {{ item.coursePassword || '无密码' }}</span>
-            <span
-              >创建时间:
-              {{ item.createdAt ? item.createdAt.split('T')[0] : '—' }}</span
-            >
+          <div class="flex justify-end text-xs text-base-content/40 pt-3">
             <button
               class="btn btn-sm btn-outline btn-primary"
-              @click="openEditModal(item)"
+              @click.stop="router.push(`/t/course/${item.courseId}`)"
             >
-              编辑
+              打开
             </button>
           </div>
         </div>
@@ -307,6 +279,20 @@ onMounted(() => {
         <div class="btn btn-sm">
           <div aria-label="status" class="status status-primary" />
           <span>总计课程数：</span>{{ total }}
+        </div>
+
+        <!-- 页面大小选择器 -->
+        <div class="flex items-center gap-2">
+          <span class="text-sm">每页显示：</span>
+          <select
+            v-model="pageSize"
+            class="select select-bordered select-sm w-24"
+            @change="handlePageSizeChange(pageSize)"
+          >
+            <option v-for="size in pageSizeOptions" :key="size" :value="size">
+              {{ size }} 条
+            </option>
+          </select>
         </div>
 
         <div v-if="totalPages > 0" class="join">
@@ -350,6 +336,15 @@ onMounted(() => {
           />
         </div>
         <div class="form-control mb-2">
+          <label class="label">课程密码<span class="text-error">*</span></label>
+          <input
+            v-model="newCourse.coursePassword"
+            class="input input-bordered"
+            type="password"
+            placeholder="请输入课程密码"
+          />
+        </div>
+        <div class="form-control mb-2">
           <label class="label">课程介绍</label>
           <textarea
             v-model="newCourse.description"
@@ -365,6 +360,10 @@ onMounted(() => {
             取消
           </button>
           <button class="btn btn-primary" @click.prevent="handleCreateCourse">
+            <span
+              v-if="createLoading"
+              class="loading loading-spinner loading-sm"
+            ></span>
             确认创建
           </button>
         </div>
@@ -391,7 +390,6 @@ onMounted(() => {
           <input
             v-model="editForm.coursePassword"
             class="input input-bordered"
-            readonly
           />
         </div>
         <div class="form-control mb-2">
@@ -406,6 +404,10 @@ onMounted(() => {
             取消
           </button>
           <button class="btn btn-primary" @click.prevent="handleEditCourse">
+            <span
+              v-if="editLoading"
+              class="loading loading-spinner loading-sm"
+            ></span>
             确认保存
           </button>
         </div>
