@@ -200,4 +200,14 @@ onMounted(() => {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+/* 隐藏管理端滚动条为了美化 */
+.app::-webkit-scrollbar {
+  display: none;
+}
+
+.app {
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+}
+</style>
