@@ -3,11 +3,11 @@ import { useComponentsStore } from '@/stores/components'
 const componentsStore = useComponentsStore()
 </script>
 <template>
-  <div class="app flex h-screen bg-base-200/50 ">
+  <div class="app flex h-screen bg-base-200/50">
     <div
       class="w-65"
       :class="{
-        'hidden': componentsStore.aiSiderBarStatus 
+        hidden: componentsStore.aiSideBarStatus,
       }"
     >
       <SiderBarMenu />

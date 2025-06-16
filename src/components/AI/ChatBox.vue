@@ -37,7 +37,6 @@ const checkRoute = () => {
     handleSendMessage(msg)
     router.replace({ path: route.path, query: {} })
   }
-
 }
 
 // 创建监听器
@@ -50,14 +49,14 @@ const unWatch = () => {
         sessionId = newId
         // 从pinia获取sessionName
         sessionName.value = ai.chatSessionHistory.find(
-          (item) => item.sessionId === sessionId
+          item => item.sessionId === sessionId,
         )?.sessionName
 
-        if(isFirstLoad.value) {
+        if (isFirstLoad.value) {
           // 是第一次加载，则返回true
           isFirstLoad.value = false
           console.log('首次不获取数据')
-         return
+          return
         }
         // 清空聊天列表
         chatList.value = []
@@ -65,7 +64,7 @@ const unWatch = () => {
         handleGetChat()
       }
     },
-    { immediate: true }
+    { immediate: true },
   )
 }
 
@@ -75,7 +74,6 @@ onMounted(async () => {
   unWatch()
 })
 
-
 /**
  * 滚动到聊天窗口底部
  */
@@ -84,7 +82,7 @@ const scrollToBottom = () => {
     if (chatContainer.value) {
       // 使用scrollIntoView方法实现平滑滚动
       const lastElement = chatContainer.value.querySelector(
-        '.chat-container > div:last-child'
+        '.chat-container > div:last-child',
       )
       if (lastElement) {
         lastElement.scrollIntoView({ behavior: 'smooth', block: 'end' })
@@ -92,7 +90,7 @@ const scrollToBottom = () => {
         // 如果没有找到最后一个元素，则使用传统方式但添加平滑效果
         chatContainer.value.scrollTo({
           top: chatContainer.value.scrollHeight,
-          behavior: 'smooth'
+          behavior: 'smooth',
         })
       }
     }
@@ -113,7 +111,7 @@ const handleGetChat = async () => {
  * @param {string} timeStr - ISO格式的时间字符串
  * @returns {string} 格式化后的时间字符串
  */
-const formatTime = (timeStr) => {
+const formatTime = timeStr => {
   const date = new Date(timeStr)
   const hours = date.getHours().toString().padStart(2, '0')
   const minutes = date.getMinutes().toString().padStart(2, '0')
@@ -124,7 +122,7 @@ const formatTime = (timeStr) => {
  * 在请求结束后上传AI回复消息
  * @param {Object} data - 包含AI回复内容的数据对象
  */
-const handleUploadBotChat = async (data) => {
+const handleUploadBotChat = async data => {
   await uploadBotChat(data)
 }
 
@@ -132,11 +130,11 @@ const handleUploadBotChat = async (data) => {
  * 处理用户发送消息并获取AI回复
  * @param {string} message - 用户输入的消息内容
  */
-const handleSendMessage = async (message) => {
+const handleSendMessage = async message => {
   // 如果已经有正在进行的请求，则终止它
   if (ai.aiLoading) {
     AIStreamClient.abort()
-    ai.aiLoading = false 
+    ai.aiLoading = false
     console.log('终止流')
 
     // 更新最后一条AI消息，添加终止提示
@@ -146,32 +144,28 @@ const handleSendMessage = async (message) => {
         lastMessage.content += '\n\n*请求已被用户终止*'
       }
       const botResponse = {
-            content: lastMessage.content,
-            sessionId,
-            sessionName: lastMessage.content,
-            role: 'system'
-          }
+        content: lastMessage.content,
+        sessionId,
+        sessionName: lastMessage.content,
+        role: 'system',
+      }
       handleUploadBotChat(botResponse)
     }
     return
   }
 
-  
   // 验证消息内容
   if (!message || message.trim() === '') return
   if (!chatList.value) {
     chatList.value = []
   }
 
-  
-  
-
   // 添加用户消息到聊天列表
   const userMessage = {
     role: 'user',
     content: message,
     createTime: new Date().toISOString(),
-    sessionId
+    sessionId,
   }
   if (Array.isArray(chatList.value)) {
     chatList.value.push(userMessage)
@@ -185,9 +179,9 @@ const handleSendMessage = async (message) => {
     role: 'system',
     content: '',
     createTime: new Date().toISOString(),
-    sessionId
+    sessionId,
   }
-  
+
   chatList.value.push(aiMessage)
   scrollToBottom()
 
@@ -195,7 +189,7 @@ const handleSendMessage = async (message) => {
     content: message,
     sessionId,
     sessionName: message,
-    role: 'user'
+    role: 'user',
   }
 
   // 发送消息并处理流式响应
@@ -207,7 +201,7 @@ const handleSendMessage = async (message) => {
     },
 
     // 接收到数据时更新AI消息内容
-    onData: (data) => {
+    onData: data => {
       console.log(data)
       const content = data.result?.output?.text || ''
 
@@ -233,7 +227,7 @@ const handleSendMessage = async (message) => {
             content: aiMessage.content,
             sessionId,
             sessionName: aiMessage.content,
-            role: 'system'
+            role: 'system',
           }
           handleUploadBotChat(botResponse)
         }
@@ -241,13 +235,12 @@ const handleSendMessage = async (message) => {
     },
 
     // 发生错误时的处理
-    onError: (error) => {
+    onError: error => {
       ai.aiLoading = false
       message.error('ai响应出现异常', error)
-    }
+    },
   })
 }
-
 </script>
 
 <template>
@@ -257,51 +250,36 @@ const handleSendMessage = async (message) => {
     <div class="self-start flex items-center space-x-3 ml-5">
       <ExpandIcon
         :class="{
-          'hidden': !componentsStore.aiSiderBarStatus 
+          hidden: !componentsStore.aiSideBarStatus,
         }"
-        @click="componentsStore.toggleAiSiderBar()"
+        @click="componentsStore.toggleAiSideBar()"
       />
-      <div class="dropdown self-start ">
-        <div
-          tabindex="0"
-          role="button"
-          class="btn m-1 bg-base-100"
-        >
+      <div class="dropdown self-start">
+        <div tabindex="0" role="button" class="btn m-1 bg-base-100">
           <span>{{ sessionName }}</span>
-          <Down
-            theme="outline"
-            size="20"
-            fill="#333"
-          />
+          <Down theme="outline" size="20" fill="#333" />
         </div>
         <ul
           tabindex="0"
           class="dropdown-content menu bg-base-100 rounded-box z-1 w-52 p-2 shadow-sm"
         >
           <li class="flex">
-            <a> <Edit
-              theme="outline"
-              size="20"
-              fill="#333"
-            />修改名称</a>
+            <a> <Edit theme="outline" size="20" fill="#333" />修改名称</a>
           </li>
           <li>
-            <a class="text-red-500"><DeleteFive
-              theme="outline"
-              size="20"
-              fill="#fa1010"
-            />删除</a>
+            <a class="text-red-500"
+              ><DeleteFive theme="outline" size="20" fill="#fa1010" />删除</a
+            >
           </li>
         </ul>
       </div>
     </div>
-    
+
     <!-- 聊天内容区域 -->
-    <div
-      ref="chatContainer"
-      class="flex-1 overflow-y-auto p-4 w-full"
-    >
-      <div class="chat-container space-y-3 h-full overflow-y-auto flex flex-col pl-50 pr-50">
+    <div ref="chatContainer" class="flex-1 overflow-y-auto p-4 w-full">
+      <div
+        class="chat-container space-y-3 h-full overflow-y-auto flex flex-col pl-50 pr-50"
+      >
         <div
           v-for="(item, index) in chatList"
           :key="item.historyId"
@@ -319,7 +297,7 @@ const handleSendMessage = async (message) => {
                       ? getAvatarPath()
                       : 'https://s21.ax1x.com/2025/04/10/pE2GAaj.jpg'
                   "
-                >
+                />
               </div>
             </div>
             <div class="chat-header">
@@ -332,16 +310,13 @@ const handleSendMessage = async (message) => {
               <div v-if="item.role === 'user'">
                 {{ item.content }}
               </div>
-              <MarkdBox
-                v-else
-                :content="item.content"
-              />
+              <MarkdBox v-else :content="item.content" />
               <LoadingState
                 v-if="
                   item.role === 'system' &&
-                    ai.aiLoading &&
-                    index === chatList.length - 1
-                " 
+                  ai.aiLoading &&
+                  index === chatList.length - 1
+                "
               />
             </div>
           </div>
@@ -349,14 +324,9 @@ const handleSendMessage = async (message) => {
       </div>
     </div>
     <!-- 底部输入框 -->
-    <div class="flex w-full  justify-center">
-      <ChatInput
-        class="w-full"
-        @send="handleSendMessage"
-      />
+    <div class="flex w-full justify-center">
+      <ChatInput class="w-full" @send="handleSendMessage" />
     </div>
   </div>
 </template>
-<style scoped>
-
-</style>
+<style scoped></style>
