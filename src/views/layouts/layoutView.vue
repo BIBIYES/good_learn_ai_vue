@@ -90,7 +90,7 @@ onMounted(() => {
       </footer>
     </div>
     <!-- 主内容区域 -->
-    <div class="flex-1 bg-base-100 rounded-r-md">
+    <div class="main flex-1 bg-base-100 rounded-r-md">
       <RouterView />
     </div>
   </div>

@@ -5,4 +5,5 @@
 html {
   scroll-behavior: smooth; /* 实现平滑滚动 */
   font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+  overflow-y: scroll;
 }

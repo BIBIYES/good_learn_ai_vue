@@ -32,6 +32,28 @@
       <div v-else class="flex flex-col gap-6 animate__animated animate__fadeIn">
         <!-- 顶部卡片带视频背景 -->
         <div class="relative rounded-2xl overflow-hidden">
+          <!-- 编辑按钮 -->
+          <button
+            class="absolute top-4 right-4 z-20 btn btn-circle btn-sm bg-base-100/50 backdrop-blur-md hover:bg-base-100/70"
+            title="编辑课程信息"
+            @click="openEditModal"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-4 w-4"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+              />
+            </svg>
+          </button>
+
           <!-- 视频背景 -->
           <video
             class="absolute top-0 left-0 w-full h-full object-cover"
@@ -134,26 +156,6 @@
                   <span class="text-base-content">{{
                     courseInfo.monitorId || '未设置'
                   }}</span>
-                  <button
-                    class="btn btn-xs btn-circle btn-ghost"
-                    title="设置班长"
-                    disabled
-                  >
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="h-4 w-4"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        stroke-linecap="round"
-                        stroke-linejoin="round"
-                        stroke-width="2"
-                        d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
-                      />
-                    </svg>
-                  </button>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-base-content"
@@ -205,13 +207,56 @@
         </transition>
       </div>
     </div>
+
+    <!-- 编辑课程信息模态框 -->
+    <dialog class="modal" :open="showEditModal">
+      <div class="modal-box w-11/12 max-w-md">
+        <h3 class="font-bold text-lg mb-4">编辑课程信息</h3>
+        <EditCourseForm
+          :course-data="editForm"
+          :loading="editLoading"
+          :selected-monitor-name="selectedMonitorName"
+          @submit="handleEditCourse"
+          @cancel="showEditModal = false"
+          @select-monitor="showMonitorSelectModal = true"
+        />
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button @click="showEditModal = false">关闭</button>
+      </form>
+    </dialog>
+
+    <!-- 选择班长模态框 -->
+    <dialog class="modal" :open="showMonitorSelectModal">
+      <div class="modal-box w-11/12 max-w-4xl">
+        <h3 class="font-bold text-lg mb-4">选择班长</h3>
+        <div class="mb-4">
+          <StudentList
+            :course-id="Number(courseId)"
+            @student-selected="handleMonitorSelected"
+          />
+        </div>
+        <div class="modal-action">
+          <button class="btn" @click="showMonitorSelectModal = false">
+            关闭
+          </button>
+        </div>
+      </div>
+      <form method="dialog" class="modal-backdrop">
+        <button @click="showMonitorSelectModal = false">关闭</button>
+      </form>
+    </dialog>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getCourseDetail, getCourseList } from '@/api/course'
+import {
+  getCourseDetail,
+  getCourseList,
+  updateTeacherCourse,
+} from '@/api/course'
 import message from '@/plugin/message'
 import GdTag from '@/components/common/GdTag.vue'
 import SignInManagement from './components/SignInManagement.vue'
@@ -219,6 +264,8 @@ import HomeworkManagement from './components/HomeworkManagement.vue'
 import GdStack from '@/components/common/GdStack.vue'
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
 import LoadingState from '@/components/common/LoadingState.vue'
+import EditCourseForm from './components/EditCourseForm.vue'
+import StudentList from '@/components/common/StudentList.vue'
 
 const avatarLoading = ref(true)
 const route = useRoute()
@@ -229,6 +276,21 @@ const courseId = computed(() => route.params.courseId)
 const loading = ref(true)
 const activeTab = ref('sign-in') // 默认显示签到管理
 const showPassword = ref(false) // 密码显示控制
+
+// 编辑课程相关状态
+const showEditModal = ref(false)
+const editLoading = ref(false)
+const editForm = ref({
+  courseId: '',
+  className: '',
+  description: '',
+  monitorId: '',
+  status: true,
+})
+
+// 班长选择相关状态
+const showMonitorSelectModal = ref(false)
+const selectedMonitorName = ref('')
 
 // 课程信息
 const courseInfo = ref({})
@@ -275,6 +337,15 @@ const fetchStudentList = async () => {
   }
 }
 
+// 处理选择班长
+const handleMonitorSelected = student => {
+  if (student && student.userId) {
+    editForm.value.monitorId = student.userId
+    selectedMonitorName.value = student.username
+    showMonitorSelectModal.value = false
+  }
+}
+
 // 日期时间格式化
 const formatDateTime = date => {
   if (!date) return '未设置'
@@ -288,6 +359,56 @@ const formatDateTime = date => {
     hour: '2-digit',
     minute: '2-digit',
   })
+}
+
+// 打开编辑模态框
+const openEditModal = () => {
+  // 复制当前课程信息到表单
+  editForm.value = {
+    courseId: courseId.value,
+    className: courseInfo.value.className || '',
+    description: courseInfo.value.description || '',
+    monitorId: courseInfo.value.monitorId || '',
+    status: courseInfo.value.status === false ? false : true,
+    coursePassword: courseInfo.value.coursePassword || '',
+  }
+
+  // 如果有班长ID，查找对应的班长名称
+  if (editForm.value.monitorId) {
+    const monitor = courseStudentList.value.find(
+      student => student.userId === editForm.value.monitorId,
+    )
+    if (monitor) {
+      selectedMonitorName.value = monitor.username
+    } else {
+      selectedMonitorName.value = ''
+    }
+  } else {
+    selectedMonitorName.value = ''
+  }
+
+  showEditModal.value = true
+}
+
+// 处理课程信息编辑
+const handleEditCourse = async formData => {
+  editLoading.value = true
+  try {
+    const res = await updateTeacherCourse(formData)
+    if (res.code === 200) {
+      message.success('课程信息更新成功')
+      showEditModal.value = false
+      // 重新获取课程信息以显示最新数据
+      fetchCourseDetail()
+    } else {
+      message.error(res.message || '更新失败')
+    }
+  } catch (error) {
+    console.error('更新课程信息失败:', error)
+    message.error('更新课程信息失败')
+  } finally {
+    editLoading.value = false
+  }
 }
 
 onMounted(() => {

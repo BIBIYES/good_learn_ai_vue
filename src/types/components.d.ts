@@ -34,6 +34,7 @@ declare module 'vue' {
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
     SiderBarMenu: typeof import('./../components/AI/SiderBarMenu.vue')['default']
+    StudentList: typeof import('./../components/common/StudentList.vue')['default']
     StudentSideBarMenu: typeof import('./../components/student/StudentSideBarMenu.vue')['default']
     StudentStatsCharts: typeof import('./../components/charts/StudentStatsCharts.vue')['default']
     Tag: typeof import('./../components/common/Tag.vue')['default']
