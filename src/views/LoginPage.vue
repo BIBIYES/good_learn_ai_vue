@@ -16,7 +16,7 @@ const welcomeTexts = ref([
 ])
 
 const generateRandomChars = length => {
-  const generateBinary = () => Math.random() > 0.5 ? '1' : '0'
+  const generateBinary = () => (Math.random() > 0.5 ? '1' : '0')
 
   const generateHex = () => {
     const hex = '0123456789ABCDEF'
@@ -24,7 +24,8 @@ const generateRandomChars = length => {
   }
 
   const generateAscii = () => {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()'
+    const chars =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()'
     return chars[Math.floor(Math.random() * chars.length)]
   }
 
@@ -33,7 +34,7 @@ const generateRandomChars = length => {
       () => Array(4).fill(0).map(generateBinary).join(''),
       () => '\\x' + Array(2).fill(0).map(generateHex).join(''),
       () => generateAscii(),
-      () => '%' + Array(2).fill(0).map(generateHex).join('')
+      () => '%' + Array(2).fill(0).map(generateHex).join(''),
     ]
 
     return styles[Math.floor(Math.random() * styles.length)]()
@@ -43,7 +44,11 @@ const generateRandomChars = length => {
   for (let i = 0; i < length; i++) {
     randomText += getRandomEncodingStyle()
 
-    if (i > 0 && i < length - 1 && i % (Math.floor(Math.random() * 2) + 3) === 0) {
+    if (
+      i > 0 &&
+      i < length - 1 &&
+      i % (Math.floor(Math.random() * 2) + 3) === 0
+    ) {
       randomText += ' '
     }
   }
@@ -63,14 +68,11 @@ const animateText = index => {
         const progress = this.progress()
         if (progress < 0.6) {
           if (progress % 0.1 < 0.01) {
-
             welcomeTexts.value[index].value = generateRandomChars(
-              targetText.length * (index === 0 ? 1.5 : 1)
+              targetText.length * (index === 0 ? 1.5 : 1),
             )
           }
-        }
-
-        else {
+        } else {
           const revealRatio = (progress - 0.6) / 0.4
           const revealLength = Math.floor(targetText.length * revealRatio)
           welcomeTexts.value[index].value =
@@ -89,21 +91,21 @@ let colorBg = null
 let bgScript = null
 
 // 路由变化动画处理函数
-const animateCardTransition = (direction) => {
+const animateCardTransition = direction => {
   const card = document.querySelector('.card-body')
   if (card) {
     gsap.fromTo(
       card,
       {
         opacity: 0,
-        x: direction === 'toRegister' ? 100 : -100
+        x: direction === 'toRegister' ? 100 : -100,
       },
       {
         opacity: 1,
         x: 0,
         duration: 0.5,
-        ease: 'power2.out'
-      }
+        ease: 'power2.out',
+      },
     )
   }
 }
@@ -118,7 +120,7 @@ watch(
       // 从注册到登录页面的过渡动画
       animateCardTransition('toLogin')
     }
-  }
+  },
 )
 
 // 组件挂载时启动动画
@@ -128,17 +130,23 @@ onMounted(() => {
   setTimeout(() => animateText(1), 800) // 第二行延迟0.8秒
   setTimeout(() => animateText(2), 1600) // 第三行延迟1.6秒
 
-  // 加载背景脚本
   bgScript = document.createElement('script')
-  bgScript.src = '/RandomCubesBg.min.js'
+  bgScript.src = '/FloatingSquaresBg.js'
   bgScript.onload = () => {
-    // 脚本加载完成后初始化背景
     if (window.Color4Bg) {
-      colorBg = new window.Color4Bg.RandomCubesBg({
-        dom: "login-bg-container",
-        colors: ["#ffffff", "#66cc8a", "#79be92", "#cedbde"],
-        loop: true
+      colorBg = new window.Color4Bg.FloatingSquaresBg({
+        dom: 'login-bg-container',
+        colors: [
+          '#ffffff',
+          '#66cc8a',
+          '#79be92',
+          '#cedbde',
+          '#89d17d',
+          '#5ac264',
+        ],
+        loop: true,
       })
+      console.log('背景初始化完成')
     }
   }
   document.head.appendChild(bgScript)
@@ -149,7 +157,7 @@ onMounted(() => {
     gsap.fromTo(
       card,
       { opacity: 0, y: 20 },
-      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' }
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
     )
   }
 })
@@ -161,7 +169,7 @@ onUnmounted(() => {
     colorBg.destroy()
     colorBg = null
   }
-  
+
   // 移除脚本标签
   if (bgScript && bgScript.parentNode) {
     bgScript.parentNode.removeChild(bgScript)
@@ -172,15 +180,22 @@ onUnmounted(() => {
 <template>
   <!-- 登录页面主容器 -->
   <div
-    class="h-screen w-full flex flex-col md:flex-row items-center justify-center p-4 gap-8 bg-base-100 overflow-hidden relative">
+    class="h-screen w-full flex flex-col md:flex-row items-center justify-center p-4 gap-8 bg-base-100 overflow-hidden relative"
+  >
     <!-- 背景容器 -->
-    <div id="login-bg-container" class="absolute inset-0 z-0"></div>
+    <div
+      id="login-bg-container"
+      class="absolute inset-0 z-0 w-full h-full"
+    ></div>
 
     <!-- 内容区域 -->
-    <div class="z-10 w-full h-full flex flex-col md:flex-row items-center justify-center gap-8">
+    <div
+      class="z-10 w-full h-full flex flex-col md:flex-row items-center justify-center gap-8"
+    >
       <!-- 欢迎文字区域 -->
       <div
-        class="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left animate__animated animate__fadeInLeft">
+        class="w-full md:w-1/2 flex flex-col items-center md:items-start text-center md:text-left animate__animated animate__fadeInLeft"
+      >
         <p class="text-5xl mb-10 font-bold">
           {{ welcomeTexts[0].value }}
         </p>
@@ -196,7 +211,8 @@ onUnmounted(() => {
       <div class="w-full md:w-96">
         <!-- 表单卡片 -->
         <div
-          class="liquid-glass-card relative backdrop-blur-xl border-0 overflow-hidden hover:shadow-xl transition-all duration-300">
+          class="liquid-glass-card relative backdrop-blur-xl border-0 overflow-hidden hover:shadow-xl transition-all duration-300"
+        >
           <div class="card-body p-8 relative z-10">
             <router-view v-slot="{ Component }">
               <component :is="Component" />
@@ -212,12 +228,18 @@ onUnmounted(() => {
 
         <!-- 切换标签 - 移到卡片下方 -->
         <div class="liquid-glass-tabs mt-6 flex rounded-lg overflow-hidden">
-          <button class="tab-btn flex-1 py-3 px-6 text-center font-medium transition-all"
-            :class="{ 'tab-active': $route.path === '/login' }" @click="router.push('/login')">
+          <button
+            class="tab-btn flex-1 py-3 px-6 text-center font-medium transition-all"
+            :class="{ 'tab-active': $route.path === '/login' }"
+            @click="router.push('/login')"
+          >
             登录
           </button>
-          <button class="tab-btn flex-1 py-3 px-6 text-center font-medium transition-all"
-            :class="{ 'tab-active': $route.path === '/register' }" @click="router.push('/register')">
+          <button
+            class="tab-btn flex-1 py-3 px-6 text-center font-medium transition-all"
+            :class="{ 'tab-active': $route.path === '/register' }"
+            @click="router.push('/register')"
+          >
             注册
           </button>
         </div>
@@ -284,14 +306,15 @@ onUnmounted(() => {
   height: 100%;
   top: -80%;
   left: -40%;
-  background: radial-gradient(ellipse at center,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(255, 255, 255, 0) 60%);
+  background: radial-gradient(
+    ellipse at center,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 60%
+  );
   transform: rotate(-15deg);
   pointer-events: none;
   z-index: 1;
 }
-
 
 .liquid-glass-edge-glow {
   position: absolute;
@@ -322,11 +345,13 @@ onUnmounted(() => {
   height: 150%;
   top: -25%;
   left: -25%;
-  background: radial-gradient(circle at bottom right,
-      rgba(102, 204, 138, 0.4) 0%,
-      rgba(121, 190, 146, 0.2) 30%,
-      rgba(206, 219, 222, 0.1) 60%,
-      rgba(255, 255, 255, 0) 80%);
+  background: radial-gradient(
+    circle at bottom right,
+    rgba(102, 204, 138, 0.4) 0%,
+    rgba(121, 190, 146, 0.2) 30%,
+    rgba(206, 219, 222, 0.1) 60%,
+    rgba(255, 255, 255, 0) 80%
+  );
   opacity: 0.6;
   filter: blur(20px);
   transform: rotate(15deg);
@@ -361,8 +386,12 @@ onUnmounted(() => {
 }
 
 :deep(button.btn),
-:deep(input[type="submit"]) {
-  background: linear-gradient(135deg, rgba(102, 204, 138, 0.7), rgba(85, 170, 115, 0.8)) !important;
+:deep(input[type='submit']) {
+  background: linear-gradient(
+    135deg,
+    rgba(102, 204, 138, 0.7),
+    rgba(85, 170, 115, 0.8)
+  ) !important;
   border: none !important;
   box-shadow:
     0 4px 12px rgba(0, 0, 0, 0.1),
@@ -376,8 +405,12 @@ onUnmounted(() => {
 }
 
 :deep(button.btn:hover),
-:deep(input[type="submit"]:hover) {
-  background: linear-gradient(135deg, rgba(112, 214, 148, 0.8), rgba(95, 180, 125, 0.9)) !important;
+:deep(input[type='submit']:hover) {
+  background: linear-gradient(
+    135deg,
+    rgba(112, 214, 148, 0.8),
+    rgba(95, 180, 125, 0.9)
+  ) !important;
   box-shadow:
     0 6px 15px rgba(0, 0, 0, 0.15),
     inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
@@ -385,7 +418,7 @@ onUnmounted(() => {
 }
 
 :deep(button.btn:active),
-:deep(input[type="submit"]:active) {
+:deep(input[type='submit']:active) {
   transform: translateY(1px);
   box-shadow:
     0 2px 8px rgba(66, 158, 93, 0.2),
@@ -399,12 +432,16 @@ onUnmounted(() => {
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle at center,
-      rgba(255, 255, 255, 0.3) 0%,
-      rgba(255, 255, 255, 0) 70%);
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.3) 0%,
+    rgba(255, 255, 255, 0) 70%
+  );
   transform: scale(0);
   opacity: 0;
-  transition: transform 0.6s ease, opacity 0.6s ease;
+  transition:
+    transform 0.6s ease,
+    opacity 0.6s ease;
 }
 
 :deep(button.btn:hover::before) {
@@ -437,7 +474,6 @@ onUnmounted(() => {
   }
 }
 
-
 .liquid-glass-tabs {
   background: rgba(220, 250, 235, 0.3);
   backdrop-filter: blur(8px);
@@ -465,7 +501,11 @@ onUnmounted(() => {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to right, rgba(102, 204, 138, 0), rgba(102, 204, 138, 0.1));
+  background: linear-gradient(
+    to right,
+    rgba(102, 204, 138, 0),
+    rgba(102, 204, 138, 0.1)
+  );
   opacity: 0;
   transition: opacity 0.3s ease;
 }
