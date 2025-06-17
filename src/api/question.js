@@ -49,16 +49,25 @@ export const updateQuestionBank = obj => {
  * @param {题库id} bankId
  * @returns
  */
-export const getQuestionBankById = (size, current, bankId) => {
+export const getQuestionBankById = (
+  size,
+  current,
+  bankId,
+  difficulty,
+  title,
+) => {
   return request.get('/question/page', {
     params: {
       size,
       current,
       bankId,
+      difficulty,
+      title,
     },
   })
 }
 
+//添加题目
 /**
  *
  * @param {题目对象} obj
@@ -69,12 +78,36 @@ export const createQuestion = obj => {
 }
 
 /**
+ * AI 创建题目
+ * @param {Object} data - 请求数据
+ * @returns {Promise}
+ */
+export const aiCreateQuestion = data => {
+  return request.post('/question/ai-create', data, {
+    headers: {
+      Authorization: 'Bearer {{token}}', // 根据实际情况替换 {{token}}
+    },
+  })
+}
+
+//批量添加
+//添加题目
+/**
+ *
+ * @param {题目对象} obj
+ * @returns
+ */
+export const batchQuestions = obj => {
+  return request.post('/question/batch-create', obj)
+}
+
+/**
  *
  * @param {题目id} questionId
  * @returns
  */
 export const deleteQuestion = questionId => {
-  return request.put(`/question/delete/${questionId}`)
+  return request.delete(`/question/delete/${questionId}`)
 }
 
 /**
@@ -83,5 +116,14 @@ export const deleteQuestion = questionId => {
  * @returns
  */
 export const updateQuestion = obj => {
-  return request.post('/question/update', obj)
+  return request.put('/question/update', obj)
+}
+
+/**
+ * 获取单个题目详情
+ * @param {题目id} questionId
+ * @returns
+ */
+export const getQuestionDetail = questionId => {
+  return request.get(`/question/${questionId}`)
 }
