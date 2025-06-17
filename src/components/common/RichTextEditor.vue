@@ -1,6 +1,7 @@
 <script setup>
-import { ref, watch } from 'vue'
-import Editor from '@tinymce/tinymce-vue'
+import { ref, shallowRef, onBeforeUnmount, watch } from 'vue'
+import { Editor, Toolbar } from '@wangeditor/editor-for-vue'
+import '@wangeditor/editor/dist/css/style.css'
 
 const props = defineProps({
   modelValue: {
@@ -23,70 +24,75 @@ const props = defineProps({
 
 const emit = defineEmits(['update:modelValue'])
 
-const editorValue = ref(props.modelValue)
+// 编辑器实例，必须用 shallowRef
+const editorRef = shallowRef()
 
+// 内容 HTML
+const valueHtml = ref(props.modelValue)
+
+// 工具栏配置
+const toolbarConfig = {
+  excludeKeys: []
+}
+
+// 编辑器配置
+const editorConfig = {
+  placeholder: props.placeholder,
+  readOnly: props.disabled,
+  scroll: true,
+  autoFocus: false,
+}
+
+// 组件销毁时，也销毁编辑器
+onBeforeUnmount(() => {
+  const editor = editorRef.value
+  if (editor == null) return
+  editor.destroy()
+})
+
+// 监听内容变化
+const handleChange = (editor) => {
+  emit('update:modelValue', editor.getHtml())
+}
+
+// 监听props变化
 watch(
   () => props.modelValue,
-  newValue => {
-    if (newValue !== editorValue.value) {
-      editorValue.value = newValue
+  (newValue) => {
+    if (newValue !== valueHtml.value) {
+      valueHtml.value = newValue
     }
-  },
+  }
 )
 
-const handleEditorChange = content => {
-  editorValue.value = content
-  emit('update:modelValue', content)
-}
-
-const editorInit = {
-  height: props.height,
-  menubar: false,
-  plugins: [
-    'advlist',
-    'autolink',
-    'lists',
-    'link',
-    'image',
-    'charmap',
-    'preview',
-    'anchor',
-    'searchreplace',
-    'visualblocks',
-    'code',
-    'fullscreen',
-    'insertdatetime',
-    'media',
-    'table',
-    'code',
-    'help',
-    'wordcount',
-  ],
-  toolbar:
-    'undo redo | bold italic underline strikethrough | ' +
-    'fontfamily fontsize blocks | alignleft aligncenter alignright alignjustify | ' +
-    'outdent indent | numlist bullist | forecolor backcolor removeformat | ' +
-    'image media link | code fullscreen',
-  content_style: `
-    body { font-family: system-ui, -apple-system, 'Segoe UI', sans-serif; font-size: 14px; }
-    .mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
-      color: rgba(0,0,0,0.4);
-      content: attr(data-mce-placeholder);
+// 监听禁用状态变化
+watch(
+  () => props.disabled,
+  (newValue) => {
+    if (editorRef.value) {
+      editorRef.value.enable(!newValue)
     }
-  `,
-  placeholder: props.placeholder,
-  language: 'zh_CN',
-}
+  }
+)
 </script>
 
 <template>
   <div class="rich-text-editor">
-    <Editor
-      v-model="editorValue"
-      :init="editorInit"
-      :disabled="disabled"
-      @input="handleEditorChange"
-    />
+    <div style="border: 1px solid #ccc; border-radius: 5px;">
+      <Toolbar
+        style="border-bottom: 1px solid #ccc"
+        :editor="editorRef"
+        :defaultConfig="toolbarConfig"
+        :mode="props.disabled ? 'simple' : 'default'"
+      />
+      <Editor
+        :style="{height: typeof props.height === 'number' ? `${props.height}px` : props.height}"
+        v-model="valueHtml"
+        :defaultConfig="editorConfig"
+        @onCreated="editorRef = $event"
+        @onChange="handleChange"
+      />
+    </div>
   </div>
 </template>
 

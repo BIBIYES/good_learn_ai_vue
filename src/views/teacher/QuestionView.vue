@@ -259,30 +259,24 @@ onMounted(() => {
           :key="bank.bankId"
           class="relative group bg-white rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-gray-100 hover:shadow-2xl transition-all animate__animated animate__fadeIn"
         >
-          <div class="flex items-center gap-3 mb-2">
+          <!-- 第一行：头像和下拉菜单 -->
+          <div class="flex items-center gap-3 mb-3">
             <div
-              class="bg-green-100 w-12 h-12 rounded-lg flex justify-center items-center text-green-600 text-2xl font-bold"
+              class="bg-green-100 w-12 h-12 rounded-lg flex-shrink-0 flex justify-center items-center text-green-600 text-2xl font-bold"
             >
               {{ bank.bankName.charAt(0) }}
             </div>
-            <div class="flex-1">
-              <span
-                class="text-lg font-bold text-gray-800 flex items-center gap-2"
-              >
+            <div class="flex-1 min-w-0">
+              <div class="font-bold text-lg text-gray-800 truncate">
                 {{ bank.bankName }}
-                <span
-                  class="ml-2 px-2 py-0.5 rounded text-xs font-medium"
-                  :class="
-                    bank.status
-                      ? 'bg-green-100 text-green-600'
-                      : 'bg-gray-200 text-gray-500'
-                  "
-                >
-                  {{ bank.status ? '已启用' : '未启用' }}
-                </span>
-              </span>
+              </div>
+              <!-- 状态显示区域 -->
+              <div class="flex flex-wrap gap-2 mt-1">
+                <span class="badge badge-success badge-sm">已启用</span>
+                <span class="badge badge-info badge-sm">难度：中等</span>
+              </div>
             </div>
-            <div class="dropdown dropdown-end">
+            <div class="dropdown dropdown-end flex-shrink-0">
               <div
                 tabindex="0"
                 role="button"
@@ -321,18 +315,24 @@ onMounted(() => {
           </div>
 
           <div
-            class="text-gray-500 flex items-center text-sm flex-1 min-h-[40px] border-l-4 border-green-200 pl-3 bg-gray-50 rounded"
+            class="text-gray-500 flex items-start text-sm flex-1 min-h-[40px] border-l-4 border-green-200 pl-3 bg-gray-50 rounded p-2 overflow-y-auto max-h-[80px]"
           >
-            <div>{{ bank.description || '暂无描述' }}</div>
+            <div class="line-clamp-3">{{ bank.description || '暂无描述' }}</div>
           </div>
 
           <div
-            class="flex items-center justify-between mt-4 text-xs text-gray-400 border-t pt-3"
+            class="flex flex-wrap items-center gap-2 justify-between mt-4 text-xs text-gray-400 border-t pt-3"
           >
-            <span>题库ID: {{ bank.bankId }}</span>
-            <span>创建时间: {{ formatDate(bank.createdAt) }}</span>
+            <div class="flex flex-wrap gap-x-3 gap-y-1 items-center">
+              <span class="truncate max-w-[150px] whitespace-nowrap"
+                >题库ID: {{ bank.bankId }}</span
+              >
+              <span class="truncate max-w-[150px] whitespace-nowrap"
+                >创建时间: {{ formatDate(bank.createdAt) }}</span
+              >
+            </div>
             <button
-              class="btn btn-sm btn-outline btn-primary"
+              class="btn btn-sm btn-outline btn-primary mt-1 sm:mt-0"
               @click="viewBankDetail(bank)"
             >
               查看详情
@@ -344,7 +344,10 @@ onMounted(() => {
 
     <!-- Pagination - always at bottom -->
     <div class="mt-auto border-t border-base-200 p-4 bg-base-100">
-      <div v-if="!loading" class="flex justify-center space-x-5">
+      <div
+        v-if="!loading"
+        class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-5"
+      >
         <div class="btn btn-sm">
           <div aria-label="status" class="status status-primary" />
           <span>总计题库数：</span>{{ questionBanks.length }}
@@ -380,7 +383,7 @@ onMounted(() => {
     <!-- Create Question Bank Modal -->
     <input id="create_bank_modal" type="checkbox" class="modal-toggle" />
     <div class="modal" role="dialog">
-      <div class="modal-box">
+      <div class="modal-box overflow-hidden">
         <h3 class="font-bold text-lg mb-4">创建新题库</h3>
         <div class="form-control mb-2">
           <label class="label">
@@ -401,7 +404,7 @@ onMounted(() => {
           </label>
           <textarea
             v-model="newBankDescription"
-            class="textarea textarea-bordered h-24"
+            class="textarea textarea-bordered h-24 resize-x"
             placeholder="输入题库的简要描述"
           />
         </div>
