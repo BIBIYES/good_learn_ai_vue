@@ -776,7 +776,16 @@ const animation = () => {
     </div>
   </div>
 </template>
-<style>
+<style scoped>
+@font-face {
+  font-family: 'Fusion';
+  src: url('@/assets/font/fusion.otf') format('opentype');
+  font-display: swap;
+}
+
+* {
+  font-family: 'Fusion', sans-serif;
+}
 .isLoading {
   opacity: 0;
   /* 隐藏 */
