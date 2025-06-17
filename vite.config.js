@@ -23,7 +23,7 @@ export default defineConfig({
       },
     }),
     Components({
-      dts: 'src/types/components.d.ts', // 指定类型声明文件的路径
+      dts: false, // 指定类型声明文件的路径
       dirs: ['src/components'],
     }),
   ],
