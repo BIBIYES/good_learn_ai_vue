@@ -276,12 +276,12 @@ onMounted(() => {
                 <span class="badge badge-info badge-sm">难度：中等</span>
               </div>
             </div>
-              <div class="dropdown dropdown-end flex-shrink-0">
-                <div
-                  tabindex="0"
-                  role="button"
-                  class="btn btn-ghost btn-sm btn-circle"
-                >
+            <div class="dropdown dropdown-end flex-shrink-0">
+              <div
+                tabindex="0"
+                role="button"
+                class="btn btn-ghost btn-sm btn-circle"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   fill="none"
@@ -295,7 +295,7 @@ onMounted(() => {
                     d="M12 12.5v.01M12 8.5v.01M12 16.5v.01M12 4.5v.01"
                   />
                 </svg>
-                </div>
+              </div>
               <ul
                 tabindex="0"
                 class="dropdown-content z-[1] menu menu-sm shadow bg-base-100 rounded-box w-32"
@@ -324,8 +324,12 @@ onMounted(() => {
             class="flex flex-wrap items-center gap-2 justify-between mt-4 text-xs text-gray-400 border-t pt-3"
           >
             <div class="flex flex-wrap gap-x-3 gap-y-1 items-center">
-              <span class="truncate max-w-[150px] whitespace-nowrap">题库ID: {{ bank.bankId }}</span>
-              <span class="truncate max-w-[150px] whitespace-nowrap">创建时间: {{ formatDate(bank.createdAt) }}</span>
+              <span class="truncate max-w-[150px] whitespace-nowrap"
+                >题库ID: {{ bank.bankId }}</span
+              >
+              <span class="truncate max-w-[150px] whitespace-nowrap"
+                >创建时间: {{ formatDate(bank.createdAt) }}</span
+              >
             </div>
             <button
               class="btn btn-sm btn-outline btn-primary mt-1 sm:mt-0"
@@ -340,7 +344,10 @@ onMounted(() => {
 
     <!-- Pagination - always at bottom -->
     <div class="mt-auto border-t border-base-200 p-4 bg-base-100">
-      <div v-if="!loading" class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-5">
+      <div
+        v-if="!loading"
+        class="flex flex-col md:flex-row justify-center items-center space-y-2 md:space-y-0 md:space-x-5"
+      >
         <div class="btn btn-sm">
           <div aria-label="status" class="status status-primary" />
           <span>总计题库数：</span>{{ questionBanks.length }}
@@ -376,7 +383,7 @@ onMounted(() => {
     <!-- Create Question Bank Modal -->
     <input id="create_bank_modal" type="checkbox" class="modal-toggle" />
     <div class="modal" role="dialog">
-      <div class="modal-box">
+      <div class="modal-box overflow-hidden">
         <h3 class="font-bold text-lg mb-4">创建新题库</h3>
         <div class="form-control mb-2">
           <label class="label">
@@ -397,7 +404,7 @@ onMounted(() => {
           </label>
           <textarea
             v-model="newBankDescription"
-            class="textarea textarea-bordered h-24"
+            class="textarea textarea-bordered h-24 resize-x"
             placeholder="输入题库的简要描述"
           />
         </div>
