@@ -181,6 +181,11 @@ const router = createRouter({
       name: 'test-page',
       component: () => import('../views/student/TestPage.vue'),
     },
+    {
+      path: '/gd-loading-demo',
+      name: 'gd-loading-demo',
+      component: () => import('../views/GdLoadingDemo.vue'),
+    },
   ],
 })
 // 前置路由守卫
@@ -192,7 +197,7 @@ router.beforeEach((to, from, next) => {
   const authRoutes = ['/login', '/register', '/forgot-password']
 
   // 公开页面
-  const openRoutes = ['/about', '/test']
+  const openRoutes = ['/about', '/test', '/gd-loading-demo']
   if (openRoutes.includes(to.path)) {
     next()
     return

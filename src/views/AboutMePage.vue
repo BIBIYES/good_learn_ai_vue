@@ -774,6 +774,11 @@ const animation = () => {
         </div>
       </div>
     </div>
+    <div class="demo-links my-4 flex flex-wrap gap-4 justify-center">
+      <router-link to="/gd-loading-demo" class="btn btn-primary"
+        >查看 GdLoading 组件演示</router-link
+      >
+    </div>
   </div>
 </template>
 <style>
