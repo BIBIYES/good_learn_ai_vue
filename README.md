@@ -98,3 +98,56 @@ onUnmounted(() => {
 #### 方法
 
 - `destroy()`: 销毁背景实例，清理资源
+
+# GdLoadingText 组件
+
+一个像素风格的加载动画组件，具有可交互的弹跳效果和粒子特效。
+
+## 预览效果
+
+访问 `/loading-demo` 路径可以查看组件的默认效果。
+
+## 使用方法
+
+### 1. 导入组件
+
+```javascript
+import GdLoadingText from '@/components/common/GdLoadingText.vue'
+```
+
+### 2. 基本用法
+
+```html
+<GdLoadingText />
+```
+
+### 3. 自定义属性
+
+```html
+<!-- 自定义文本 -->
+<GdLoadingText text="加载中..." />
+
+<!-- 自定义颜色 -->
+<GdLoadingText color="#4285f4" />
+
+<!-- 同时自定义文本和颜色 -->
+<GdLoadingText text="数据加载中" color="#ea4335" />
+```
+
+## 属性说明
+
+| 属性名 | 类型 | 默认值 | 说明 |
+|-------|------|-------|------|
+| text | String | "正在加载..." | 加载组件显示的文本 |
+| color | String | "#53a979" | 加载动画的主色调 |
+
+## 交互功能
+
+- 鼠标悬停在图形上可以看到交互效果
+- 点击画布任意位置会产生粒子特效
+- 当图形撞击文字时，会向上方迸发出彩色粒子效果
+
+## 注意事项
+
+- 组件使用了自定义字体 'Fusion'，确保 `@/assets/font/fusion.otf` 文件存在
+- 组件默认高度为 240px，可以通过修改 CSS 样式调整
