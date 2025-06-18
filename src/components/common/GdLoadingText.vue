@@ -15,7 +15,7 @@ const props = defineProps({
   // 固定绿色，从浅到深
   color: {
     type: String,
-    default: '#53a979', // 主色调固定为绿色
+    default: '#66cc8a', // 主色调固定为绿色，与FloatingSquaresBg.js相同
   },
 })
 
@@ -54,7 +54,8 @@ let shape = {
   rotationSpeed: 0.02, // 增加旋转速度
   hovered: false,
   targetSize: 40,
-  glowIntensity: 0, // 马赛克材质的发光强度
+  glowIntensity: 0, // 发光强度
+  opacity: 0.8, // 添加透明度，增强玻璃感
 }
 
 // 弹床参数
@@ -62,7 +63,7 @@ let trampoline = {
   text: props.text,
   width: 0,
   y: 0,
-  color: '#000000',
+  color: '#000000', // 修改回黑色
   bounceStrength: -10, // 增加弹跳强度，使动画更有活力
   glowIntensity: 0,
   scale: 1, // 文字缩放
@@ -70,7 +71,7 @@ let trampoline = {
   stretchAmount: 0, // 文字拉伸量
 }
 
-// 绘制各种形状，添加马赛克风格效果
+// 绘制各种形状，添加光晕玻璃风格效果
 const drawShape = (ctx, shape) => {
   ctx.save()
   ctx.translate(shape.x, shape.y)
@@ -79,132 +80,59 @@ const drawShape = (ctx, shape) => {
   // 获取基础颜色
   const baseColor = props.color
 
-  // 为形状添加像素风效果
-  const addPixelEffect = (ctx, shapePath) => {
-    // 解析基础颜色
-    let r, g, b
-    if (baseColor.startsWith('#')) {
-      r = parseInt(baseColor.substring(1, 3), 16)
-      g = parseInt(baseColor.substring(3, 5), 16)
-      b = parseInt(baseColor.substring(5, 7), 16)
-    } else {
-      // 默认绿色
-      r = 83
-      g = 169
-      b = 121
-    }
+  // 设置全局透明度
+  ctx.globalAlpha = shape.opacity
 
-    // 创建裁剪区域
-    shapePath()
-    ctx.clip()
-
-    // 像素的大小 - 使用更大的像素块来增强锯齿感
-    const pixelSize = Math.max(6, Math.floor(shape.size / 5))
-
-    // 计算形状的边界框
-    const boundingBoxSize = shape.size
-    const startX = -boundingBoxSize / 2
-    const startY = -boundingBoxSize / 2
-
-    // 定义经典像素游戏风格的颜色调色板 - 只使用2-3种颜色
-    const palette = [
-      {
-        r: Math.max(0, r - 40),
-        g: Math.max(0, g - 40),
-        b: Math.max(0, b - 40),
-      }, // 暗色
-      { r, g, b }, // 基础色
-      {
-        r: Math.min(255, r + 30),
-        g: Math.min(255, g + 30),
-        b: Math.min(255, b + 30),
-      }, // 亮色
-    ]
-
-    // 绘制低分辨率像素
-    for (let x = startX; x < startX + boundingBoxSize; x += pixelSize) {
-      for (let y = startY; y < startY + boundingBoxSize; y += pixelSize) {
-        // 使用简单的像素游戏光照模型
-        // 左上方亮，右下方暗
-
-        // 计算像素在形状内的相对位置 (-1到1的范围)
-        const relX = x / (boundingBoxSize / 2)
-        const relY = y / (boundingBoxSize / 2)
-
-        // 确定使用调色板中的哪个颜色
-        let colorIndex
-
-        // 简单的光照方向：左上角亮，右下角暗
-        if (relX + relY < -0.5) {
-          // 左上角区域使用亮色
-          colorIndex = 2
-        } else if (relX + relY > 0.5) {
-          // 右下角区域使用暗色
-          colorIndex = 0
-        } else {
-          // 中间区域使用基础色
-          colorIndex = 1
-        }
-
-        // 获取选定的颜色
-        const selectedColor = palette[colorIndex]
-
-        // 设置填充颜色
-        ctx.fillStyle = `rgb(${Math.floor(selectedColor.r)}, ${Math.floor(selectedColor.g)}, ${Math.floor(selectedColor.b)})`
-
-        // 绘制像素方块，不留间隙以体现像素风格
-        ctx.fillRect(x, y, pixelSize, pixelSize)
-      }
-    }
-
-    // 添加像素游戏风格的黑色边框
-    ctx.strokeStyle = 'black'
-    ctx.lineWidth = 1
-    shapePath()
-    ctx.stroke()
-  }
-
-  switch (shape.type) {
-    case SHAPES.SQUARE:
-      addPixelEffect(ctx, () => {
+  // 创建绘制路径函数
+  const createShapePath = () => {
+    switch (shape.type) {
+      case SHAPES.SQUARE:
         ctx.beginPath()
         ctx.rect(-shape.size / 2, -shape.size / 2, shape.size, shape.size)
         ctx.closePath()
-      })
-      break
-
-    case SHAPES.CIRCLE:
-      addPixelEffect(ctx, () => {
+        break
+      case SHAPES.CIRCLE:
         ctx.beginPath()
         ctx.arc(0, 0, shape.size / 2, 0, Math.PI * 2)
         ctx.closePath()
-      })
-      break
-
-    case SHAPES.TRIANGLE:
-      addPixelEffect(ctx, () => {
+        break
+      case SHAPES.TRIANGLE:
         ctx.beginPath()
         ctx.moveTo(0, -shape.size / 2)
         ctx.lineTo(shape.size / 2, shape.size / 2)
         ctx.lineTo(-shape.size / 2, shape.size / 2)
         ctx.closePath()
-      })
-      break
-
-    case SHAPES.PENTAGON:
-      addPixelEffect(ctx, () => drawPolygon(ctx, 5, shape.size / 2))
-      break
-
-    case SHAPES.HEXAGON:
-      addPixelEffect(ctx, () => drawPolygon(ctx, 6, shape.size / 2))
-      break
-
-    case SHAPES.STAR:
-      addPixelEffect(ctx, () =>
-        drawStar(ctx, 5, shape.size / 2, shape.size / 4),
-      )
-      break
+        break
+      case SHAPES.PENTAGON:
+        drawPolygon(ctx, 5, shape.size / 2)
+        break
+      case SHAPES.HEXAGON:
+        drawPolygon(ctx, 6, shape.size / 2)
+        break
+      case SHAPES.STAR:
+        drawStar(ctx, 5, shape.size / 2, shape.size / 4)
+        break
+    }
   }
+
+  // 添加光晕效果
+  if (shape.glowIntensity > 0 || shape.hovered) {
+    ctx.shadowColor = baseColor
+    ctx.shadowBlur = 20
+    ctx.shadowOffsetX = 0
+    ctx.shadowOffsetY = 0
+  }
+
+  // 绘制半透明填充
+  createShapePath()
+  ctx.fillStyle = baseColor
+  ctx.fill()
+
+  // 添加白色边框 - 从FloatingSquaresBg.js中借鉴
+  ctx.strokeStyle = '#ffffff'
+  ctx.lineWidth = 2
+  createShapePath()
+  ctx.stroke()
 
   ctx.restore()
 }
@@ -250,7 +178,7 @@ const drawStar = (ctx, points, outerRadius, innerRadius) => {
 const drawTrampoline = (ctx, trampoline) => {
   ctx.save()
 
-  // 设置像素字体样式
+  // 设置字体样式
   ctx.font = 'bold 28px Fusion, Arial'
   ctx.textAlign = 'center'
 
@@ -265,13 +193,36 @@ const drawTrampoline = (ctx, trampoline) => {
   // 测量文字宽度
   trampoline.width = ctx.measureText(trampoline.text).width
 
-  // 文字不再有辉光效果
+  // 创建绿色渐变
+  const gradient = ctx.createLinearGradient(
+    width / 2 - trampoline.width / 2,
+    trampoline.y - 15,
+    width / 2 + trampoline.width / 2,
+    trampoline.y + 15,
+  )
+  gradient.addColorStop(0, '#44aa66') // 深绿色
+  gradient.addColorStop(0.5, '#66cc8a') // 中绿色
+  gradient.addColorStop(1, '#99eebb') // 浅绿色
 
-  // 使用实心颜色绘制文字，不使用渐变
-  ctx.fillStyle = '#000000'
+  // 添加光晕效果 - 减弱光晕强度
+  if (trampoline.glowIntensity > 0) {
+    ctx.shadowColor = props.color
+    ctx.shadowBlur = 8 // 减少模糊半径
+    ctx.shadowOffsetX = 0
+    ctx.shadowOffsetY = 0
+  }
+
+  // 先绘制白色描边
+  ctx.lineWidth = 2 // 适中的描边宽度
+  ctx.strokeStyle = 'white'
+  ctx.strokeText(trampoline.text, width / 2, trampoline.y)
+
+  // 重置阴影，避免阴影影响填充文字
+  ctx.shadowBlur = 0
+
+  // 使用渐变色绘制文字
+  ctx.fillStyle = gradient
   ctx.fillText(trampoline.text, width / 2, trampoline.y)
-
-  // 底部水平线已移除
 
   ctx.restore()
 }
@@ -314,8 +265,13 @@ const updateShape = () => {
       trampoline.targetScale = 0.95
       trampoline.stretchAmount = 0.15
 
-      // 创建向上迸发的粒子效果 - 减少粒子数量
-      createParticles(shape.x, trampoline.y - 10, shape.color, 15)
+      // 创建向上迸发的粒子效果 - 增加粒子数量，但限制最大数量
+      createParticles(
+        shape.x,
+        trampoline.y - 10,
+        shape.color,
+        Math.min(40, Math.floor(width / 12)),
+      )
     }
   }
 
@@ -392,9 +348,9 @@ const changeShape = () => {
 
 // 重置形状位置
 const resetShape = () => {
-  shape.y = height * 0.5
+  shape.y = height * 0.5 // 将起始点调整到中间位置0.5
   shape.x = width / 2
-  shape.vy = 0
+  shape.vy = 1 // 给一个小的初始向下速度
 
   // 随机选择一个形状类型
   const shapeTypes = Object.values(SHAPES)
@@ -422,8 +378,22 @@ const handleMouseClick = e => {
   const x = e.clientX - rect.left
   const y = e.clientY - rect.top
 
-  // 在点击位置创建粒子效果
-  createParticles(x, y, props.color, 20)
+  // 在点击位置创建更多粒子效果，大幅增加数量
+  createParticles(x, y, props.color, Math.min(60, Math.floor(width / 10)))
+
+  // 在周围区域也创建一些粒子，制造爆炸效果
+  for (let i = 0; i < 3; i++) {
+    const radius = 20 + Math.random() * 30
+    const angle = Math.random() * Math.PI * 2
+    const burstX = x + Math.cos(angle) * radius
+    const burstY = y + Math.sin(angle) * radius
+    createParticles(
+      burstX,
+      burstY,
+      props.color,
+      Math.min(20, Math.floor(width / 15)),
+    )
+  }
 }
 
 const handleMouseLeave = () => {
@@ -441,8 +411,8 @@ const resize = () => {
   canvas.value.width = width
   canvas.value.height = height
 
-  // 设置弹床位置 - 将文本位置下移
-  trampoline.y = height * 0.75
+  // 设置弹床位置 - 将文本位置移到更低的位置
+  trampoline.y = height * 0.75 // 将弹床位置调整到0.75，更靠近底部
 
   // 初始化形状位置
   resetShape()
@@ -488,65 +458,98 @@ const init = () => {
 // 像素游戏风格粒子类
 class Particle {
   constructor(x, y, color) {
-    // 使用整数坐标，增强像素感
     this.x = Math.round(x)
     this.y = Math.round(y)
 
-    // 固定的几种尺寸，不使用随机值
-    const sizeOptions = [4, 6, 8]
+    // 使用更多尺寸选项
+    const sizeOptions = [3, 4, 6, 8, 10]
     this.size = sizeOptions[Math.floor(Math.random() * sizeOptions.length)]
 
-    // 使用固定的几个角度，增强像素风格的机械感
-    const angleOptions = [
-      Math.PI * 0.25, // 右上 45°
-      Math.PI * 0.5, // 正上 90°
-      Math.PI * 0.75, // 左上 135°
-    ]
-    const angle = angleOptions[Math.floor(Math.random() * angleOptions.length)]
+    // 更多角度选项，使粒子向各个方向飞散
+    const angle = Math.random() * Math.PI * 2 // 完全随机的360度角度
 
-    // 使用固定的几个速度值
-    const speedOptions = [4, 6, 8]
+    // 使用更多速度变化
+    const speedOptions = [3, 4, 6, 8, 10]
     const speed = speedOptions[Math.floor(Math.random() * speedOptions.length)]
 
-    // 使用整数速度，增强像素感
-    this.speedX = Math.round(Math.cos(angle) * speed)
-    this.speedY = Math.round(-Math.sin(angle) * speed) - 2
+    // 使用随机速度
+    this.speedX = Math.cos(angle) * speed
+    this.speedY = Math.sin(angle) * speed - (Math.random() * 3 + 2) // 向上偏移的初始速度
 
-    this.color = color
-    this.alpha = 1
-    this.gravity = 0.2
+    // 随机选择颜色，有一定概率使用更亮的颜色
+    this.color = Math.random() > 0.7 ? '#ffffff' : color
+    this.alpha = 0.8 + Math.random() * 0.2 // 随机透明度
+    this.gravity = 0.15 + Math.random() * 0.1 // 随机重力
 
-    // 使用固定的几个生命周期值
-    this.life = 20 + Math.floor(Math.random() * 3) * 5
+    // 使用更长的生命周期并增加随机性
+    this.life = 30 + Math.floor(Math.random() * 40)
     this.remainingLife = this.life
 
-    // 只使用 0°, 90°, 180°, 270° 的旋转角度
-    this.rotation = Math.floor(Math.random() * 4) * (Math.PI / 2)
-    this.rotationSpeed = 0 // 不使用连续旋转
+    // 随机旋转角度和速度
+    this.rotation = Math.random() * Math.PI * 2
+    this.rotationSpeed = (Math.random() - 0.5) * 0.1
+
+    // 添加随机闪烁效果
+    this.flashFrequency = 0.02 + Math.random() * 0.04
+    this.flashPhase = Math.random() * Math.PI * 2
+
+    // 随机加速度变化
+    this.accelerationX = (Math.random() - 0.5) * 0.05
+    this.accelerationY = (Math.random() - 0.5) * 0.05
   }
 
   // 更新粒子状态
   update() {
+    // 应用重力
     this.speedY += this.gravity
+
+    // 应用随机加速度
+    this.speedX += this.accelerationX
+    this.speedY += this.accelerationY
+
+    // 更新位置
     this.x += this.speedX
     this.y += this.speedY
 
-    // 更明显的旋转效果
+    // 更新旋转
     this.rotation += this.rotationSpeed
 
+    // 生命周期减少
     this.remainingLife--
-    this.alpha = this.remainingLife / this.life
 
-    // 添加一些飘动效果
+    // 计算基础透明度
+    let baseAlpha = (this.remainingLife / this.life) * 0.8
+
+    // 添加闪烁效果
+    const flickerEffect =
+      Math.sin(this.remainingLife * this.flashFrequency + this.flashPhase) *
+        0.2 +
+      0.8
+    this.alpha = baseAlpha * flickerEffect
+
+    // 添加飘动效果
     this.speedX *= 0.98
+
+    // 随机改变加速度
+    if (Math.random() < 0.05) {
+      this.accelerationX = (Math.random() - 0.5) * 0.1
+      this.accelerationY = (Math.random() - 0.5) * 0.1
+    }
 
     // 生命末期旋转加速
     if (this.remainingLife < this.life * 0.3) {
-      this.rotationSpeed *= 1.01
+      this.rotationSpeed *= 1.02
     }
 
-    // 保持足够的不透明度以便看清方块
-    this.alpha = Math.max(this.alpha, 0.2)
+    // 限制粒子不要飞出太远
+    if (
+      this.x < -this.size * 2 ||
+      this.x > width + this.size * 2 ||
+      this.y < -this.size * 2 ||
+      this.y > height + this.size * 2
+    ) {
+      this.remainingLife = 0 // 如果飞出范围，直接结束生命周期
+    }
   }
 
   // 绘制粒子
@@ -555,20 +558,45 @@ class Particle {
     ctx.globalAlpha = this.alpha
     ctx.fillStyle = this.color
 
-    // 绘制方块粒子
+    // 添加光晕效果
+    ctx.shadowColor = this.color
+    ctx.shadowBlur = 10
+    ctx.shadowOffsetX = 0
+    ctx.shadowOffsetY = 0
+
+    // 根据形状类型绘制不同的粒子
     ctx.translate(this.x, this.y)
     ctx.rotate(this.rotation)
 
-    // 更大的方块尺寸
     const rectSize = this.size
 
-    // 填充方块
-    ctx.fillRect(-rectSize / 2, -rectSize / 2, rectSize, rectSize)
-
-    // 添加边框使方块更明显
-    ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)'
-    ctx.lineWidth = 0.5
-    ctx.strokeRect(-rectSize / 2, -rectSize / 2, rectSize, rectSize)
+    // 根据粒子形状类型绘制不同形状
+    if (!this.shapeType || this.shapeType === 0) {
+      // 方形粒子
+      ctx.fillRect(-rectSize / 2, -rectSize / 2, rectSize, rectSize)
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+      ctx.lineWidth = 1
+      ctx.strokeRect(-rectSize / 2, -rectSize / 2, rectSize, rectSize)
+    } else if (this.shapeType === 1) {
+      // 圆形粒子
+      ctx.beginPath()
+      ctx.arc(0, 0, rectSize / 2, 0, Math.PI * 2)
+      ctx.fill()
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+      ctx.lineWidth = 1
+      ctx.stroke()
+    } else {
+      // 三角形粒子
+      ctx.beginPath()
+      ctx.moveTo(0, -rectSize / 2)
+      ctx.lineTo(rectSize / 2, rectSize / 2)
+      ctx.lineTo(-rectSize / 2, rectSize / 2)
+      ctx.closePath()
+      ctx.fill()
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)'
+      ctx.lineWidth = 1
+      ctx.stroke()
+    }
 
     ctx.restore()
   }
@@ -580,51 +608,56 @@ class Particle {
 }
 
 // 创建粒子效果
-const createParticles = (x, y, baseColor, count = 8) => {
-  // 减少粒子数量以提高性能
-  // 解析基础颜色
-  let baseR, baseG, baseB
-  if (baseColor.startsWith('#')) {
-    baseR = parseInt(baseColor.substring(1, 3), 16)
-    baseG = parseInt(baseColor.substring(3, 5), 16)
-    baseB = parseInt(baseColor.substring(5, 7), 16)
-  } else {
-    // 默认绿色
-    baseR = 83
-    baseG = 169
-    baseB = 121
-  }
-
-  // 像素风格的颜色调色板 - 只使用几种固定的颜色
-  const pixelPalette = [
-    `rgb(${baseR}, ${baseG}, ${baseB})`, // 基础色
-    `rgb(${baseR + 40}, ${baseG + 40}, ${baseB + 40})`, // 亮色
-    `rgb(${baseR - 30}, ${baseG - 30}, ${baseB - 30})`, // 暗色
+const createParticles = (x, y, baseColor, count = 15) => {
+  // 使用与FloatingSquaresBg.js相同的颜色，增加更多绿色变体
+  const colors = [
+    '#ffffff',
+    '#66cc8a',
+    '#79be92',
+    '#cedbde',
+    '#88ddaa', // 新增绿色变体
+    '#55bb77', // 新增绿色变体
+    '#99eebb', // 新增绿色变体
+    '#44aa66', // 新增绿色变体
   ]
 
-  // 生成像素风格的颜色
-  const generatePixelColor = () => {
-    // 从调色板中随机选择一种颜色
-    return pixelPalette[Math.floor(Math.random() * pixelPalette.length)]
+  // 根据容器大小限制粒子数量，但增加基础数量
+  const maxParticles = Math.floor(Math.min(width, height) / 8) // 减小除数，增加粒子
+  const actualCount = Math.min(count * 2, maxParticles) // 乘以2增加粒子数量
+
+  // 限制总粒子数量，但增加上限
+  if (particles.length > 150) {
+    // 从100增加到150
+    // 如果已有太多粒子，保留较新的
+    particles = particles.slice(-120) // 从80增加到120
   }
 
-  for (let i = 0; i < count; i++) {
-    // 为每个粒子生成像素风格的颜色
-    const particleColor = generatePixelColor()
+  for (let i = 0; i < actualCount; i++) {
+    // 从颜色数组中随机选择一种颜色
+    const particleColor = colors[Math.floor(Math.random() * colors.length)]
 
-    // 创建新粒子
-    const particle = new Particle(x, y, particleColor)
+    // 创建新粒子，位置增加随机偏移
+    const offsetX = (Math.random() - 0.5) * 30 // 水平随机偏移±15像素
+    const offsetY = (Math.random() - 0.5) * 20 // 垂直随机偏移±10像素
+    const particle = new Particle(x + offsetX, y + offsetY, particleColor)
 
-    // 像素风格的粒子大小应该更加统一，只有少量变化
-    // 使用固定的几种尺寸，而不是随机值
-    const sizeVariant = Math.floor(Math.random() * 3) // 0, 1, 2
+    // 随机粒子大小，增加更多变体
+    const sizeVariant = Math.floor(Math.random() * 5) // 从3增加到5种尺寸
     if (sizeVariant === 0) {
-      particle.size = 5 // 小
+      particle.size = 3 // 极小
     } else if (sizeVariant === 1) {
+      particle.size = 5 // 小
+    } else if (sizeVariant === 2) {
       particle.size = 7 // 中
-    } else {
+    } else if (sizeVariant === 3) {
       particle.size = 9 // 大
+    } else {
+      particle.size = 11 // 极大
     }
+
+    // 增加随机性 - 随机选择不同的形状
+    const shapeType = Math.floor(Math.random() * 3)
+    particle.shapeType = shapeType // 添加形状类型：0方形，1圆形，2三角形
 
     particles.push(particle)
   }
@@ -680,14 +713,14 @@ onBeforeUnmount(() => {
 .loading-container {
   position: relative;
   width: 100%;
-  height: 240px;
+  height: 260px; /* 增加高度 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: flex-start; /* 从顶部开始布局，不居中 */
-  padding-top: 20px; /* 顶部添加一些空间 */
+  justify-content: center; /* 改为居中对齐，而不是从顶部开始 */
   font-family: 'Fusion', sans-serif;
-  overflow: hidden; /* 防止内容溢出 */
+  overflow: hidden; /* 修改回hidden以防止内容溢出 */
+  border-radius: 8px;
 }
 
 .bounce-canvas {
@@ -697,6 +730,7 @@ onBeforeUnmount(() => {
   width: 100%;
   height: 100%;
   z-index: 0;
-  border-radius: 8px; /* 添加圆角边框 */
+  border-radius: 8px;
+  pointer-events: auto; /* 确保可以接收鼠标事件 */
 }
 </style>
