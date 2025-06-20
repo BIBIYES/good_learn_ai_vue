@@ -20,6 +20,7 @@ import {
   Lightning,
 } from '@icon-park/vue-next'
 import RichTextEditor from '@/components/common/RichTextEditor.vue'
+import DgLoadingText from '@/components/common/GdLoadingText.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -497,13 +498,13 @@ onMounted(() => {
 
 <template>
   <div class="flex flex-col h-full p-4 bg-white relative">
-    <div class="fixed right-0 bottom-0 w-[800px] h-[800px] rounded-full bg-gradient-to-br from-[rgba(100,220,130,0.18)] to-[rgba(80,200,110,0.04)] blur-3xl pointer-events-none"></div>
-    <div class="fixed right-[20%] top-[10%] w-[500px] h-[500px] rounded-full bg-gradient-to-bl from-[rgba(100,180,255,0.1)] to-[rgba(70,150,230,0.03)] blur-3xl pointer-events-none"></div>
-    <div class="fixed left-[15%] bottom-[15%] w-[400px] h-[400px] rounded-full bg-gradient-to-tr from-[rgba(255,210,100,0.08)] to-[rgba(230,190,80,0.02)] blur-3xl pointer-events-none"></div>
     <TitleBar class="p-4 mb-4">
       <template #title>
         <div class="flex flex-wrap items-center gap-2">
-          <button @click="router.back()" class="btn btn-ghost btn-sm btn-circle">
+          <button
+            class="btn btn-ghost btn-sm btn-circle"
+            @click="router.back()"
+          >
             <ArrowLeft theme="outline" size="20" />
           </button>
           <FileQuestion theme="outline" size="38" />
@@ -515,18 +516,12 @@ onMounted(() => {
       </template>
       <template #module>
         <div class="flex flex-wrap gap-2 mt-2 md:mt-0">
-          <button
-            class="btn-liquid-glass"
-            @click="showCreateModal = true"
-          >
+          <button class="btn-liquid-glass" @click="showCreateModal = true">
             <Add theme="outline" size="16" />
             <span class="hidden sm:inline">添加题目</span>
             <span class="sm:hidden">添加</span>
           </button>
-          <button
-            class="btn-liquid-glass"
-            @click="handleBatchAddClick"
-          >
+          <button class="btn-liquid-glass" @click="handleBatchAddClick">
             <Add theme="outline" size="16" />
             <span class="hidden md:inline">批量添加题目</span>
             <span class="md:hidden">批量添加</span>
@@ -541,8 +536,13 @@ onMounted(() => {
           </button>
           <button
             class="btn-liquid-glass error"
+            :disabled="deleteLoading"
             @click="handleBatchDeleteQuestions"
           >
+            <span
+              v-if="deleteLoading"
+              class="loading loading-spinner loading-sm mr-2"
+            ></span>
             <Delete theme="outline" size="16" />
             <span class="hidden lg:inline">批量删除题目</span>
             <span class="lg:hidden">批量删除</span>
@@ -555,9 +555,13 @@ onMounted(() => {
     <div class="flex-1 overflow-y-auto p-4 md:p-6">
       <!-- Filter box -->
       <div class="flex flex-wrap gap-4 p-4 mb-4">
-        <div class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]">
+        <div
+          class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]"
+        >
           <label class="label">
-            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]">难度筛选</span>
+            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]"
+              >难度筛选</span
+            >
           </label>
           <select
             v-model="filterDifficulty"
@@ -569,9 +573,13 @@ onMounted(() => {
             <option value="hard">困难</option>
           </select>
         </div>
-        <div class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]">
+        <div
+          class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]"
+        >
           <label class="label">
-            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]">标题搜索</span>
+            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]"
+              >标题搜索</span
+            >
           </label>
           <input
             v-model="filterTitle"
@@ -580,11 +588,15 @@ onMounted(() => {
             class="input w-full bg-[rgba(255,255,255,0.7)] backdrop-blur-sm border border-[rgba(140,220,160,0.3)] focus:border-[rgba(100,200,130,0.5)] focus:ring-2 focus:ring-[rgba(100,200,130,0.2)] transition-all duration-300"
           />
         </div>
-        <div class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]">
+        <div
+          class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]"
+        >
           <label class="label">
-            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]">状态筛选</span>
+            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]"
+              >状态筛选</span
+            >
           </label>
-          <select 
+          <select
             class="select w-full bg-[rgba(255,255,255,0.7)] backdrop-blur-sm border border-[rgba(140,220,160,0.3)] focus:border-[rgba(100,200,130,0.5)] focus:ring-2 focus:ring-[rgba(100,200,130,0.2)] transition-all duration-300"
           >
             <option value="">全部</option>
@@ -594,14 +606,15 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Loading State - Skeleton -->
-      <div v-if="loading" class="w-full">
-        <div class="skeleton h-12 w-full mb-4 rounded" />
+      <!-- Loading State -->
+      <div v-if="loading" class="w-full overflow-x-auto">
         <div
-          v-for="i in 5"
-          :key="i"
-          class="skeleton h-16 w-full mb-2 rounded"
-        />
+          class="bg-gradient-to-br from-[rgba(248,255,250,0.3)] to-[rgba(245,253,248,0.2)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.6)] shadow-sm p-8"
+        >
+          <div class="flex justify-center items-center py-12">
+            <DgLoadingText text="正在获取题目列表...."></DgLoadingText>
+          </div>
+        </div>
       </div>
 
       <!-- Empty State -->
@@ -610,11 +623,7 @@ onMounted(() => {
         class="flex flex-col items-center justify-center h-64"
       >
         <div class="text-center glass-panel p-8">
-          <FileQuestion
-            theme="outline"
-            size="64"
-            class="text-gray-400 mb-6"
-          />
+          <FileQuestion theme="outline" size="64" class="text-gray-400 mb-6" />
           <p class="text-gray-600 text-xl font-medium mb-6">
             该题库暂无题目，快去添加一个吧！
           </p>
@@ -626,7 +635,10 @@ onMounted(() => {
       </div>
 
       <!-- Questions Table -->
-      <div v-else class="overflow-x-auto w-full">
+      <div
+        v-else
+        class="overflow-x-auto w-full animate__animated animate__fadeIn"
+      >
         <!-- 移动端卡片视图 -->
         <div class="block lg:hidden">
           <div class="grid grid-cols-1 gap-4">
@@ -645,17 +657,44 @@ onMounted(() => {
                     :value="question.questionId"
                     :disabled="!selectedQuestions"
                   />
-                  <span class="text-sm text-gray-600 font-medium">ID: {{ question.questionId }}</span>
+                  <span class="text-sm text-gray-600 font-medium"
+                    >ID: {{ question.questionId }}</span
+                  >
                 </div>
                 <div class="dropdown dropdown-end">
-                  <div tabindex="0" role="button" class="btn btn-ghost btn-sm btn-circle">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" class="w-4 h-4 stroke-current">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12.5v.01M12 8.5v.01M12 16.5v.01M12 4.5v.01"></path>
+                  <div
+                    tabindex="0"
+                    role="button"
+                    class="btn btn-ghost btn-sm btn-circle"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      class="w-4 h-4 stroke-current"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M12 12.5v.01M12 8.5v.01M12 16.5v.01M12 4.5v.01"
+                      ></path>
                     </svg>
                   </div>
-                  <ul tabindex="0" class="dropdown-content z-[1] menu menu-sm shadow bg-white rounded-lg w-32 border border-gray-200">
-                    <li><a @click="openEditModal(question)"><Edit theme="outline" size="14" />编辑</a></li>
-                    <li><a class="text-error" @click="openDeleteModal(question)"><Delete theme="outline" size="14" />删除</a></li>
+                  <ul
+                    tabindex="0"
+                    class="dropdown-content z-[1] menu menu-sm shadow bg-white rounded-lg w-32 border border-gray-200"
+                  >
+                    <li>
+                      <a @click="openEditModal(question)"
+                        ><Edit theme="outline" size="14" />编辑</a
+                      >
+                    </li>
+                    <li>
+                      <a class="text-error" @click="openDeleteModal(question)"
+                        ><Delete theme="outline" size="14" />删除</a
+                      >
+                    </li>
                     <li><a @click="openDetailModal(question)">查看详情</a></li>
                   </ul>
                 </div>
@@ -681,7 +720,9 @@ onMounted(() => {
                   class="badge-liquid-glass"
                   :class="getDifficultyStyle(question.difficulty)"
                 >
-                  {{ difficultyMap[question.difficulty] || question.difficulty }}
+                  {{
+                    difficultyMap[question.difficulty] || question.difficulty
+                  }}
                 </div>
                 <div
                   class="badge-liquid-glass"
@@ -725,11 +766,15 @@ onMounted(() => {
         </div>
 
         <!-- 桌面端表格视图 -->
-        <div class="overflow-x-auto bg-gradient-to-br from-[rgba(248,255,250,0.3)] to-[rgba(245,253,248,0.2)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.6)] shadow-sm hidden lg:block">
+        <div
+          class="overflow-x-auto bg-gradient-to-br from-[rgba(248,255,250,0.3)] to-[rgba(245,253,248,0.2)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.6)] shadow-sm hidden lg:block"
+        >
           <table class="table w-full">
             <!-- Table head -->
             <thead>
-              <tr class="bg-[rgba(250, 255, 252, 0.4), rgba(248, 253, 250, 0.3)]">
+              <tr
+                class="bg-[rgba(250, 255, 252, 0.4), rgba(248, 253, 250, 0.3)]"
+              >
                 <th class="w-12">
                   <input
                     type="checkbox"
@@ -781,7 +826,9 @@ onMounted(() => {
                     class="badge-liquid-glass mx-auto"
                     :class="getDifficultyStyle(question.difficulty)"
                   >
-                    {{ difficultyMap[question.difficulty] || question.difficulty }}
+                    {{
+                      difficultyMap[question.difficulty] || question.difficulty
+                    }}
                   </div>
                 </td>
                 <td class="text-center">
@@ -799,22 +846,22 @@ onMounted(() => {
                   <div class="flex items-center justify-center gap-2">
                     <button
                       class="btn-liquid-glass edit xs"
-                      @click="openEditModal(question)"
                       title="编辑题目"
+                      @click="openEditModal(question)"
                     >
                       <Edit theme="outline" size="12" />
                     </button>
                     <button
                       class="btn-liquid-glass error xs"
-                      @click="openDeleteModal(question)"
                       title="删除题目"
+                      @click="openDeleteModal(question)"
                     >
                       <Delete theme="outline" size="12" />
                     </button>
                     <button
                       class="btn-liquid-glass xs"
-                      @click="openDetailModal(question)"
                       title="查看详情"
+                      @click="openDetailModal(question)"
                     >
                       详情
                     </button>
@@ -844,7 +891,7 @@ onMounted(() => {
           v-for="page in totalPages"
           :key="page"
           class="pagination-btn"
-          :class="{ 'active': currentPage === page }"
+          :class="{ active: currentPage === page }"
           @click="changePage(page)"
         >
           {{ page }}
@@ -861,16 +908,31 @@ onMounted(() => {
 
     <!-- Modals -->
     <!-- 添加题目模态框 -->
-    <div v-if="showCreateModal" class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop">
-      <div class="absolute inset-0 bg-transparent" @click="showCreateModal = false"></div>
-      <div class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto">
+    <div
+      v-if="showCreateModal"
+      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    >
+      <div
+        class="absolute inset-0 bg-transparent"
+        @click="showCreateModal = false"
+      ></div>
+      <div
+        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
+      >
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-bold text-xl">添加题目</h3>
-          <button class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100" @click="showCreateModal = false">✕</button>
+          <button
+            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            @click="showCreateModal = false"
+          >
+            ✕
+          </button>
         </div>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">题目标题<span class="text-error">*</span></span>
+            <span class="label-text font-medium"
+              >题目标题<span class="text-error">*</span></span
+            >
           </label>
           <input
             v-model="newQuestion.title"
@@ -880,7 +942,9 @@ onMounted(() => {
         </div>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">题目内容<span class="text-error">*</span></span>
+            <span class="label-text font-medium"
+              >题目内容<span class="text-error">*</span></span
+            >
           </label>
           <RichTextEditor
             v-model="newQuestion.content"
@@ -890,7 +954,9 @@ onMounted(() => {
         </div>
         <div class="form-control mb-6">
           <label class="label">
-            <span class="label-text font-medium">难度等级<span class="text-error">*</span></span>
+            <span class="label-text font-medium"
+              >难度等级<span class="text-error">*</span></span
+            >
           </label>
           <div class="flex items-center space-x-4">
             <div class="rating rating-lg custom-rating">
@@ -928,10 +994,16 @@ onMounted(() => {
           </div>
         </div>
         <div class="flex justify-end gap-2">
-          <button class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700" @click="showCreateModal = false">
+          <button
+            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
+            @click="showCreateModal = false"
+          >
             取消
           </button>
-          <button class="btn-liquid-glass wechat-green" @click="handleCreateQuestion">
+          <button
+            class="btn-liquid-glass wechat-green"
+            @click="handleCreateQuestion"
+          >
             <span
               v-show="createLoading"
               class="loading loading-spinner loading-sm"
@@ -943,16 +1015,31 @@ onMounted(() => {
     </div>
 
     <!-- AI创建题目模态框 -->
-    <div v-if="showAICreateModal" class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop">
-      <div class="absolute inset-0 bg-transparent" @click="showAICreateModal = false"></div>
-      <div class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto">
+    <div
+      v-if="showAICreateModal"
+      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    >
+      <div
+        class="absolute inset-0 bg-transparent"
+        @click="showAICreateModal = false"
+      ></div>
+      <div
+        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
+      >
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-bold text-xl">AI创建题目</h3>
-          <button class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100" @click="showAICreateModal = false">✕</button>
+          <button
+            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            @click="showAICreateModal = false"
+          >
+            ✕
+          </button>
         </div>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">创建题目类型<span class="text-error">*</span></span>
+            <span class="label-text font-medium"
+              >创建题目类型<span class="text-error">*</span></span
+            >
           </label>
           <RichTextEditor
             v-model="aiRequestData"
@@ -961,37 +1048,60 @@ onMounted(() => {
           />
         </div>
         <div class="flex justify-end gap-2">
-          <button class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700" @click="showAICreateModal = false">取消</button>
-                      <button
-              class="btn-liquid-glass wechat-green"
-              :disabled="aiCreateLoading"
-              @click="handleAICreateQuestion"
-            >
-              <span v-if="aiCreateLoading" class="loading loading-spinner loading-sm"></span>
-              {{ aiCreateLoading ? '创建中...' : '确认创建' }}
-            </button>
+          <button
+            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
+            @click="showAICreateModal = false"
+          >
+            取消
+          </button>
+          <button
+            class="btn-liquid-glass wechat-green"
+            :disabled="aiCreateLoading"
+            @click="handleAICreateQuestion"
+          >
+            <span
+              v-if="aiCreateLoading"
+              class="loading loading-spinner loading-sm"
+            ></span>
+            {{ aiCreateLoading ? '创建中...' : '确认创建' }}
+          </button>
         </div>
       </div>
     </div>
 
     <!-- 批量添加题目模态框 -->
-    <div v-if="showBatchAddModal" class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop">
-      <div class="absolute inset-0 bg-transparent" @click="showBatchAddModal = false"></div>
-      <div class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto">
+    <div
+      v-if="showBatchAddModal"
+      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    >
+      <div
+        class="absolute inset-0 bg-transparent"
+        @click="showBatchAddModal = false"
+      ></div>
+      <div
+        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
+      >
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-bold text-xl">批量添加题目</h3>
-          <button class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100" @click="showBatchAddModal = false">✕</button>
+          <button
+            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            @click="showBatchAddModal = false"
+          >
+            ✕
+          </button>
         </div>
         <div class="flex flex-col gap-6 mb-6">
           <!-- 下载模板选项 -->
           <div class="form-control">
             <label class="flex items-center gap-2 cursor-pointer">
               <input type="checkbox" class="checkbox checkbox-success" />
-              <span class="label-text text-base font-medium">下载Excel导入模板</span>
+              <span class="label-text text-base font-medium"
+                >下载Excel导入模板</span
+              >
             </label>
             <div class="mt-2">
-                              <button 
-                class="btn-liquid-glass wechat-green-light" 
+              <button
+                class="btn-liquid-glass wechat-green-light"
                 @click="handleDownloadTemplate"
               >
                 <FileQuestion theme="outline" size="16" />
@@ -999,7 +1109,7 @@ onMounted(() => {
               </button>
             </div>
           </div>
-          
+
           <!-- 文件上传区域 -->
           <div
             class="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg"
@@ -1029,35 +1139,53 @@ onMounted(() => {
           </div>
         </div>
         <div class="flex justify-end gap-2">
-          <button class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700" @click="showBatchAddModal = false">
+          <button
+            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
+            @click="showBatchAddModal = false"
+          >
             取消
           </button>
-                      <button
-              class="btn-liquid-glass wechat-green"
-              :disabled="!batchAddFile || !batchAddFile.value || batchAddLoading"
-              @click="handleBatchAddQuestion"
-            >
-              <span
-                v-if="batchAddLoading"
-                class="loading loading-spinner loading-sm"
-              />
-              确认上传
-            </button>
+          <button
+            class="btn-liquid-glass wechat-green"
+            :disabled="!batchAddFile || !batchAddFile.value || batchAddLoading"
+            @click="handleBatchAddQuestion"
+          >
+            <span
+              v-if="batchAddLoading"
+              class="loading loading-spinner loading-sm"
+            />
+            确认上传
+          </button>
         </div>
       </div>
     </div>
 
     <!-- 编辑题目模态框 -->
-    <div v-if="showEditModal" class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop">
-      <div class="absolute inset-0 bg-transparent" @click="showEditModal = false"></div>
-      <div class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto">
+    <div
+      v-if="showEditModal"
+      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    >
+      <div
+        class="absolute inset-0 bg-transparent"
+        @click="showEditModal = false"
+      ></div>
+      <div
+        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
+      >
         <div class="flex items-center justify-between mb-4">
           <h3 class="font-bold text-xl">编辑题目</h3>
-          <button class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100" @click="showEditModal = false">✕</button>
+          <button
+            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
+            @click="showEditModal = false"
+          >
+            ✕
+          </button>
         </div>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">题目标题<span class="text-error">*</span></span>
+            <span class="label-text font-medium"
+              >题目标题<span class="text-error">*</span></span
+            >
           </label>
           <input
             v-model="editQuestion.title"
@@ -1067,7 +1195,9 @@ onMounted(() => {
         </div>
         <div class="form-control mb-4">
           <label class="label">
-            <span class="label-text font-medium">题目内容<span class="text-error">*</span></span>
+            <span class="label-text font-medium"
+              >题目内容<span class="text-error">*</span></span
+            >
           </label>
           <RichTextEditor
             v-model="editQuestion.content"
@@ -1077,7 +1207,9 @@ onMounted(() => {
         </div>
         <div class="form-control mb-6">
           <label class="label">
-            <span class="label-text font-medium">难度等级<span class="text-error">*</span></span>
+            <span class="label-text font-medium"
+              >难度等级<span class="text-error">*</span></span
+            >
           </label>
           <div class="flex items-center space-x-4">
             <div class="rating rating-lg custom-rating">
@@ -1124,14 +1256,22 @@ onMounted(() => {
               type="checkbox"
               class="toggle toggle-success"
             />
-            <span class="text-sm">{{ editQuestion.status ? '启用' : '禁用' }}</span>
+            <span class="text-sm">{{
+              editQuestion.status ? '启用' : '禁用'
+            }}</span>
           </div>
         </div>
         <div class="flex justify-end gap-2">
-          <button class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700" @click="showEditModal = false">
+          <button
+            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
+            @click="showEditModal = false"
+          >
             取消
           </button>
-          <button class="btn-liquid-glass wechat-green" @click="handleEditQuestion">
+          <button
+            class="btn-liquid-glass wechat-green"
+            @click="handleEditQuestion"
+          >
             <span
               v-show="editLoading"
               class="loading loading-spinner loading-sm"
@@ -1143,9 +1283,17 @@ onMounted(() => {
     </div>
 
     <!-- 查看详情模态框 -->
-    <div v-if="showDetailModal" class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop">
-      <div class="absolute inset-0 bg-transparent" @click="showDetailModal = false"></div>
-      <div class="relative z-[10000] bg-white rounded-xl w-96 p-6 shadow-2xl border border-gray-100 m-auto">
+    <div
+      v-if="showDetailModal"
+      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    >
+      <div
+        class="absolute inset-0 bg-transparent"
+        @click="showDetailModal = false"
+      ></div>
+      <div
+        class="relative z-[10000] bg-white rounded-xl w-96 p-6 shadow-2xl border border-gray-100 m-auto"
+      >
         <h3 class="font-bold text-lg mb-4">题目详情</h3>
         <div class="form-control mb-4">
           <label class="label">
@@ -1213,7 +1361,10 @@ onMounted(() => {
           />
         </div>
         <div class="flex justify-end gap-2">
-          <button class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700" @click="showDetailModal = false">
+          <button
+            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
+            @click="showDetailModal = false"
+          >
             关闭
           </button>
         </div>
@@ -1221,9 +1372,17 @@ onMounted(() => {
     </div>
 
     <!-- 删除确认模态框 -->
-    <div v-if="showDeleteModal" class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop">
-      <div class="absolute inset-0 bg-transparent" @click="showDeleteModal = false"></div>
-      <div class="relative z-[10000] bg-white rounded-xl w-96 p-6 shadow-2xl border border-gray-100 m-auto">
+    <div
+      v-if="showDeleteModal"
+      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    >
+      <div
+        class="absolute inset-0 bg-transparent"
+        @click="showDeleteModal = false"
+      ></div>
+      <div
+        class="relative z-[10000] bg-white rounded-xl w-96 p-6 shadow-2xl border border-gray-100 m-auto"
+      >
         <h3 class="font-bold text-lg mb-4">确认删除</h3>
         <p class="py-4">
           您确定要删除题目
@@ -1233,7 +1392,10 @@ onMounted(() => {
           吗？此操作不可逆。
         </p>
         <div class="flex justify-end gap-2">
-          <button class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700" @click="showDeleteModal = false">
+          <button
+            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
+            @click="showDeleteModal = false"
+          >
             取消
           </button>
           <button
@@ -1278,23 +1440,24 @@ onMounted(() => {
   }
 }
 
+/* 合并徽章样式 */
 .badge {
   white-space: nowrap;
   font-size: 0.75rem;
 }
 
+/* 合并按钮响应式样式 */
 @media (max-width: 480px) {
   .btn-sm {
     padding: 0.25rem 0.5rem;
     font-size: 0.75rem;
   }
-  
+
   .btn-xs {
     padding: 0.125rem 0.25rem;
     font-size: 0.625rem;
   }
 }
-
 
 .btn {
   flex-shrink: 0;
@@ -1305,17 +1468,17 @@ onMounted(() => {
   min-width: 0;
 }
 
-
 @media (max-width: 640px) {
   .flex-wrap {
     gap: 0.25rem;
   }
-  
+
   .btn {
     min-width: 2.5rem;
   }
 }
 
+/* 合并液态玻璃按钮基础样式 */
 .btn-liquid-glass {
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;
@@ -1325,66 +1488,115 @@ onMounted(() => {
   gap: 0.5rem;
   font-weight: 500;
   transition: all 0.3s ease;
-  background: linear-gradient(145deg, rgba(248, 255, 252, 0.7), rgba(245, 253, 248, 0.6));
+  background: linear-gradient(
+    145deg,
+    rgba(248, 255, 252, 0.7),
+    rgba(245, 253, 248, 0.6)
+  );
   color: rgb(40, 130, 90);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(248, 255, 252, 0.5);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 2px 10px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 .btn-liquid-glass:hover {
-  background: linear-gradient(145deg, rgba(250, 255, 253, 0.8), rgba(248, 253, 250, 0.7));
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.8);
+  background: linear-gradient(
+    145deg,
+    rgba(250, 255, 253, 0.8),
+    rgba(248, 253, 250, 0.7)
+  );
+  box-shadow:
+    0 4px 15px rgba(0, 0, 0, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.8);
   transform: translateY(-1px);
 }
 
 .btn-liquid-glass:active {
-  background: linear-gradient(145deg, rgba(245, 253, 248, 0.7), rgba(242, 250, 245, 0.6));
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.04), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  background: linear-gradient(
+    145deg,
+    rgba(245, 253, 248, 0.7),
+    rgba(242, 250, 245, 0.6)
+  );
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.04),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
   transform: translateY(0);
 }
 
-.btn-liquid-glass.info {
-  background: linear-gradient(145deg, rgba(147, 112, 255, 0.9), rgba(100, 70, 220, 0.8));
+/* 液态玻璃按钮变体 */
+.btn-liquid-glass.info,
+.btn-liquid-glass.ai-btn {
+  background: linear-gradient(
+    145deg,
+    rgba(147, 112, 255, 0.9),
+    rgba(100, 70, 220, 0.8)
+  );
   color: white;
   border-color: rgba(147, 112, 255, 0.4);
-  box-shadow: 0 2px 10px rgba(100, 70, 220, 0.2), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 2px 10px rgba(100, 70, 220, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
-.btn-liquid-glass.info:hover {
-  background: linear-gradient(145deg, rgba(157, 122, 255, 0.95), rgba(110, 80, 230, 0.85));
-  box-shadow: 0 4px 15px rgba(100, 70, 220, 0.25), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+.btn-liquid-glass.info:hover,
+.btn-liquid-glass.ai-btn:hover {
+  background: linear-gradient(
+    145deg,
+    rgba(157, 122, 255, 0.95),
+    rgba(110, 80, 230, 0.85)
+  );
+  box-shadow:
+    0 4px 15px rgba(100, 70, 220, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
-.btn-liquid-glass.info:active {
-  background: linear-gradient(145deg, rgba(137, 102, 245, 0.9), rgba(90, 60, 210, 0.8));
-  box-shadow: 0 2px 5px rgba(100, 70, 220, 0.15), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.2);
+.btn-liquid-glass.info:active,
+.btn-liquid-glass.ai-btn:active {
+  background: linear-gradient(
+    145deg,
+    rgba(137, 102, 245, 0.9),
+    rgba(90, 60, 210, 0.8)
+  );
+  box-shadow:
+    0 2px 5px rgba(100, 70, 220, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-liquid-glass.error {
-  background: linear-gradient(145deg, rgba(239, 68, 68, 0.8), rgba(220, 38, 38, 0.7));
+  background: linear-gradient(
+    145deg,
+    rgba(239, 68, 68, 0.8),
+    rgba(220, 38, 38, 0.7)
+  );
   color: white;
   border-color: rgba(239, 68, 68, 0.3);
-  box-shadow: 0 2px 10px rgba(220, 38, 38, 0.15), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 2px 10px rgba(220, 38, 38, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .btn-liquid-glass.error:hover {
-  background: linear-gradient(145deg, rgba(249, 78, 78, 0.9), rgba(230, 48, 48, 0.8));
-  box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  background: linear-gradient(
+    145deg,
+    rgba(249, 78, 78, 0.9),
+    rgba(230, 48, 48, 0.8)
+  );
+  box-shadow:
+    0 4px 15px rgba(220, 38, 38, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .btn-liquid-glass.error:active {
-  background: linear-gradient(145deg, rgba(229, 58, 58, 0.8), rgba(210, 28, 28, 0.7));
-  box-shadow: 0 2px 5px rgba(220, 38, 38, 0.1), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+    145deg,
+    rgba(229, 58, 58, 0.8),
+    rgba(210, 28, 28, 0.7)
+  );
+  box-shadow:
+    0 2px 5px rgba(220, 38, 38, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-liquid-glass.xs {
@@ -1397,8 +1609,9 @@ onMounted(() => {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .badge-liquid-glass {
@@ -1416,37 +1629,56 @@ onMounted(() => {
 }
 
 .badge-liquid-glass.success {
-  background: linear-gradient(145deg, rgba(34, 197, 94, 0.3), rgba(21, 128, 61, 0.2));
+  background: linear-gradient(
+    145deg,
+    rgba(34, 197, 94, 0.3),
+    rgba(21, 128, 61, 0.2)
+  );
   color: rgb(21, 128, 61);
   border: 1px solid rgba(34, 197, 94, 0.4);
-  box-shadow: 0 1px 3px rgba(21, 128, 61, 0.1), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 1px 3px rgba(21, 128, 61, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .badge-liquid-glass.warning {
-  background: linear-gradient(145deg, rgba(234, 179, 8, 0.3), rgba(161, 98, 7, 0.2));
+  background: linear-gradient(
+    145deg,
+    rgba(234, 179, 8, 0.3),
+    rgba(161, 98, 7, 0.2)
+  );
   color: rgb(161, 98, 7);
   border: 1px solid rgba(234, 179, 8, 0.4);
-  box-shadow: 0 1px 3px rgba(161, 98, 7, 0.1), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 1px 3px rgba(161, 98, 7, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .badge-liquid-glass.error {
-  background: linear-gradient(145deg, rgba(239, 68, 68, 0.3), rgba(185, 28, 28, 0.2));
+  background: linear-gradient(
+    145deg,
+    rgba(239, 68, 68, 0.3),
+    rgba(185, 28, 28, 0.2)
+  );
   color: rgb(185, 28, 28);
   border: 1px solid rgba(239, 68, 68, 0.4);
-  box-shadow: 0 1px 3px rgba(185, 28, 28, 0.1), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 1px 3px rgba(185, 28, 28, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .badge-liquid-glass.disabled {
-  background: linear-gradient(145deg, rgba(156, 163, 175, 0.3), rgba(75, 85, 99, 0.2));
+  background: linear-gradient(
+    145deg,
+    rgba(156, 163, 175, 0.3),
+    rgba(75, 85, 99, 0.2)
+  );
   color: rgb(75, 85, 99);
   border: 1px solid rgba(156, 163, 175, 0.4);
-  box-shadow: 0 1px 3px rgba(75, 85, 99, 0.1), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 1px 3px rgba(75, 85, 99, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
-
 
 .glass-panel {
   background: rgba(255, 255, 255, 0.7);
@@ -1496,7 +1728,11 @@ onMounted(() => {
 }
 
 .table thead tr {
-  background: linear-gradient(145deg, rgba(250, 255, 252, 0.4), rgba(248, 253, 250, 0.3));
+  background: linear-gradient(
+    145deg,
+    rgba(250, 255, 252, 0.4),
+    rgba(248, 253, 250, 0.3)
+  );
   backdrop-filter: blur(10px);
   border-bottom: 1px solid rgba(255, 255, 255, 0.6);
 }
@@ -1509,17 +1745,29 @@ onMounted(() => {
 }
 
 .table tbody tr:nth-child(even) {
-  background: linear-gradient(145deg, rgba(250, 255, 252, 0.25), rgba(248, 253, 250, 0.15));
+  background: linear-gradient(
+    145deg,
+    rgba(250, 255, 252, 0.25),
+    rgba(248, 253, 250, 0.15)
+  );
   backdrop-filter: blur(5px);
 }
 
 .table tbody tr:nth-child(odd) {
-  background: linear-gradient(145deg, rgba(248, 253, 250, 0.15), rgba(245, 250, 248, 0.1));
+  background: linear-gradient(
+    145deg,
+    rgba(248, 253, 250, 0.15),
+    rgba(245, 250, 248, 0.1)
+  );
   backdrop-filter: blur(5px);
 }
 
 .table tbody tr:hover {
-  background: linear-gradient(145deg, rgba(245, 255, 250, 0.3), rgba(240, 253, 245, 0.2));
+  background: linear-gradient(
+    145deg,
+    rgba(245, 255, 250, 0.3),
+    rgba(240, 253, 245, 0.2)
+  );
 }
 
 .table tbody td {
@@ -1565,7 +1813,9 @@ onMounted(() => {
 
 .custom-rating .mask-star-2:checked {
   transform: scale(1.15);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15), 0 0 0 2px rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 3px 6px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(255, 255, 255, 0.5);
 }
 
 .custom-rating .mask-star-2.bg-green-500 {
@@ -1590,7 +1840,9 @@ onMounted(() => {
 
 .custom-toggle:checked {
   background-color: #22c55e;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1), 0 0 0 2px rgba(34, 197, 94, 0.2);
+  box-shadow:
+    inset 0 1px 3px rgba(0, 0, 0, 0.1),
+    0 0 0 2px rgba(34, 197, 94, 0.2);
 }
 
 .custom-toggle:focus {
@@ -1603,11 +1855,11 @@ onMounted(() => {
     height: 2rem;
     padding: 0.25rem 0.75rem;
   }
-  
+
   .total-count-number {
     font-size: 1rem;
   }
-  
+
   .pagination-btn {
     min-width: 2.5rem;
     height: 2.5rem;
@@ -1623,34 +1875,50 @@ onMounted(() => {
   align-items: center;
   justify-content: center;
   transition: all 0.3s ease;
-  background: linear-gradient(145deg, rgba(248, 255, 252, 0.7), rgba(245, 253, 248, 0.6));
+  background: linear-gradient(
+    145deg,
+    rgba(248, 255, 252, 0.7),
+    rgba(245, 253, 248, 0.6)
+  );
   color: rgb(40, 130, 90);
   backdrop-filter: blur(5px);
   border: 1px solid rgba(248, 255, 252, 0.5);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.6);
+  box-shadow:
+    0 1px 3px rgba(0, 0, 0, 0.05),
+    inset 0 1px 1px rgba(255, 255, 255, 0.6);
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background: linear-gradient(145deg, rgba(34, 197, 94, 0.1), rgba(21, 128, 61, 0.05));
+  background: linear-gradient(
+    145deg,
+    rgba(34, 197, 94, 0.1),
+    rgba(21, 128, 61, 0.05)
+  );
   border-color: rgba(34, 197, 94, 0.2);
-  box-shadow: 0 2px 5px rgba(21, 128, 61, 0.05), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.7);
+  box-shadow:
+    0 2px 5px rgba(21, 128, 61, 0.05),
+    inset 0 1px 1px rgba(255, 255, 255, 0.7);
 }
 
 .pagination-btn.active {
-  background: linear-gradient(145deg, rgba(34, 197, 94, 0.15), rgba(21, 128, 61, 0.1));
+  background: linear-gradient(
+    145deg,
+    rgba(34, 197, 94, 0.15),
+    rgba(21, 128, 61, 0.1)
+  );
   border-color: rgba(34, 197, 94, 0.25);
   color: rgb(21, 128, 61);
-  box-shadow: 0 2px 5px rgba(21, 128, 61, 0.08), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.5);
+  box-shadow:
+    0 2px 5px rgba(21, 128, 61, 0.08),
+    inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
 .pagination-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .join .pagination-btn:first-child {
@@ -1688,69 +1956,100 @@ onMounted(() => {
 }
 
 .btn-liquid-glass.edit {
-  background: linear-gradient(145deg, rgba(96, 165, 250, 0.8), rgba(59, 130, 246, 0.7));
+  background: linear-gradient(
+    145deg,
+    rgba(96, 165, 250, 0.8),
+    rgba(59, 130, 246, 0.7)
+  );
   color: white;
   border-color: rgba(96, 165, 250, 0.3);
-  box-shadow: 0 2px 10px rgba(59, 130, 246, 0.15), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 2px 10px rgba(59, 130, 246, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .btn-liquid-glass.edit:hover {
-  background: linear-gradient(145deg, rgba(116, 185, 255, 0.9), rgba(79, 150, 255, 0.8));
-  box-shadow: 0 4px 15px rgba(59, 130, 246, 0.2), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  background: linear-gradient(
+    145deg,
+    rgba(116, 185, 255, 0.9),
+    rgba(79, 150, 255, 0.8)
+  );
+  box-shadow:
+    0 4px 15px rgba(59, 130, 246, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .btn-liquid-glass.edit:active {
-  background: linear-gradient(145deg, rgba(76, 145, 230, 0.8), rgba(39, 110, 226, 0.7));
-  box-shadow: 0 2px 5px rgba(59, 130, 246, 0.1), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+    145deg,
+    rgba(76, 145, 230, 0.8),
+    rgba(39, 110, 226, 0.7)
+  );
+  box-shadow:
+    0 2px 5px rgba(59, 130, 246, 0.1),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 /* AI按钮专用样式，优先级更高 */
 .btn-liquid-glass.ai-btn {
-  background: linear-gradient(145deg, rgba(147, 112, 255, 0.9), rgba(100, 70, 220, 0.8));
+  background: linear-gradient(
+    145deg,
+    rgba(147, 112, 255, 0.9),
+    rgba(100, 70, 220, 0.8)
+  );
   color: white;
   border-color: rgba(147, 112, 255, 0.4);
-  box-shadow: 0 2px 10px rgba(100, 70, 220, 0.2), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 2px 10px rgba(100, 70, 220, 0.2),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 .btn-liquid-glass.ai-btn:hover {
-  background: linear-gradient(145deg, rgba(157, 122, 255, 0.95), rgba(110, 80, 230, 0.85));
-  box-shadow: 0 4px 15px rgba(100, 70, 220, 0.25), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.4);
+  background: linear-gradient(
+    145deg,
+    rgba(157, 122, 255, 0.95),
+    rgba(110, 80, 230, 0.85)
+  );
+  box-shadow:
+    0 4px 15px rgba(100, 70, 220, 0.25),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
 }
 
 .btn-liquid-glass.ai-btn:active {
-  background: linear-gradient(145deg, rgba(137, 102, 245, 0.9), rgba(90, 60, 210, 0.8));
-  box-shadow: 0 2px 5px rgba(100, 70, 220, 0.15), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(
+    145deg,
+    rgba(137, 102, 245, 0.9),
+    rgba(90, 60, 210, 0.8)
+  );
+  box-shadow:
+    0 2px 5px rgba(100, 70, 220, 0.15),
+    inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
 .btn-liquid-glass.ai-btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
   transform: none;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03), 
-              inset 0 1px 1px rgba(255, 255, 255, 0.3);
+  box-shadow:
+    0 2px 5px rgba(0, 0, 0, 0.03),
+    inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
 /* 微信风格绿色按钮 */
 .btn-liquid-glass.wechat-green {
-  background: #07C160;
+  background: #07c160;
   color: white;
   border: none;
   box-shadow: 0 2px 6px rgba(7, 193, 96, 0.3);
 }
 
 .btn-liquid-glass.wechat-green:hover {
-  background: #06AD56;
+  background: #06ad56;
   box-shadow: 0 4px 12px rgba(7, 193, 96, 0.4);
 }
 
 .btn-liquid-glass.wechat-green:active {
-  background: #069E4F;
+  background: #069e4f;
   box-shadow: 0 2px 4px rgba(7, 193, 96, 0.3);
 }
 
@@ -1763,7 +2062,7 @@ onMounted(() => {
 
 .btn-liquid-glass.wechat-green-light {
   background: rgba(7, 193, 96, 0.1);
-  color: #07C160;
+  color: #07c160;
   border: 1px solid rgba(7, 193, 96, 0.3);
   box-shadow: 0 2px 4px rgba(7, 193, 96, 0.1);
 }
@@ -1779,20 +2078,6 @@ onMounted(() => {
   box-shadow: 0 1px 3px rgba(7, 193, 96, 0.1);
 }
 
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000; 
-  overflow: auto;
-}
-
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -1802,22 +2087,6 @@ onMounted(() => {
   background-color: rgba(0, 0, 0, 0);
   z-index: 1001;
 }
-
-.modal-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 1002; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  height: 100%;
-  overflow-y: auto; 
-}
-
 
 @keyframes modalPop {
   0% {
@@ -1835,10 +2104,9 @@ onMounted(() => {
 .animate-modal-pop > div:last-child {
   animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   margin: auto;
-  position: relative; 
-  z-index: 1003; 
+  position: relative;
+  z-index: 1003;
 }
-
 
 .modal-container > div:last-child {
   max-height: 80vh;
@@ -1865,12 +2133,11 @@ onMounted(() => {
   background: white !important;
   backdrop-filter: none !important;
   border: 1px solid rgba(220, 240, 230, 0.5);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.0);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
   padding: 1.5rem;
   max-height: 90vh;
   overflow-y: auto;
 }
-
 
 .modal-box .form-control,
 .modal-box input,
@@ -1880,50 +2147,46 @@ onMounted(() => {
   backdrop-filter: none !important;
 }
 
-
 .modal-backdrop button {
   display: none;
 }
 
-
-[class*="modal"] button.btn-liquid-glass {
+[class*='modal'] button.btn-liquid-glass {
   transition: all 0.2s ease;
   padding: 0.6rem 1.2rem;
   font-weight: 600;
   letter-spacing: 0.01em;
 }
 
-[class*="modal"] button.btn-liquid-glass:hover {
+[class*='modal'] button.btn-liquid-glass:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-
-[class*="modal"] h3 {
+[class*='modal'] h3 {
   color: rgba(40, 130, 90, 0.9);
   font-weight: 600;
   letter-spacing: 0.01em;
 }
 
-.modal-container .relative[class^="z-"],
+.modal-container .relative[class^='z-'],
 .modal-container .relative.z-10000 {
   border-radius: 16px;
-  box-shadow: 
+  box-shadow:
     0 10px 30px rgba(0, 0, 0, 0.1),
     0 4px 15px rgba(0, 0, 0, 0.05),
     0 0 0 1px rgba(255, 255, 255, 0.9) inset;
   max-width: 90vw;
   max-height: 85vh;
   position: relative;
-  z-index: 10000; 
-  overflow-y: auto; 
-  background-color: rgba(255, 255, 255, 0.98); 
-  backdrop-filter: blur(5px); 
+  z-index: 10000;
+  overflow-y: auto;
+  background-color: rgba(255, 255, 255, 0.98);
+  backdrop-filter: blur(5px);
 }
 
-
 @media (max-width: 768px) {
-  .modal-container .relative[class^="z-"],
+  .modal-container .relative[class^='z-'],
   .modal-container .relative.z-10000 {
     width: 95vw !important;
     max-height: 80vh;

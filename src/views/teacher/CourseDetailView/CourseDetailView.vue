@@ -172,6 +172,26 @@
                       spacing="3"
                     />
                   </div>
+                  <button
+                    class="btn btn-circle btn-sm btn-ghost"
+                    title="查看全部学生"
+                    @click="toggleStudentDrawer"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        stroke-width="2"
+                        d="M9 5l7 7-7 7"
+                      />
+                    </svg>
+                  </button>
                 </div>
               </div>
             </div>
@@ -246,6 +266,35 @@
         <button @click="showMonitorSelectModal = false">关闭</button>
       </form>
     </dialog>
+
+    <!-- 学生列表抽屉 -->
+    <div class="drawer drawer-end z-50">
+      <input
+        id="student-drawer"
+        v-model="showStudentDrawer"
+        type="checkbox"
+        class="drawer-toggle"
+      />
+      <div class="drawer-side">
+        <label
+          for="student-drawer"
+          aria-label="close sidebar"
+          class="drawer-overlay"
+        ></label>
+        <div class="menu p-4 w-96 min-h-full bg-base-200 text-base-content">
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-bold">课程学生列表</h3>
+            <button
+              class="btn btn-sm btn-circle btn-ghost"
+              @click="showStudentDrawer = false"
+            >
+              ✕
+            </button>
+          </div>
+          <StudentList :course-id="Number(courseId)" />
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -288,6 +337,9 @@ const editForm = ref({
   status: true,
 })
 
+// 学生列表抽屉状态
+const showStudentDrawer = ref(false)
+
 // 班长选择相关状态
 const showMonitorSelectModal = ref(false)
 const selectedMonitorName = ref('')
@@ -307,6 +359,11 @@ const currentTabComponent = computed(() => {
       return SignInManagement
   }
 })
+
+// 切换学生列表抽屉
+const toggleStudentDrawer = () => {
+  showStudentDrawer.value = !showStudentDrawer.value
+}
 
 // 获取课程详情
 const fetchCourseDetail = async () => {

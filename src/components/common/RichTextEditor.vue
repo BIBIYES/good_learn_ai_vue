@@ -32,7 +32,7 @@ const valueHtml = ref(props.modelValue)
 
 // 工具栏配置
 const toolbarConfig = {
-  excludeKeys: []
+  excludeKeys: [],
 }
 
 // 编辑器配置
@@ -51,46 +51,51 @@ onBeforeUnmount(() => {
 })
 
 // 监听内容变化
-const handleChange = (editor) => {
+const handleChange = editor => {
   emit('update:modelValue', editor.getHtml())
 }
 
 // 监听props变化
 watch(
   () => props.modelValue,
-  (newValue) => {
+  newValue => {
     if (newValue !== valueHtml.value) {
       valueHtml.value = newValue
     }
-  }
+  },
 )
 
 // 监听禁用状态变化
 watch(
   () => props.disabled,
-  (newValue) => {
+  newValue => {
     if (editorRef.value) {
       editorRef.value.enable(!newValue)
     }
-  }
+  },
 )
 </script>
 
 <template>
   <div class="rich-text-editor">
-    <div style="border: 1px solid #ccc; border-radius: 5px;">
+    <div style="border: 1px solid #ccc; border-radius: 5px">
       <Toolbar
         style="border-bottom: 1px solid #ccc"
         :editor="editorRef"
-        :defaultConfig="toolbarConfig"
+        :default-config="toolbarConfig"
         :mode="props.disabled ? 'simple' : 'default'"
       />
       <Editor
-        :style="{height: typeof props.height === 'number' ? `${props.height}px` : props.height}"
         v-model="valueHtml"
-        :defaultConfig="editorConfig"
-        @onCreated="editorRef = $event"
-        @onChange="handleChange"
+        :style="{
+          height:
+            typeof props.height === 'number'
+              ? `${props.height}px`
+              : props.height,
+        }"
+        :default-config="editorConfig"
+        @on-created="editorRef = $event"
+        @on-change="handleChange"
       />
     </div>
   </div>
