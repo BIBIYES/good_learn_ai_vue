@@ -53,10 +53,11 @@
       </label>
       <div class="flex gap-2">
         <input
-          v-model="formData.monitorId"
+          :value="selectedMonitorName"
           type="text"
           class="input input-bordered flex-grow"
-          placeholder="请输入班长ID"
+          placeholder="请选择班长"
+          readonly
         />
         <button
           type="button"

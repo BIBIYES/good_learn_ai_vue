@@ -9,6 +9,7 @@ import {
   updateQuestionBank,
 } from '@/api/question'
 import message from '@/plugin/message.js'
+import DgLoadingText from '@/components/common/GdLoadingText.vue'
 
 const router = useRouter()
 
@@ -204,34 +205,12 @@ onMounted(() => {
     </TitleBar>
     <!-- Main content area -->
     <div class="flex-1 overflow-y-auto p-4 md:p-6">
-      <!-- Loading State - Skeleton Screen -->
+      <!-- Loading State -->
       <div
         v-if="loading"
-        class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6"
+        class="w-full h-full flex justify-center items-center"
       >
-        <!-- 骨架屏 -->
-        <div
-          v-for="i in 6"
-          :key="i"
-          class="relative bg-base-100 rounded-2xl shadow-lg p-6 flex flex-col gap-3 border border-base-200"
-        >
-          <div class="flex items-center gap-3 mb-2">
-            <div class="skeleton w-12 h-12 rounded-lg" />
-            <div class="flex-1">
-              <div class="skeleton h-5 w-2/3 mb-2" />
-              <div class="skeleton h-3 w-1/3" />
-            </div>
-            <div class="skeleton w-6 h-6 rounded-full" />
-          </div>
-
-          <div class="skeleton h-16 w-full rounded mb-4" />
-
-          <div class="flex justify-between mt-4 pt-3 border-t">
-            <div class="skeleton h-3 w-1/4" />
-            <div class="skeleton h-3 w-1/4" />
-            <div class="skeleton h-6 w-16 rounded" />
-          </div>
-        </div>
+        <DgLoadingText text="正在获取题库列表...."></DgLoadingText>
       </div>
 
       <!-- Empty State -->

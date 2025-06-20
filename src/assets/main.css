@@ -7,3 +7,7 @@ html {
   font-family: 'Poppins', 'Noto Sans SC', sans-serif;
   scrollbar-gutter: stable; /* 保持滚动条占用宽度 */
 }
+
+* {
+  --color-primary: rgb(131, 205, 157);
+}

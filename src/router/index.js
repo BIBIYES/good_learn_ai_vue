@@ -95,7 +95,10 @@ const router = createRouter({
         {
           path: 'question/:bankId',
           name: 'QuestionBankDetail',
-          component: () => import('@/views/teacher/QuestionBankDetail.vue'),
+          component: () =>
+            import(
+              '@/views/teacher/question-bank-detail/QuestionBankDetail.vue'
+            ),
         },
         {
           path: 'exam',

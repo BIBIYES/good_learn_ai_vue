@@ -1,0 +1,12 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+本项目采用的项目技术框架
+- tailwindcss
+- daisyui
+- vue
+- vite
+
+- axios
