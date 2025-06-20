@@ -1,16 +1,8 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import {
-  getQuestionBankById,
-  createQuestion,
-  deleteQuestion,
-  updateQuestion,
-  batchQuestions,
-  aiCreateQuestion,
-} from '@/api/question'
+import { getQuestionBankById } from '@/api/question'
 import message from '@/plugin/message'
-import * as XLSX from 'xlsx'
 import {
   FileQuestion,
   Add,
@@ -19,8 +11,16 @@ import {
   Delete,
   Lightning,
 } from '@icon-park/vue-next'
-import RichTextEditor from '@/components/common/RichTextEditor.vue'
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
+
+// 导入模态框组件
+import CreateQuestionModal from './components/CreateQuestionModal.vue'
+import EditQuestionModal from './components/EditQuestionModal.vue'
+import DeleteQuestionModal from './components/DeleteQuestionModal.vue'
+import BatchAddQuestionModal from './components/BatchAddQuestionModal.vue'
+import QuestionDetailModal from './components/QuestionDetailModal.vue'
+import BatchDeleteQuestionModal from './components/BatchDeleteQuestionModal.vue'
+import AIQuestionGenerate from './components/AIQuestionGenerate.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -36,20 +36,18 @@ const total = ref(0)
 const filterDifficulty = ref('')
 const filterTitle = ref('')
 
-// 创建题目模态框
-const showCreateModal = ref(false)
-const createLoading = ref(false)
-const newQuestion = ref({
-  bankId: bankId.value,
-  content: '',
-  difficulty: '1', // 默认简单难度
-  title: '', // 新增题目标题字段
-  status: true,
+// 统一管理所有模态框状态
+const modals = ref({
+  create: false,
+  edit: false,
+  delete: false,
+  detail: false,
+  batchAdd: false,
+  batchDelete: false,
+  aiDrawer: false,
 })
 
-// 编辑题目模态框
-const showEditModal = ref(false)
-const editLoading = ref(false)
+// 编辑题目数据
 const editQuestion = ref({
   questionId: '',
   bankId: bankId.value,
@@ -58,58 +56,32 @@ const editQuestion = ref({
   status: true,
 })
 
-// 删除确认模态框
-const showDeleteModal = ref(false)
-const deleteLoading = ref(false)
+// 删除题目数据
 const questionToDelete = ref(null)
 
-// 批量添加题目模态框
-const showBatchAddModal = ref(false)
-const batchAddLoading = ref(false)
-const batchAddFile = ref(null)
+// 查看详情数据
+const detailQuestion = ref({})
 
 // 获取题目列表
 const fetchQuestions = async (page = 1) => {
   loading.value = true
   try {
-    // 打印请求参数
-    console.log('Fetching questions with params:', {
-      size: pageSize.value,
-      current: page,
-      bankId: bankId.value,
-      difficulty: filterDifficulty.value,
-      title: filterTitle.value,
-    })
-
-    // 处理默认值
-    const actualDifficulty = filterDifficulty.value || ''
-    const actualTitle = filterTitle.value || ''
-
     const res = await getQuestionBankById(
       pageSize.value,
       page,
       bankId.value,
-      actualDifficulty,
-      actualTitle,
+      filterDifficulty.value || '',
+      filterTitle.value || '',
     )
 
-    console.log('API Response:', res)
+    if (res.code === 200 && res.data) {
+      questions.value = res.data.records || []
+      currentPage.value = res.data.current || 1
+      totalPages.value = res.data.pages || 1
+      total.value = res.data.total || 0
 
-    if (res.code === 200) {
-      console.log('API Response Data:', res.data)
-
-      if (res.data && Array.isArray(res.data.records)) {
-        questions.value = res.data.records
-        currentPage.value = res.data.current || 1
-        totalPages.value = res.data.pages || 1
-        total.value = res.data.total || 0
-
-        if (questions.value.length === 0) {
-          message.info('当前题库没有题目或没有匹配的题目')
-        }
-      } else {
-        console.error('Invalid response data structure')
-        message.error('获取题目列表失败，数据结构异常')
+      if (questions.value.length === 0) {
+        message.info('当前题库没有题目或没有匹配的题目')
       }
     } else {
       message.error(res.message || '获取题目列表失败')
@@ -167,107 +139,50 @@ const difficultyMap = {
   hard: '困难',
 }
 
-// 添加题目
-const handleCreateQuestion = async () => {
-  if (!newQuestion.value.title) {
-    message.error('题目标题不能为空')
-    return
-  }
+// 规范化难度值
+const normalizeDifficulty = difficulty => {
+  return difficulty === 'easy'
+    ? '1'
+    : difficulty === 'medium'
+      ? '2'
+      : difficulty === 'hard'
+        ? '3'
+        : difficulty
+}
 
-  if (!newQuestion.value.content) {
-    message.error('题目内容不能为空')
-    return
-  }
-
-  createLoading.value = true
-  try {
-    const res = await createQuestion({
-      bankId: bankId.value,
-      content: newQuestion.value.content,
-      difficulty: newQuestion.value.difficulty,
-      title: newQuestion.value.title,
-    })
-
-    if (res.code === 200) {
-      message.success('添加题目成功')
-      showCreateModal.value = false
-      newQuestion.value = {
-        bankId: bankId.value,
-        content: '',
-        difficulty: '1',
-        status: true,
-        title: '',
-      }
-      fetchQuestions(currentPage.value)
-    } else {
-      message.error(res.message || '添加题目失败')
+// 统一的模态框控制函数
+const openModal = (type, data = null) => {
+  modals.value[type] = true
+  if (type === 'edit' && data) {
+    editQuestion.value = {
+      questionId: data.questionId,
+      bankId: data.bankId,
+      content: data.content,
+      title: data.title,
+      difficulty: normalizeDifficulty(data.difficulty),
+      status: data.status,
     }
-  } catch (error) {
-    console.error('添加题目错误:', error)
-    message.error('添加题目时发生错误')
-  } finally {
-    createLoading.value = false
+  }
+  if (type === 'delete' && data) {
+    questionToDelete.value = data
+  }
+  if (type === 'detail' && data) {
+    detailQuestion.value = { ...data }
   }
 }
 
-// 打开编辑模态框
-const openEditModal = question => {
-  editQuestion.value = {
-    questionId: question.questionId,
-    bankId: question.bankId,
-    content: question.content,
-    difficulty:
-      question.difficulty === 'easy'
-        ? '1'
-        : question.difficulty === 'medium'
-          ? '2'
-          : question.difficulty === 'hard'
-            ? '3'
-            : question.difficulty,
-    status: question.status,
-  }
-  showEditModal.value = true
+const closeModal = type => {
+  modals.value[type] = false
+  // 清理相关数据
+  if (type === 'edit') editQuestion.value = {}
+  if (type === 'delete') questionToDelete.value = null
+  if (type === 'detail') detailQuestion.value = {}
 }
 
-// 编辑题目
-const handleEditQuestion = async () => {
-  if (!editQuestion.value.title) {
-    message.error('题目标题不能为空')
-    return
-  }
-
-  if (!editQuestion.value.content) {
-    message.error('题目内容不能为空')
-    return
-  }
-
-  editLoading.value = true
-  try {
-    const res = await updateQuestion({
-      questionId: editQuestion.value.questionId,
-      bankId: editQuestion.value.bankId,
-      content: editQuestion.value.content,
-      difficulty: editQuestion.value.difficulty,
-      status: editQuestion.value.status,
-      title: editQuestion.value.title,
-    })
-
-    if (res.code === 200) {
-      message.success('编辑题目成功')
-      showEditModal.value = false
-      fetchQuestions(currentPage.value)
-    } else {
-      message.error(res.message || '编辑题目失败')
-    }
-  } catch (error) {
-    console.error('编辑题目错误:', error)
-    message.error('编辑题目时发生错误')
-  } finally {
-    editLoading.value = false
-  }
+// 监听dialog的close事件
+const handleDialogClose = type => {
+  closeModal(type)
 }
-
-const selectedQuestions = ref([])
 
 // 全选/取消全选
 const toggleSelectAll = event => {
@@ -287,206 +202,34 @@ const isAllSelected = computed(() => {
 })
 
 // 批量删除题目
-const handleBatchDeleteQuestions = async () => {
+const handleBatchDeleteQuestions = () => {
   if (selectedQuestions.value.length === 0) {
     message.error('请至少选择一个题目进行删除')
     return
   }
 
-  deleteLoading.value = true
-  try {
-    const res = await Promise.all(
-      selectedQuestions.value.map(questionId => deleteQuestion(questionId)),
-    )
-
-    if (res.every(r => r.code === 200)) {
-      message.success('批量删除题目成功')
-      selectedQuestions.value = []
-      fetchQuestions(currentPage.value)
-    } else {
-      message.error('部分题目删除失败，请重试')
-    }
-  } catch (error) {
-    console.error('批量删除题目错误:', error)
-    message.error('批量删除题目时发生错误')
-  } finally {
-    deleteLoading.value = false
-  }
-}
-// 查看详情模态框
-const showDetailModal = ref(false)
-const detailQuestion = ref({})
-
-// 打开查看详情模态框
-const openDetailModal = question => {
-  detailQuestion.value = { ...question }
-  showDetailModal.value = true
+  // 打开批量删除模态框
+  openModal('batchDelete')
 }
 
-// 打开删除确认模态框
-const openDeleteModal = question => {
-  questionToDelete.value = question
-  showDeleteModal.value = true
-}
-
-// 删除题目
-const handleDeleteQuestion = async () => {
-  if (!questionToDelete.value) return
-
-  deleteLoading.value = true
-  try {
-    const res = await deleteQuestion(questionToDelete.value.questionId)
-
-    if (res.code === 200) {
-      message.success('删除题目成功')
-      showDeleteModal.value = false
-
-      // 重新获取当前页，如果当前页没有数据了，则获取上一页
-      if (questions.value.length === 1 && currentPage.value > 1) {
-        fetchQuestions(currentPage.value - 1)
-      } else {
-        fetchQuestions(currentPage.value)
-      }
-    } else {
-      message.error(res.message || '删除题目失败')
-    }
-  } catch (error) {
-    console.error('删除题目错误:', error)
-    message.error('删除题目时发生错误')
-  } finally {
-    deleteLoading.value = false
-  }
-}
+const selectedQuestions = ref([])
 
 // 监听筛选条件变化
 watch([filterDifficulty, filterTitle], () => {
   fetchQuestions(1)
 })
 
-// 下载Excel模板
-const handleDownloadTemplate = () => {
-  // 定义表头
-  const headers = [
-    '题目标题 (title)',
-    '题目内容 (content)',
-    '难度等级 (difficulty)',
-  ]
-  // 示例数据（可选）
-  const data = [
-    ['标题', '内容', '1'],
-    ['', '', '', '2/medium'],
-    ['', '', '', '3/hard'],
-  ]
-
-  // 构建工作表数据（第一行为表头 + 示例数据）
-  const worksheetData = [headers, ...data]
-
-  // 创建工作表
-  const ws = XLSX.utils.aoa_to_sheet(worksheetData)
-
-  // 设置列宽（可选）
-  ws['!cols'] = [
-    { wch: 15 }, // bankId
-    { wch: 30 }, // title
-    { wch: 50 }, // content
-    { wch: 15 }, // difficulty
-  ]
-
-  // 创建工作簿
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, '题目模板')
-
-  // 导出 Excel 文件
-  XLSX.writeFile(wb, '题目批量导入模板.xlsx')
+// 页面数据刷新处理函数
+const handleDataRefresh = () => {
+  fetchQuestions(currentPage.value)
 }
 
-// 处理文件选择
-const handleFileChange = e => {
-  const file = e.target.files[0] // 从文件选择框中获取文件
-  if (
-    file &&
-    file.type ===
-      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
-  ) {
-    batchAddFile.value = file
-    message.success('文件已选择，请点击确认上传按钮')
-  } else {
-    message.error('请上传正确的 Excel 文件 (.xlsx)')
-    batchAddFile.value = null
-  }
-}
-
-// 批量添加题目
-const handleBatchAddQuestion = async () => {
-  if (!batchAddFile.value) {
-    message.error('请先选择文件')
-    return
-  }
-
-  batchAddLoading.value = true
-  try {
-    const formData = new FormData()
-    formData.append('file', batchAddFile.value)
-    formData.append('bankId', bankId.value)
-
-    const res = await batchQuestions(formData)
-
-    if (res.code === 200) {
-      message.success(
-        `批量创建成功，共创建${res.message.match(/\d+/)?.[0] || ''}道题目`,
-      )
-      showBatchAddModal.value = false
-      batchAddFile.value = null
-      fetchQuestions(currentPage.value)
-    } else {
-      message.error(res.message || '批量添加题目失败')
-    }
-  } catch (error) {
-    console.error('批量添加题目错误:', error)
-    message.error('批量添加题目时发生错误')
-  } finally {
-    batchAddLoading.value = false
-  }
-}
-
-// AI创建题目模态框
-const showAICreateModal = ref(false)
-const aiCreateLoading = ref(false)
-const aiRequestData = ref('')
-
-// AI创建题目
-const handleAICreateQuestion = async () => {
-  if (!aiRequestData.value) {
-    message.error('请输入请求数据')
-    return
-  }
-
-  aiCreateLoading.value = true
-  try {
-    const res = await aiCreateQuestion({
-      bankId: bankId.value,
-      requestData: aiRequestData.value,
-    })
-
-    if (res.code === 200) {
-      message.success('AI创建题目成功')
-      showAICreateModal.value = false
-      aiRequestData.value = ''
-      fetchQuestions(currentPage.value)
-    } else {
-      message.error(res.message || 'AI创建题目失败')
-    }
-  } catch (error) {
-    console.error('AI创建题目错误:', error)
-    message.error('AI创建题目时发生错误')
-  } finally {
-    aiCreateLoading.value = false
-  }
-}
-
-const handleBatchAddClick = () => {
-  // 不再自动下载模板，而是显示模态框
-  showBatchAddModal.value = true
+// 批量删除成功后的处理
+const handleBatchDeleteSuccess = () => {
+  selectedQuestions.value = []
+  closeModal('batchDelete')
+  // 刷新数据
+  fetchQuestions(currentPage.value)
 }
 
 onMounted(() => {
@@ -516,19 +259,24 @@ onMounted(() => {
       </template>
       <template #module>
         <div class="flex flex-wrap gap-2 mt-2 md:mt-0">
-          <button class="btn-liquid-glass" @click="showCreateModal = true">
+          <button class="btn-liquid-glass" @click="openModal('create')">
             <Add theme="outline" size="16" />
             <span class="hidden sm:inline">添加题目</span>
             <span class="sm:hidden">添加</span>
           </button>
-          <button class="btn-liquid-glass" @click="handleBatchAddClick">
+          <button class="btn-liquid-glass" @click="openModal('batchAdd')">
             <Add theme="outline" size="16" />
             <span class="hidden md:inline">批量添加题目</span>
             <span class="md:hidden">批量添加</span>
           </button>
+          <button class="btn-liquid-glass" disabled title="功能开发中">
+            <FileQuestion theme="outline" size="16" />
+            <span class="hidden md:inline">导出题目(开发中)</span>
+            <span class="md:hidden">导出(开发中)</span>
+          </button>
           <button
             class="btn-liquid-glass ai-btn"
-            @click="showAICreateModal = true"
+            @click="modals.aiDrawer = true"
           >
             <Lightning theme="outline" size="16" />
             <span class="hidden md:inline">AI创建题目</span>
@@ -536,13 +284,9 @@ onMounted(() => {
           </button>
           <button
             class="btn-liquid-glass error"
-            :disabled="deleteLoading"
+            :disabled="selectedQuestions.length === 0"
             @click="handleBatchDeleteQuestions"
           >
-            <span
-              v-if="deleteLoading"
-              class="loading loading-spinner loading-sm mr-2"
-            ></span>
             <Delete theme="outline" size="16" />
             <span class="hidden lg:inline">批量删除题目</span>
             <span class="lg:hidden">批量删除</span>
@@ -617,23 +361,6 @@ onMounted(() => {
         </div>
       </div>
 
-      <!-- Empty State -->
-      <div
-        v-else-if="!questions.length"
-        class="flex flex-col items-center justify-center h-64"
-      >
-        <div class="text-center glass-panel p-8">
-          <FileQuestion theme="outline" size="64" class="text-gray-400 mb-6" />
-          <p class="text-gray-600 text-xl font-medium mb-6">
-            该题库暂无题目，快去添加一个吧！
-          </p>
-          <button class="btn-liquid-glass" @click="showCreateModal = true">
-            <Add theme="outline" size="18" class="mr-2" />
-            添加第一个题目
-          </button>
-        </div>
-      </div>
-
       <!-- Questions Table -->
       <div
         v-else
@@ -686,16 +413,20 @@ onMounted(() => {
                     class="dropdown-content z-[1] menu menu-sm shadow bg-white rounded-lg w-32 border border-gray-200"
                   >
                     <li>
-                      <a @click="openEditModal(question)"
+                      <a @click="openModal('edit', question)"
                         ><Edit theme="outline" size="14" />编辑</a
                       >
                     </li>
                     <li>
-                      <a class="text-error" @click="openDeleteModal(question)"
+                      <a
+                        class="text-error"
+                        @click="openModal('delete', question)"
                         ><Delete theme="outline" size="14" />删除</a
                       >
                     </li>
-                    <li><a @click="openDetailModal(question)">查看详情</a></li>
+                    <li>
+                      <a @click="openModal('detail', question)">查看详情</a>
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -741,21 +472,21 @@ onMounted(() => {
               <div class="flex flex-wrap gap-2">
                 <button
                   class="btn-liquid-glass edit xs"
-                  @click="openEditModal(question)"
+                  @click="openModal('edit', question)"
                 >
                   <Edit theme="outline" size="14" />
                   <span class="hidden sm:inline">编辑</span>
                 </button>
                 <button
                   class="btn-liquid-glass error xs"
-                  @click="openDeleteModal(question)"
+                  @click="openModal('delete', question)"
                 >
                   <Delete theme="outline" size="14" />
                   <span class="hidden sm:inline">删除</span>
                 </button>
                 <button
                   class="btn-liquid-glass xs"
-                  @click="openDetailModal(question)"
+                  @click="openModal('detail', question)"
                 >
                   <span class="hidden sm:inline">详情</span>
                   <span class="sm:hidden">查看</span>
@@ -847,21 +578,21 @@ onMounted(() => {
                     <button
                       class="btn-liquid-glass edit xs"
                       title="编辑题目"
-                      @click="openEditModal(question)"
+                      @click="openModal('edit', question)"
                     >
                       <Edit theme="outline" size="12" />
                     </button>
                     <button
                       class="btn-liquid-glass error xs"
                       title="删除题目"
-                      @click="openDeleteModal(question)"
+                      @click="openModal('delete', question)"
                     >
                       <Delete theme="outline" size="12" />
                     </button>
                     <button
                       class="btn-liquid-glass xs"
                       title="查看详情"
-                      @click="openDetailModal(question)"
+                      @click="openModal('detail', question)"
                     >
                       详情
                     </button>
@@ -875,10 +606,7 @@ onMounted(() => {
     </div>
 
     <!-- Pagination section -->
-    <div
-      v-if="!loading && questions.length > 0"
-      class="mt-auto py-6 flex justify-center items-center"
-    >
+    <div v-if="!loading" class="mt-auto py-6 flex justify-center items-center">
       <div class="flex gap-2 pagination-container">
         <button
           class="pagination-btn"
@@ -908,510 +636,173 @@ onMounted(() => {
 
     <!-- Modals -->
     <!-- 添加题目模态框 -->
-    <div
-      v-if="showCreateModal"
-      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    <dialog
+      id="create-question-modal"
+      class="modal"
+      :open="modals.create"
+      @close="handleDialogClose('create')"
     >
-      <div
-        class="absolute inset-0 bg-transparent"
-        @click="showCreateModal = false"
-      ></div>
-      <div
-        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-bold text-xl">添加题目</h3>
-          <button
-            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-            @click="showCreateModal = false"
-          >
-            ✕
-          </button>
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text font-medium"
-              >题目标题<span class="text-error">*</span></span
-            >
-          </label>
-          <input
-            v-model="newQuestion.title"
-            class="input input-bordered"
-            placeholder="请输入题目标题"
-          />
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text font-medium"
-              >题目内容<span class="text-error">*</span></span
-            >
-          </label>
-          <RichTextEditor
-            v-model="newQuestion.content"
-            :height="300"
-            :placeholder="'请输入题目内容'"
-          />
-        </div>
-        <div class="form-control mb-6">
-          <label class="label">
-            <span class="label-text font-medium"
-              >难度等级<span class="text-error">*</span></span
-            >
-          </label>
-          <div class="flex items-center space-x-4">
-            <div class="rating rating-lg custom-rating">
-              <input
-                v-model="newQuestion.difficulty"
-                type="radio"
-                name="create-rating"
-                class="mask mask-star-2 bg-green-500"
-                value="1"
-              />
-              <input
-                v-model="newQuestion.difficulty"
-                type="radio"
-                name="create-rating"
-                class="mask mask-star-2 bg-yellow-500"
-                value="2"
-              />
-              <input
-                v-model="newQuestion.difficulty"
-                type="radio"
-                name="create-rating"
-                class="mask mask-star-2 bg-red-500"
-                value="3"
-              />
-            </div>
-            <span
-              :class="{
-                'text-green-500 font-medium': newQuestion.difficulty === '1',
-                'text-yellow-500 font-medium': newQuestion.difficulty === '2',
-                'text-red-500 font-medium': newQuestion.difficulty === '3',
-              }"
-            >
-              {{ difficultyMap[newQuestion.difficulty] }}
-            </span>
-          </div>
-        </div>
-        <div class="flex justify-end gap-2">
-          <button
-            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-            @click="showCreateModal = false"
-          >
-            取消
-          </button>
-          <button
-            class="btn-liquid-glass wechat-green"
-            @click="handleCreateQuestion"
-          >
-            <span
-              v-show="createLoading"
-              class="loading loading-spinner loading-sm"
-            />
-            确认添加
-          </button>
-        </div>
+      <div class="modal-box max-w-3xl">
+        <h3 class="font-bold text-lg mb-4">添加题目</h3>
+        <CreateQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
       </div>
-    </div>
-
-    <!-- AI创建题目模态框 -->
-    <div
-      v-if="showAICreateModal"
-      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
-    >
-      <div
-        class="absolute inset-0 bg-transparent"
-        @click="showAICreateModal = false"
-      ></div>
-      <div
-        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
+      <form
+        method="dialog"
+        class="modal-backdrop"
+        @click="closeModal('create')"
       >
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-bold text-xl">AI创建题目</h3>
-          <button
-            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-            @click="showAICreateModal = false"
-          >
-            ✕
-          </button>
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text font-medium"
-              >创建题目类型<span class="text-error">*</span></span
+        <button>关闭</button>
+      </form>
+    </dialog>
+
+    <!-- AI创建题目抽屉 (daisyUI) -->
+    <div class="drawer drawer-end z-40">
+      <input
+        id="ai-drawer"
+        v-model="modals.aiDrawer"
+        type="checkbox"
+        class="drawer-toggle"
+      />
+      <div class="drawer-side">
+        <label
+          for="ai-drawer"
+          class="drawer-overlay"
+          @click="modals.aiDrawer = false"
+        ></label>
+        <div
+          class="p-6 w-full max-w-md min-h-full bg-base-100 text-base-content flex flex-col"
+        >
+          <div class="flex justify-between items-center mb-4">
+            <h3 class="font-bold text-lg">题目生成器</h3>
+            <button
+              class="btn btn-sm btn-circle"
+              @click="modals.aiDrawer = false"
             >
-          </label>
-          <RichTextEditor
-            v-model="aiRequestData"
-            :height="300"
-            :placeholder="'请输入AI生成题目所需的请求数据'"
-          />
-        </div>
-        <div class="flex justify-end gap-2">
-          <button
-            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-            @click="showAICreateModal = false"
-          >
-            取消
-          </button>
-          <button
-            class="btn-liquid-glass wechat-green"
-            :disabled="aiCreateLoading"
-            @click="handleAICreateQuestion"
-          >
-            <span
-              v-if="aiCreateLoading"
-              class="loading loading-spinner loading-sm"
-            ></span>
-            {{ aiCreateLoading ? '创建中...' : '确认创建' }}
-          </button>
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+          <div class="">
+            <AIQuestionGenerate :bank-id="bankId" />
+          </div>
         </div>
       </div>
     </div>
 
     <!-- 批量添加题目模态框 -->
-    <div
-      v-if="showBatchAddModal"
-      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    <dialog
+      id="batch-add-question-modal"
+      class="modal"
+      :open="modals.batchAdd"
+      @close="handleDialogClose('batchAdd')"
     >
-      <div
-        class="absolute inset-0 bg-transparent"
-        @click="showBatchAddModal = false"
-      ></div>
-      <div
-        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-bold text-xl">批量添加题目</h3>
-          <button
-            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-            @click="showBatchAddModal = false"
-          >
-            ✕
-          </button>
-        </div>
-        <div class="flex flex-col gap-6 mb-6">
-          <!-- 下载模板选项 -->
-          <div class="form-control">
-            <label class="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" class="checkbox checkbox-success" />
-              <span class="label-text text-base font-medium"
-                >下载Excel导入模板</span
-              >
-            </label>
-            <div class="mt-2">
-              <button
-                class="btn-liquid-glass wechat-green-light"
-                @click="handleDownloadTemplate"
-              >
-                <FileQuestion theme="outline" size="16" />
-                下载模板
-              </button>
-            </div>
-          </div>
-
-          <!-- 文件上传区域 -->
-          <div
-            class="flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-lg"
-          >
-            <input
-              id="batchUpload"
-              type="file"
-              accept=".xlsx,.xls"
-              class="hidden"
-              @change="handleFileChange"
-            />
-            <label for="batchUpload" class="cursor-pointer">
-              <div class="text-center">
-                <FileQuestion
-                  theme="outline"
-                  size="48"
-                  class="text-base-content/30 mb-4"
-                />
-                <p class="text-base-content/70 text-lg mb-2">
-                  拖拽Excel文件到此处或点击上传
-                </p>
-                <p class="text-sm text-base-content/50">
-                  支持.xlsx和.xls格式文件
-                </p>
-              </div>
-            </label>
-          </div>
-        </div>
-        <div class="flex justify-end gap-2">
-          <button
-            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-            @click="showBatchAddModal = false"
-          >
-            取消
-          </button>
-          <button
-            class="btn-liquid-glass wechat-green"
-            :disabled="!batchAddFile || !batchAddFile.value || batchAddLoading"
-            @click="handleBatchAddQuestion"
-          >
-            <span
-              v-if="batchAddLoading"
-              class="loading loading-spinner loading-sm"
-            />
-            确认上传
-          </button>
-        </div>
+      <div class="modal-box max-w-3xl">
+        <BatchAddQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
       </div>
-    </div>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+        @click="closeModal('batchAdd')"
+      >
+        <button>关闭</button>
+      </form>
+    </dialog>
 
     <!-- 编辑题目模态框 -->
-    <div
-      v-if="showEditModal"
-      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    <dialog
+      id="edit-question-modal"
+      class="modal"
+      :open="modals.edit"
+      @close="handleDialogClose('edit')"
     >
-      <div
-        class="absolute inset-0 bg-transparent"
-        @click="showEditModal = false"
-      ></div>
-      <div
-        class="relative z-[10000] bg-white rounded-xl w-11/12 max-w-3xl p-6 shadow-2xl border border-gray-100 m-auto"
-      >
-        <div class="flex items-center justify-between mb-4">
-          <h3 class="font-bold text-xl">编辑题目</h3>
-          <button
-            class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-            @click="showEditModal = false"
-          >
-            ✕
-          </button>
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text font-medium"
-              >题目标题<span class="text-error">*</span></span
-            >
-          </label>
-          <input
-            v-model="editQuestion.title"
-            class="input input-bordered"
-            placeholder="请输入题目标题"
-          />
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text font-medium"
-              >题目内容<span class="text-error">*</span></span
-            >
-          </label>
-          <RichTextEditor
-            v-model="editQuestion.content"
-            :height="300"
-            :placeholder="'请输入题目内容'"
-          />
-        </div>
-        <div class="form-control mb-6">
-          <label class="label">
-            <span class="label-text font-medium"
-              >难度等级<span class="text-error">*</span></span
-            >
-          </label>
-          <div class="flex items-center space-x-4">
-            <div class="rating rating-lg custom-rating">
-              <input
-                v-model="editQuestion.difficulty"
-                type="radio"
-                name="edit-rating"
-                class="mask mask-star-2 bg-green-500"
-                value="1"
-              />
-              <input
-                v-model="editQuestion.difficulty"
-                type="radio"
-                name="edit-rating"
-                class="mask mask-star-2 bg-yellow-500"
-                value="2"
-              />
-              <input
-                v-model="editQuestion.difficulty"
-                type="radio"
-                name="edit-rating"
-                class="mask mask-star-2 bg-red-500"
-                value="3"
-              />
-            </div>
-            <span
-              :class="{
-                'text-green-500 font-medium': editQuestion.difficulty === '1',
-                'text-yellow-500 font-medium': editQuestion.difficulty === '2',
-                'text-red-500 font-medium': editQuestion.difficulty === '3',
-              }"
-            >
-              {{ difficultyMap[editQuestion.difficulty] }}
-            </span>
-          </div>
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">状态</span>
-          </label>
-          <div class="flex items-center space-x-2">
-            <input
-              v-model="editQuestion.status"
-              type="checkbox"
-              class="toggle toggle-success"
-            />
-            <span class="text-sm">{{
-              editQuestion.status ? '启用' : '禁用'
-            }}</span>
-          </div>
-        </div>
-        <div class="flex justify-end gap-2">
-          <button
-            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-            @click="showEditModal = false"
-          >
-            取消
-          </button>
-          <button
-            class="btn-liquid-glass wechat-green"
-            @click="handleEditQuestion"
-          >
-            <span
-              v-show="editLoading"
-              class="loading loading-spinner loading-sm"
-            />
-            确认修改
-          </button>
-        </div>
+      <div class="modal-box max-w-3xl">
+        <h3 class="font-bold text-lg mb-4">编辑题目</h3>
+        <EditQuestionModal
+          :question-data="editQuestion"
+          @success="handleDataRefresh"
+        />
       </div>
-    </div>
-
-    <!-- 查看详情模态框 -->
-    <div
-      v-if="showDetailModal"
-      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
-    >
-      <div
-        class="absolute inset-0 bg-transparent"
-        @click="showDetailModal = false"
-      ></div>
-      <div
-        class="relative z-[10000] bg-white rounded-xl w-96 p-6 shadow-2xl border border-gray-100 m-auto"
-      >
-        <h3 class="font-bold text-lg mb-4">题目详情</h3>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">题目ID</span>
-          </label>
-          <input
-            v-model="detailQuestion.questionId"
-            type="text"
-            class="input glass-input-border"
-            readonly
-          />
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">题目标题</span>
-          </label>
-          <input
-            v-model="detailQuestion.title"
-            type="text"
-            class="input glass-input-border"
-            readonly
-          />
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">题目内容</span>
-          </label>
-          <textarea
-            v-model="detailQuestion.content"
-            class="textarea glass-input-border"
-            readonly
-          ></textarea>
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">难度</span>
-          </label>
-          <input
-            type="text"
-            :value="difficultyMap[detailQuestion.difficulty]"
-            class="input glass-input-border"
-            readonly
-          />
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">状态</span>
-          </label>
-          <input
-            type="text"
-            :value="detailQuestion.status ? '已启用' : '未启用'"
-            class="input glass-input-border"
-            readonly
-          />
-        </div>
-        <div class="form-control mb-4">
-          <label class="label">
-            <span class="label-text">创建时间</span>
-          </label>
-          <input
-            type="text"
-            :value="formatDate(detailQuestion.createdAt)"
-            class="input glass-input-border"
-            readonly
-          />
-        </div>
-        <div class="flex justify-end gap-2">
-          <button
-            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-            @click="showDetailModal = false"
-          >
-            关闭
-          </button>
-        </div>
-      </div>
-    </div>
+      <form method="dialog" class="modal-backdrop" @click="closeModal('edit')">
+        <button>关闭</button>
+      </form>
+    </dialog>
 
     <!-- 删除确认模态框 -->
-    <div
-      v-if="showDeleteModal"
-      class="fixed inset-0 z-[9999] flex items-center justify-center modal-container animate-modal-pop"
+    <dialog
+      id="delete-question-modal"
+      class="modal"
+      :open="modals.delete"
+      @close="handleDialogClose('delete')"
     >
-      <div
-        class="absolute inset-0 bg-transparent"
-        @click="showDeleteModal = false"
-      ></div>
-      <div
-        class="relative z-[10000] bg-white rounded-xl w-96 p-6 shadow-2xl border border-gray-100 m-auto"
-      >
-        <h3 class="font-bold text-lg mb-4">确认删除</h3>
-        <p class="py-4">
-          您确定要删除题目
-          <span class="font-bold text-error">{{
-            questionToDelete?.content
-          }}</span>
-          吗？此操作不可逆。
-        </p>
-        <div class="flex justify-end gap-2">
-          <button
-            class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-            @click="showDeleteModal = false"
-          >
-            取消
-          </button>
-          <button
-            class="btn-liquid-glass wechat-green"
-            :disabled="deleteLoading"
-            @click="handleDeleteQuestion"
-          >
-            <span
-              v-if="deleteLoading"
-              class="loading loading-spinner loading-xs"
-            />
-            确认删除
-          </button>
-        </div>
+      <div class="modal-box max-w-md">
+        <h3 class="font-bold text-lg mb-4">删除题目</h3>
+        <DeleteQuestionModal
+          :question="questionToDelete"
+          @success="handleDataRefresh"
+        />
       </div>
-    </div>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+        @click="closeModal('delete')"
+      >
+        <button>关闭</button>
+      </form>
+    </dialog>
+
+    <!-- 详情模态框 -->
+    <dialog
+      id="question-detail-modal"
+      class="modal"
+      :open="modals.detail"
+      @close="handleDialogClose('detail')"
+    >
+      <div class="modal-box max-w-3xl">
+        <QuestionDetailModal :question="detailQuestion" />
+      </div>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+        @click="closeModal('detail')"
+      >
+        <button>关闭</button>
+      </form>
+    </dialog>
+
+    <!-- 批量删除题目模态框 -->
+    <dialog
+      id="batch-delete-question-modal"
+      class="modal"
+      :open="modals.batchDelete"
+      @close="handleDialogClose('batchDelete')"
+    >
+      <div class="modal-box max-w-md">
+        <h3 class="font-bold text-lg mb-4">批量删除题目</h3>
+        <BatchDeleteQuestionModal
+          :selected-questions="selectedQuestions"
+          @success="handleBatchDeleteSuccess"
+        />
+      </div>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+        @click="closeModal('batchDelete')"
+      >
+        <button>关闭</button>
+      </form>
+    </dialog>
   </div>
 </template>
 
@@ -2078,7 +1469,8 @@ onMounted(() => {
   box-shadow: 0 1px 3px rgba(7, 193, 96, 0.1);
 }
 
-.modal-backdrop {
+/* 该样式影响了模态框先禁用 */
+/* .modal-backdrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -2099,7 +1491,7 @@ onMounted(() => {
   100% {
     transform: scale(1);
   }
-}
+} */
 
 .animate-modal-pop > div:last-child {
   animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -2129,67 +1521,5 @@ onMounted(() => {
   border-radius: 10px;
 }
 
-.modal-box {
-  background: white !important;
-  backdrop-filter: none !important;
-  border: 1px solid rgba(220, 240, 230, 0.5);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0);
-  padding: 1.5rem;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.modal-box .form-control,
-.modal-box input,
-.modal-box select,
-.modal-box .rich-text-editor,
-.modal-box button {
-  backdrop-filter: none !important;
-}
-
-.modal-backdrop button {
-  display: none;
-}
-
-[class*='modal'] button.btn-liquid-glass {
-  transition: all 0.2s ease;
-  padding: 0.6rem 1.2rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-[class*='modal'] button.btn-liquid-glass:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
-[class*='modal'] h3 {
-  color: rgba(40, 130, 90, 0.9);
-  font-weight: 600;
-  letter-spacing: 0.01em;
-}
-
-.modal-container .relative[class^='z-'],
-.modal-container .relative.z-10000 {
-  border-radius: 16px;
-  box-shadow:
-    0 10px 30px rgba(0, 0, 0, 0.1),
-    0 4px 15px rgba(0, 0, 0, 0.05),
-    0 0 0 1px rgba(255, 255, 255, 0.9) inset;
-  max-width: 90vw;
-  max-height: 85vh;
-  position: relative;
-  z-index: 10000;
-  overflow-y: auto;
-  background-color: rgba(255, 255, 255, 0.98);
-  backdrop-filter: blur(5px);
-}
-
-@media (max-width: 768px) {
-  .modal-container .relative[class^='z-'],
-  .modal-container .relative.z-10000 {
-    width: 95vw !important;
-    max-height: 80vh;
-  }
-}
+/* daisyUI自带抽屉样式，不需要自定义 */
 </style>

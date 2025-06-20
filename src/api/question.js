@@ -89,11 +89,8 @@ export const aiCreateQuestion = data => {
     },
   })
 }
-
-//批量添加
-//添加题目
 /**
- *
+ * @description 批量添加题目
  * @param {题目对象} obj
  * @returns
  */
