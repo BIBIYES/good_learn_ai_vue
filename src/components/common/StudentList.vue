@@ -9,9 +9,24 @@
         class="input input-bordered flex-grow"
         @keyup.enter="handleSearch"
       />
-      <button class="btn btn-primary flex items-center" @click="handleSearch">
-        <span class="">🔍</span>
+      <button
+        class="btn btn-primary flex items-center"
+        :disabled="isSearching"
+        @click="handleSearch"
+      >
+        <span
+          v-if="isSearching"
+          class="loading loading-spinner loading-sm mr-2"
+        ></span>
+        <span v-else>🔍</span>
         <span>搜索</span>
+      </button>
+      <button
+        class="btn btn-outline flex items-center"
+        :disabled="isSearching"
+        @click="handleReset"
+      >
+        重置
       </button>
     </div>
     <hr />
@@ -35,6 +50,7 @@ import { onMounted, ref } from 'vue'
 
 const studentList = ref([])
 const searchUsername = ref('')
+const isSearching = ref(false)
 
 const props = defineProps({
   courseId: {
@@ -56,8 +72,23 @@ const fetchStudentList = async (username = '') => {
   }
 }
 
-const handleSearch = () => {
-  fetchStudentList(searchUsername.value)
+const handleSearch = async () => {
+  isSearching.value = true
+  try {
+    await fetchStudentList(searchUsername.value)
+  } finally {
+    isSearching.value = false
+  }
+}
+
+const handleReset = async () => {
+  searchUsername.value = ''
+  isSearching.value = true
+  try {
+    await fetchStudentList()
+  } finally {
+    isSearching.value = false
+  }
 }
 
 const selectStudent = student => {
