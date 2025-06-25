@@ -1,11 +1,5 @@
+<script setup></script>
 <template>
-  <div>
-    <StudentList :course-id="courseId" />
-  </div>
+  <div class="container"></div>
 </template>
-
-<script setup>
-import StudentList from '@/components/common/StudentList.vue'
-
-const courseId = 1000000
-</script>
+<style lang="scss" scoped></style>

@@ -1,162 +1,3 @@
-<template>
-  <div class="flex flex-col space-y-4">
-    <div class="flex w-full space-x-2">
-      <input
-        v-model="prompt"
-        type="text"
-        placeholder="例如：帮我生成5道有关于数据库查询的题目 "
-        class="input input-bordered w-full"
-        :disabled="loading.button"
-      />
-      <button
-        class="btn-liquid-glass wechat-green"
-        :disabled="loading.button"
-        @click="handleSubmit"
-      >
-        <span
-          v-if="loading.button"
-          class="loading loading-spinner loading-xs"
-        />
-        <span class="whitespace-nowrap">
-          {{ loading.button ? '生成中...' : '生成题目' }}</span
-        >
-      </button>
-    </div>
-
-    <!-- Loader -->
-    <div v-if="loading.button" class="animate__animated animate__fadeIn">
-      <!-- Shimmer text loader -->
-      <div class="text-center py-2">
-        <span class="shimmer-text"
-          >AI助手正在努力创作中... {{ currentCharacter }}</span
-        >
-      </div>
-
-      <!-- Skeleton Loader -->
-      <div class="space-y-2">
-        <div
-          v-for="i in 6"
-          :key="i"
-          class="flex skeleton items-center space-x-4 p-4 rounded-lg bg-base-200"
-        >
-          <div class="h-5 w-5 bg-gray-300 rounded"></div>
-          <div class="flex-1 space-y-2">
-            <div class="h-4 bg-gray-300 rounded w-3/4"></div>
-            <div class="h-4 bg-gray-300 rounded w-1/2"></div>
-          </div>
-          <div class="h-6 w-20 bg-gray-300 rounded-full"></div>
-          <div class="h-6 w-16 bg-gray-300 rounded"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Questions Table -->
-    <div
-      v-if="questions.length > 0"
-      class="mt-4 space-y-4 animate__animated animate__fadeIn"
-    >
-      <div
-        class="overflow-x-auto bg-gradient-to-br from-[rgba(248,255,250,0.3)] to-[rgba(245,253,248,0.2)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.6)] shadow-sm"
-      >
-        <table class="table w-full">
-          <thead>
-            <tr class="bg-[rgba(250, 255, 252, 0.4), rgba(248, 253, 250, 0.3)]">
-              <th class="w-12">
-                <input
-                  type="checkbox"
-                  class="checkbox checkbox-neutral"
-                  :checked="isAllSelected"
-                  @change="toggleSelectAll"
-                />
-              </th>
-              <th class="font-semibold">题目标题</th>
-              <th class="font-semibold">题目内容</th>
-              <th class="w-24 font-semibold text-center">难度</th>
-              <th class="w-24 font-semibold text-center">操作</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr
-              v-for="(question, index) in questions"
-              :key="index"
-              class="hover:bg-[rgba(245, 255, 250, 0.3), rgba(240, 253, 245, 0.2)] transition-colors duration-200"
-            >
-              <td>
-                <input
-                  v-model="selectedQuestions"
-                  type="checkbox"
-                  class="checkbox checkbox-neutral"
-                  :value="index"
-                />
-              </td>
-              <td class="max-w-xs truncate font-medium">
-                {{ question.title }}
-              </td>
-              <td>
-                <div
-                  class="prose max-w-none line-clamp-2"
-                  v-html="renderMarkdown(question.content)"
-                ></div>
-              </td>
-              <td class="text-center">
-                <div
-                  class="badge-liquid-glass mx-auto"
-                  :class="getDifficultyClass(question.difficulty)"
-                >
-                  {{ getDifficultyText(question.difficulty) }}
-                </div>
-              </td>
-              <td class="text-center">
-                <button
-                  class="btn btn-ghost btn-xs"
-                  @click="openPreviewModal(question)"
-                >
-                  预览
-                </button>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="flex justify-end items-center space-x-4">
-        <span class="text-sm text-gray-600">
-          已选择 {{ selectedQuestions.length }} / {{ questions.length }} 项
-        </span>
-        <button
-          class="btn-liquid-glass wechat-green"
-          :disabled="selectedQuestions.length === 0 || loading.add"
-          @click="handleBatchAdd"
-        >
-          <span v-if="loading.add" class="loading loading-spinner loading-xs" />
-          批量添加选中题目
-        </button>
-      </div>
-    </div>
-
-    <!-- Question Preview Modal -->
-    <dialog class="modal" :open="showPreview">
-      <div class="modal-box w-11/12 max-w-3xl">
-        <form method="dialog">
-          <button
-            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-            @click="showPreview = false"
-          >
-            ✕
-          </button>
-        </form>
-        <AIGeneratedQuestionPreview
-          v-if="questionForPreview"
-          :question="questionForPreview"
-        />
-      </div>
-      <form method="dialog" class="modal-backdrop" @click="showPreview = false">
-        <button>close</button>
-      </form>
-    </dialog>
-  </div>
-</template>
-
 <script setup>
 import AIStreamClient from '@/plugin/AIStreamClient'
 import { ref, computed } from 'vue'
@@ -164,7 +5,7 @@ import { marked } from 'marked'
 import { batchQuestions } from '@/api/question'
 import message from '@/plugin/message'
 import AIGeneratedQuestionPreview from './AIGeneratedQuestionPreview.vue'
-
+import gsap from 'gsap'
 const props = defineProps({
   bankId: {
     type: String,
@@ -280,6 +121,12 @@ const handleBatchAdd = async () => {
 }
 
 const handleSubmit = () => {
+  gsap.to('.ai-question-generator', {
+    width: '80vw',
+    height: '80vh',
+    duration: 1,
+    ease: 'power4.Out',
+  })
   loading.value.button = true
   emit('generation-start')
   questionJsonString.value = '' // 重置接收到的数据
@@ -364,17 +211,364 @@ const handleSubmit = () => {
   })
 }
 </script>
+<template>
+  <div class="ai-question-generator">
+    <div class="prompt-input-group">
+      <input
+        v-model="prompt"
+        type="text"
+        placeholder="例如：帮我生成5道有关于数据库查询的题目 "
+        class="input input-bordered prompt-input"
+        :disabled="loading.button"
+      />
+      <button
+        class="btn-liquid-glass wechat-green generate-button"
+        :disabled="loading.button"
+        @click="handleSubmit"
+      >
+        <span
+          v-if="loading.button"
+          class="loading loading-spinner loading-xs"
+        />
+        <span> {{ loading.button ? '生成中...' : '生成题目' }}</span>
+      </button>
+    </div>
 
+    <!-- Loader -->
+    <div v-if="loading.button" class="loading-section">
+      <!-- Shimmer text loader -->
+      <div class="shimmer-container">
+        <span class="shimmer-text"
+          >AI助手正在努力创作中... {{ currentCharacter }}</span
+        >
+      </div>
+
+      <!-- Skeleton Loader -->
+      <div class="skeleton-loader">
+        <div v-for="i in 5" :key="i" class="skeleton-item skeleton">
+          <div class="skeleton-checkbox"></div>
+          <div class="skeleton-content">
+            <div class="skeleton-line-1"></div>
+            <div class="skeleton-line-2"></div>
+          </div>
+          <div class="skeleton-badge"></div>
+          <div class="skeleton-button"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Questions Table -->
+    <div v-if="questions.length > 0" class="results-section">
+      <div class="questions-table-container">
+        <table class="table w-full">
+          <thead>
+            <tr class="table-header-row">
+              <th class="checkbox-cell">
+                <input
+                  type="checkbox"
+                  class="checkbox checkbox-neutral"
+                  :checked="isAllSelected"
+                  @change="toggleSelectAll"
+                />
+              </th>
+              <th class="title-cell">题目标题</th>
+              <th class="content-cell">题目内容</th>
+              <th class="difficulty-cell">难度</th>
+              <th class="actions-cell">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              v-for="(question, index) in questions"
+              :key="index"
+              class="table-body-row"
+            >
+              <td>
+                <input
+                  v-model="selectedQuestions"
+                  type="checkbox"
+                  class="checkbox checkbox-neutral"
+                  :value="index"
+                />
+              </td>
+              <td class="title-cell-content">
+                {{ question.title }}
+              </td>
+              <td>
+                <div
+                  class="content-cell-content prose"
+                  v-html="renderMarkdown(question.content)"
+                ></div>
+              </td>
+              <td class="difficulty-cell-content">
+                <div
+                  class="badge-liquid-glass"
+                  :class="getDifficultyClass(question.difficulty)"
+                >
+                  {{ getDifficultyText(question.difficulty) }}
+                </div>
+              </td>
+              <td class="actions-cell-content">
+                <button
+                  class="btn btn-ghost btn-xs"
+                  @click="openPreviewModal(question)"
+                >
+                  预览
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="batch-actions-container">
+        <span class="selection-counter">
+          已选择 {{ selectedQuestions.length }} / {{ questions.length }} 项
+        </span>
+        <button
+          class="btn-liquid-glass wechat-green"
+          :disabled="selectedQuestions.length === 0 || loading.add"
+          @click="handleBatchAdd"
+        >
+          <span v-if="loading.add" class="loading loading-spinner loading-xs" />
+          批量添加选中题目
+        </button>
+      </div>
+    </div>
+
+    <!-- Question Preview Modal -->
+    <dialog class="modal" :open="showPreview">
+      <div class="modal-box preview-modal-box">
+        <form method="dialog">
+          <button
+            class="btn btn-sm btn-circle btn-ghost close-button"
+            @click="showPreview = false"
+          >
+            ✕
+          </button>
+        </form>
+        <AIGeneratedQuestionPreview
+          v-if="questionForPreview"
+          :question="questionForPreview"
+        />
+      </div>
+      <form method="dialog" class="modal-backdrop" @click="showPreview = false">
+        <button>close</button>
+      </form>
+    </dialog>
+  </div>
+</template>
 <style scoped lang="scss">
-@import './AIGenerateStyles.scss';
+@import '@/styles/AIGenerateStyles.scss';
 
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+// 组件根元素，服务于AIQuestionGenerate主容器
+.ai-question-generator {
+  width: 30vw;
+  height: 4rem;
+  padding: 5px;
+  overflow-y: auto;
 }
 
+// 顶部输入框和生成按钮区域，服务于prompt-input-group
+.prompt-input-group {
+  display: flex;
+  width: 100%;
+  gap: 0.5rem;
+
+  .prompt-input {
+    flex: 1;
+  }
+
+  .generate-button span {
+    white-space: nowrap;
+  }
+}
+
+// 加载状态容器，服务于loading-section
+.loading-section {
+  animation: fadeIn 0.5s;
+}
+
+// "AI生成中" 的闪烁文本，服务于shimmer-container
+.shimmer-container {
+  text-align: center;
+  padding: 0.5rem 0;
+}
+
+// 加载骨架屏，服务于skeleton-loader
+.skeleton-loader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+
+  .skeleton-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    background-color: #f3f4f6; // base-200
+  }
+
+  .skeleton-checkbox {
+    height: 1.25rem;
+    width: 1.25rem;
+    background-color: #d1d5db;
+    border-radius: 0.25rem;
+  }
+
+  .skeleton-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .skeleton-line-1 {
+    height: 1rem;
+    background-color: #d1d5db;
+    border-radius: 0.25rem;
+    width: 75%;
+  }
+
+  .skeleton-line-2 {
+    height: 1rem;
+    background-color: #d1d5db;
+    border-radius: 0.25rem;
+    width: 50%;
+  }
+
+  .skeleton-badge {
+    height: 1.5rem;
+    width: 5rem;
+    background-color: #d1d5db;
+    border-radius: 9999px;
+  }
+
+  .skeleton-button {
+    height: 1.5rem;
+    width: 4rem;
+    background-color: #d1d5db;
+    border-radius: 0.25rem;
+  }
+}
+
+// 生成结果区域，服务于results-section
+.results-section {
+  margin-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  animation: fadeIn 0.5s;
+}
+
+// 问题表格容器，服务于questions-table-container
+.questions-table-container {
+  overflow-x: auto;
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(248, 255, 250, 0.3),
+    rgba(245, 253, 248, 0.2)
+  );
+  backdrop-filter: blur(16px);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+}
+
+// 表格头部行，服务于table-header-row
+.table-header-row {
+  background: rgba(250, 255, 252, 0.4), rgba(248, 253, 250, 0.3);
+}
+
+// 表格内容行，服务于table-body-row
+.table-body-row {
+  transition: background-color 0.2s;
+  &:hover {
+    background: rgba(245, 255, 250, 0.3), rgba(240, 253, 245, 0.2);
+  }
+}
+
+// 表格单元格 - 复选框，服务于checkbox-cell
+.checkbox-cell {
+  width: 3rem;
+}
+
+// 表格单元格 - 标题和内容，服务于title-cell、content-cell
+.title-cell,
+.content-cell {
+  th {
+    font-weight: 600;
+  }
+}
+
+// 表格单元格 - 难度和操作，服务于difficulty-cell、actions-cell
+.difficulty-cell,
+.actions-cell {
+  width: 6rem;
+  text-align: center;
+  th {
+    font-weight: 600;
+    text-align: center;
+  }
+}
+
+// 表格内容 - 标题，服务于title-cell-content
+.title-cell-content {
+  max-width: 16rem; /* max-w-xs is actually 20rem, but this seems more reasonable */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+// 表格内容 - 内容，服务于content-cell-content
+.content-cell-content {
+  max-width: 30rem;
+  height: 50px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// 表格内容 - 难度和操作，服务于difficulty-cell-content、actions-cell-content
+.difficulty-cell-content,
+.actions-cell-content {
+  text-align: center;
+  .badge-liquid-glass {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// 批量操作区域，服务于batch-actions-container
+.batch-actions-container {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 1rem;
+}
+
+// 选中计数器，服务于selection-counter
+.selection-counter {
+  font-size: 0.875rem;
+  color: #4b5563;
+}
+
+// 预览模态框，服务于preview-modal-box
+.preview-modal-box {
+  width: 91.666667%;
+  max-width: 56rem; // max-w-3xl is 48rem, using 56rem for w-11/12
+}
+
+// 模态框关闭按钮，服务于close-button
+.close-button {
+  position: absolute;
+  right: 0.5rem;
+  top: 0.5rem;
+}
+
+// 表格基础样式，服务于.table
 .table {
   background: transparent;
   width: 100%;
