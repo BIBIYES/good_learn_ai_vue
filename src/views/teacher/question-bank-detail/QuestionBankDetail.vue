@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed, watch, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getQuestionBankById } from '@/api/question'
 import message from '@/plugin/message'
@@ -12,6 +12,7 @@ import {
   Lightning,
 } from '@icon-park/vue-next'
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
+import gsap from 'gsap'
 
 // 导入模态框组件
 import CreateQuestionModal from './components/CreateQuestionModal.vue'
@@ -35,6 +36,8 @@ const pageSize = ref(5)
 const total = ref(0)
 const filterDifficulty = ref('')
 const filterTitle = ref('')
+const isGenerating = ref(false)
+const aiModalBox = ref(null)
 
 // 统一管理所有模态框状态
 const modals = ref({
@@ -44,7 +47,7 @@ const modals = ref({
   detail: false,
   batchAdd: false,
   batchDelete: false,
-  aiDrawer: false,
+  aiGenerate: false,
 })
 
 // 编辑题目数据
@@ -182,6 +185,15 @@ const closeModal = type => {
 // 监听dialog的close事件
 const handleDialogClose = type => {
   closeModal(type)
+  if (type === 'aiGenerate') {
+    isGenerating.value = false
+    // 重置GSAP动画设置的样式
+    if (aiModalBox.value) {
+      gsap.set(aiModalBox.value, {
+        clearProps: 'all',
+      })
+    }
+  }
 }
 
 // 全选/取消全选
@@ -224,6 +236,12 @@ const handleDataRefresh = () => {
   fetchQuestions(currentPage.value)
 }
 
+// AI生成成功后的处理
+const handleAIGenerateSuccess = () => {
+  handleDataRefresh()
+  closeModal('aiGenerate')
+}
+
 // 批量删除成功后的处理
 const handleBatchDeleteSuccess = () => {
   selectedQuestions.value = []
@@ -231,6 +249,23 @@ const handleBatchDeleteSuccess = () => {
   // 刷新数据
   fetchQuestions(currentPage.value)
 }
+
+watch(isGenerating, (newValue, oldValue) => {
+  if (newValue && !oldValue) {
+    // 确保DOM已经更新
+    nextTick(() => {
+      if (aiModalBox.value) {
+        gsap.to(aiModalBox.value, {
+          duration: 0.5,
+          width: '91.666667%', // w-11/12
+          maxWidth: '64rem', // max-w-5xl
+          height: '80vh',
+          ease: 'power3.inOut',
+        })
+      }
+    })
+  }
+})
 
 onMounted(() => {
   filterDifficulty.value = ''
@@ -276,7 +311,7 @@ onMounted(() => {
           </button>
           <button
             class="btn-liquid-glass ai-btn"
-            @click="modals.aiDrawer = true"
+            @click="openModal('aiGenerate')"
           >
             <Lightning theme="outline" size="16" />
             <span class="hidden md:inline">AI创建题目</span>
@@ -655,51 +690,32 @@ onMounted(() => {
       </form>
     </dialog>
 
-    <!-- AI创建题目抽屉 (daisyUI) -->
-    <div class="drawer drawer-end z-40">
-      <input
-        id="ai-drawer"
-        v-model="modals.aiDrawer"
-        type="checkbox"
-        class="drawer-toggle"
-      />
-      <div class="drawer-side">
-        <label
-          for="ai-drawer"
-          class="drawer-overlay"
-          @click="modals.aiDrawer = false"
-        ></label>
-        <div
-          class="p-6 w-full max-w-md min-h-full bg-base-100 text-base-content flex flex-col"
-        >
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-lg">题目生成器</h3>
-            <button
-              class="btn btn-sm btn-circle"
-              @click="modals.aiDrawer = false"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <div class="">
-            <AIQuestionGenerate :bank-id="bankId" />
-          </div>
+    <!-- AI创建题目模态框 -->
+    <dialog
+      id="ai-generate-modal"
+      class="modal"
+      :open="modals.aiGenerate"
+      @close="handleDialogClose('aiGenerate')"
+    >
+      <div ref="aiModalBox" class="modal-box flex flex-col w-11/12 max-w-lg">
+        <h3 class="font-bold text-lg">题目生成器</h3>
+        <div class="py-4 flex-grow overflow-y-auto">
+          <AIQuestionGenerate
+            :bank-id="bankId"
+            @success="handleAIGenerateSuccess"
+            @generation-start="isGenerating = true"
+            @generation-end="isGenerating = true"
+          />
         </div>
       </div>
-    </div>
+      <form
+        method="dialog"
+        class="modal-backdrop"
+        @click="closeModal('aiGenerate')"
+      >
+        <button>关闭</button>
+      </form>
+    </dialog>
 
     <!-- 批量添加题目模态框 -->
     <dialog
@@ -769,7 +785,7 @@ onMounted(() => {
       :open="modals.detail"
       @close="handleDialogClose('detail')"
     >
-      <div class="modal-box max-w-3xl">
+      <div class="modal-box h-[80vh] max-w-3xl">
         <QuestionDetailModal :question="detailQuestion" />
       </div>
       <form
@@ -820,7 +836,6 @@ onMounted(() => {
 
 .line-clamp-2 {
   display: -webkit-box;
-  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
 }

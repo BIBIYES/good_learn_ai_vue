@@ -1,4 +1,4 @@
-import '@/assets/main.css'
+import '@/styles/main.css'
 import '@icon-park/vue-next/styles/index.css'
 import { createApp } from 'vue'
 import { createPinia } from 'pinia'
