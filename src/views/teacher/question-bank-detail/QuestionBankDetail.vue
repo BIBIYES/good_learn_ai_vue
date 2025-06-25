@@ -682,7 +682,6 @@ onMounted(() => {
       @close="handleDialogClose('edit')"
     >
       <div class="modal-box max-w-3xl">
-        <h3 class="modal-title">编辑题目</h3>
         <EditQuestionModal
           :question-data="editQuestion"
           @success="handleDataRefresh"
