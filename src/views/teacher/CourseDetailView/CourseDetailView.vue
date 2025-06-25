@@ -54,19 +54,12 @@
             </svg>
           </button>
 
-          <!-- 视频背景 -->
-          <video
+          <!-- 图片背景 -->
+          <img
             class="absolute top-0 left-0 w-full h-full object-cover"
-            autoplay
-            loop
-            muted
-            playsinline
-          >
-            <source
-              src="../../../assets/videos/banner-bg.mp4"
-              type="video/mp4"
-            />
-          </video>
+            src="https://cdn.pixabay.com/photo/2019/11/13/12/18/king-4623497_1280.jpg"
+            alt="课程背景"
+          />
 
           <!-- 遮罩层 -->
           <div

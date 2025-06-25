@@ -785,12 +785,10 @@ const animation = () => {
 .outlined-text {
   color: black; /* 黑色文字 */
   -webkit-text-stroke: 2px white; /* 白色描边，适用于 Webkit 浏览器（如 Chrome 和 Safari） */
-  text-stroke: 2px white; /* 标准的 text-stroke，某些浏览器可能不支持 */
 }
 .outlined-text-black {
   color: rgb(255, 255, 255); /* 黑色文字 */
   -webkit-text-stroke: 2px rgb(0, 0, 0); /* 白色描边，适用于 Webkit 浏览器（如 Chrome 和 Safari） */
-  text-stroke: 2px rgb(0, 0, 0); /* 标准的 text-stroke，某些浏览器可能不支持 */
 }
 
 /* 团队成员卡片样式 */
