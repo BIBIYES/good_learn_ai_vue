@@ -3,14 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getQuestionBankById } from '@/api/question'
 import message from '@/plugin/message'
-import {
-  FileQuestion,
-  Add,
-  ArrowLeft,
-  Edit,
-  Delete,
-  Lightning,
-} from '@icon-park/vue-next'
+
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
 
 // 导入模态框组件
@@ -254,9 +247,9 @@ onMounted(() => {
             class="btn btn-ghost btn-sm btn-circle"
             @click="router.back()"
           >
-            <ArrowLeft theme="outline" size="20" />
+            <LineMdArrowLeft class="w-5 h-5" />
           </button>
-          <FileQuestion theme="outline" size="38" />
+          <i-mdi-file-question-outline class="w-9 h-9" />
           <span class="bank-name">{{ bankName }}</span>
           <div v-if="!loading && total > 0" class="total-count-badge">
             总计：<span class="total-count-number">{{ total }}</span> 题
@@ -266,17 +259,17 @@ onMounted(() => {
       <template #module>
         <div class="module-actions">
           <button class="btn-liquid-glass" @click="openModal('create')">
-            <Add theme="outline" size="16" />
+            <i-mdi-plus class="w-4 h-4" />
             <span class="btn-text-desktop">添加题目</span>
             <span class="btn-text-mobile">添加</span>
           </button>
           <button class="btn-liquid-glass" @click="openModal('batchAdd')">
-            <Add theme="outline" size="16" />
+            <i-mdi-plus class="w-4 h-4" />
             <span class="btn-text-desktop-md">批量添加题目</span>
             <span class="btn-text-mobile-md">批量添加</span>
           </button>
           <button class="btn-liquid-glass" disabled title="功能开发中">
-            <FileQuestion theme="outline" size="16" />
+            <i-mdi-file-question-outline class="w-4 h-4" />
             <span class="btn-text-desktop-md">导出题目(开发中)</span>
             <span class="btn-text-mobile-md">导出(开发中)</span>
           </button>
@@ -284,7 +277,7 @@ onMounted(() => {
             class="btn-liquid-glass ai-btn"
             @click="openModal('aiGenerate')"
           >
-            <Lightning theme="outline" size="16" />
+            <i-mdi-flash class="w-4 h-4" />
             <span class="btn-text-desktop-md">AI创建题目</span>
             <span class="btn-text-mobile-md">AI创建</span>
           </button>
@@ -293,7 +286,7 @@ onMounted(() => {
             :disabled="selectedQuestions.length === 0"
             @click="handleBatchDeleteQuestions"
           >
-            <Delete theme="outline" size="16" />
+            <i-mdi-delete-outline class="w-4 h-4" />
             <span class="btn-text-desktop-lg">批量删除题目</span>
             <span class="btn-text-mobile-lg">批量删除</span>
           </button>
@@ -396,14 +389,14 @@ onMounted(() => {
                   >
                     <li>
                       <a @click="openModal('edit', question)"
-                        ><Edit theme="outline" size="14" />编辑</a
+                        ><i-mdi-pencil-outline class="w-3.5 h-3.5" />编辑</a
                       >
                     </li>
                     <li>
                       <a
                         class="text-error"
                         @click="openModal('delete', question)"
-                        ><Delete theme="outline" size="14" />删除</a
+                        ><i-mdi-delete-outline class="w-3.5 h-3.5" />删除</a
                       >
                     </li>
                     <li>
@@ -456,14 +449,14 @@ onMounted(() => {
                   class="btn-liquid-glass edit xs"
                   @click="openModal('edit', question)"
                 >
-                  <Edit theme="outline" size="14" />
+                  <i-mdi-pencil-outline class="w-3.5 h-3.5" />
                   <span class="btn-text-desktop">编辑</span>
                 </button>
                 <button
                   class="btn-liquid-glass error xs"
                   @click="openModal('delete', question)"
                 >
-                  <Delete theme="outline" size="14" />
+                  <i-mdi-delete-outline class="w-3.5 h-3.5" />
                   <span class="btn-text-desktop">删除</span>
                 </button>
                 <button
@@ -558,14 +551,14 @@ onMounted(() => {
                       title="编辑题目"
                       @click="openModal('edit', question)"
                     >
-                      <Edit theme="outline" size="12" />
+                      <i-mdi-pencil-outline class="w-3 h-3" />
                     </button>
                     <button
                       class="btn-liquid-glass error xs"
                       title="删除题目"
                       @click="openModal('delete', question)"
                     >
-                      <Delete theme="outline" size="12" />
+                      <i-mdi-delete-outline class="w-3 h-3" />
                     </button>
                     <button
                       class="btn-liquid-glass xs"

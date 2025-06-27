@@ -1,6 +1,4 @@
 <script setup>
-// 导入图标组件
-import { Attention, Github, Moon, Sun } from '@icon-park/vue-next'
 // 导入用户状态管理
 import { useUserStore } from '@/stores/user'
 import { ref, onMounted } from 'vue'
@@ -74,17 +72,17 @@ onMounted(() => {
       >
         <!-- 主题切换按钮 -->
         <button class="btn btn-md w-30" @click="toggleTheme">
-          <Sun v-if="isDarkMode" theme="outline" size="18" />
-          <Moon v-else theme="outline" size="18" />
+          <LineMdMoonTwotoneAltLoop v-if="isDarkMode" />
+          <LineMdSunnyOutlineLoop v-else />
           {{ isDarkMode ? '亮色模式' : '暗色模式' }}
         </button>
 
         <button class="btn btn-md w-30" @click="navigateToGithub()">
-          <Github theme="outline" size="18" />Github
+          <LineMdGithubTwotone />Github
         </button>
         <router-link to="/about">
           <button class="btn btn-md w-30">
-            <attention theme="outline" size="18" />关于我们
+            <LineMdPersonTwotone />关于我们
           </button>
         </router-link>
       </footer>

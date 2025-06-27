@@ -4,8 +4,15 @@ import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import vueDevTools from 'vite-plugin-vue-devtools'
 import tailwindcss from '@tailwindcss/vite'
+// 依赖移动引入插件
 import AutoImport from 'unplugin-auto-import/vite'
+// 组件自动引入插件
 import Components from 'unplugin-vue-components/vite'
+// 图标插件
+import Icons from 'unplugin-icons/vite'
+// 图标解析器
+import IconsResolver from 'unplugin-icons/resolver'
+
 // https://vite.dev/config/
 
 export default defineConfig({
@@ -25,6 +32,14 @@ export default defineConfig({
     Components({
       dts: false, // 指定类型声明文件的路径
       dirs: ['src/components'],
+      resolvers: [
+        IconsResolver({
+          prefix: '', // 设置为 '' 表示你可以直接使用 <HeroiconsOutlineTrash /> 而不是 <IconHeroiconsOutlineTrash />
+        }),
+      ],
+    }),
+    Icons({
+      autoInstall: true, // 没有这个参数的话，第一次用图标会报错找不到
     }),
   ],
   // 自动导入组件

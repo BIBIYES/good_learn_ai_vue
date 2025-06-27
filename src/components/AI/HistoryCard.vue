@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router'
 import router from '@/router'
 
 // 导入图标组件，用于UI展示
-import { History, Edit, DeleteFive, More } from '@icon-park/vue-next'
 
 // 导入API和Store，用于数据获取和状态管理
 import { getSession } from '@/api/chat'
@@ -117,7 +116,7 @@ const getSessionPath = sessionId => {
   <div class="w-full">
     <!-- 标题栏 -->
     <div class="flex items-center space-x-2 px-2 py-1">
-      <History theme="outline" size="20" fill="#333" />
+      <i-mdi-history class="w-5 h-5" />
       <span class="text-md font-bold">历史消息</span>
     </div>
 
@@ -152,7 +151,7 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More theme="outline" size="15" fill="#333" />
+                    <i-mdi-dots-horizontal class="w-4 h-4" />
                   </div>
                   <ul
                     tabindex="0"
@@ -160,20 +159,12 @@ const getSessionPath = sessionId => {
                   >
                     <li>
                       <a class="text-black">
-                        <Edit
-                          theme="outline"
-                          size="20"
-                          fill="#333"
-                        />修改名称</a
+                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
                       >
                     </li>
                     <li>
                       <a class="text-red-500">
-                        <DeleteFive
-                          theme="outline"
-                          size="20"
-                          fill="#fa1010"
-                        />删除
+                        <i-mdi-delete-outline class="w-5 h-5" />删除
                       </a>
                     </li>
                   </ul>
@@ -209,7 +200,7 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More theme="outline" size="15" fill="#333" />
+                    <i-mdi-dots-horizontal class="w-4 h-4" />
                   </div>
                   <ul
                     tabindex="0"
@@ -217,20 +208,12 @@ const getSessionPath = sessionId => {
                   >
                     <li>
                       <a class="text-black">
-                        <Edit
-                          theme="outline"
-                          size="20"
-                          fill="#333"
-                        />修改名称</a
+                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
                       >
                     </li>
                     <li>
                       <a class="text-red-500">
-                        <DeleteFive
-                          theme="outline"
-                          size="20"
-                          fill="#fa1010"
-                        />删除
+                        <i-mdi-delete-outline class="w-5 h-5" />删除
                       </a>
                     </li>
                   </ul>
@@ -265,7 +248,7 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More theme="outline" size="15" fill="#333" />
+                    <i-mdi-dots-horizontal class="w-4 h-4" />
                   </div>
                   <ul
                     tabindex="0"
@@ -273,20 +256,12 @@ const getSessionPath = sessionId => {
                   >
                     <li>
                       <a class="text-black">
-                        <Edit
-                          theme="outline"
-                          size="20"
-                          fill="#333"
-                        />修改名称</a
+                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
                       >
                     </li>
                     <li>
                       <a class="text-red-500">
-                        <DeleteFive
-                          theme="outline"
-                          size="20"
-                          fill="#fa1010"
-                        />删除
+                        <i-mdi-delete-outline class="w-5 h-5" />删除
                       </a>
                     </li>
                   </ul>
@@ -321,7 +296,7 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More theme="outline" size="15" fill="#333" />
+                    <i-mdi-dots-horizontal class="w-4 h-4" />
                   </div>
                   <ul
                     tabindex="0"
@@ -329,20 +304,12 @@ const getSessionPath = sessionId => {
                   >
                     <li>
                       <a class="text-black">
-                        <Edit
-                          theme="outline"
-                          size="20"
-                          fill="#333"
-                        />修改名称</a
+                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
                       >
                     </li>
                     <li>
                       <a class="text-red-500">
-                        <DeleteFive
-                          theme="outline"
-                          size="20"
-                          fill="#fa1010"
-                        />删除
+                        <i-mdi-delete-outline class="w-5 h-5" />删除
                       </a>
                     </li>
                   </ul>
@@ -377,7 +344,7 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <More theme="outline" size="15" fill="#333" />
+                    <i-mdi-dots-horizontal class="w-4 h-4" />
                   </div>
                   <ul
                     tabindex="0"
@@ -385,20 +352,12 @@ const getSessionPath = sessionId => {
                   >
                     <li>
                       <a class="text-black">
-                        <Edit
-                          theme="outline"
-                          size="20"
-                          fill="#333"
-                        />修改名称</a
+                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
                       >
                     </li>
                     <li>
                       <a class="text-red-500">
-                        <DeleteFive
-                          theme="outline"
-                          size="20"
-                          fill="#fa1010"
-                        />删除
+                        <i-mdi-delete-outline class="w-5 h-5" />删除
                       </a>
                     </li>
                   </ul>

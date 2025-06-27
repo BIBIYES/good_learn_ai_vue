@@ -1,0 +1,12 @@
+该项目遵循典型的 Vue.js 项目结构：
+- `src/`: 包含所有源代码。
+  - `api/`: 存放 API 请求模块。
+  - `assets/`: 存放静态资源，如图片、字体等。
+  - `components/`: 存放可复用的 Vue 组件。
+  - `router/`: 存放 Vue Router 的路由配置。
+  - `stores/`: 存放 Pinia 的状态管理模块。
+  - `views/`: 存放页面的 Vue 组件。
+  - `main.js`: 应用程序的入口文件。
+- `public/`: 存放不会被 Vite 处理的静态文件。
+- `package.json`: 定义项目依赖和脚本。
+- `vite.config.js`: Vite 的配置文件。

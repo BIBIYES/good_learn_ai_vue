@@ -1,0 +1,1 @@
+该项目使用 ESLint 和 Prettier 来统一代码风格和格式。配置文件 `eslint.config.js` 和 `.prettierrc` 可以在项目根目录中找到。在提交代码前，建议运行 `npm run lint` 和 `npm run format` 来确保代码符合规范。

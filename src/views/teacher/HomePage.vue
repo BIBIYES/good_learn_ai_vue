@@ -1,5 +1,4 @@
 <script setup>
-import { Home, BookOne, Peoples, Edit, Time } from '@icon-park/vue-next'
 import { useUserStore } from '@/stores/user'
 import TeacherStatsCharts from '@/components/teacher/TeacherStatsCharts.vue' // 导入图表组件
 import gsap from 'gsap'

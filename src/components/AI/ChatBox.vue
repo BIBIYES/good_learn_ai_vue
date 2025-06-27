@@ -1,5 +1,4 @@
 <script setup>
-import { Down, Edit, DeleteFive } from '@icon-park/vue-next'
 // API和工具
 import { getChat, uploadBotChat } from '@/api/chat'
 import AIStreamClient from '@/plugin/AIStreamClient'

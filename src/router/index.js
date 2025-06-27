@@ -103,7 +103,7 @@ const router = createRouter({
         {
           path: 'exam',
           name: 'teacher-exam',
-          component: () => import('@/views/teacher/ExamView.vue'),
+          component: () => import('@/views/teacher/exam/ExamView.vue'),
         },
       ],
     },
