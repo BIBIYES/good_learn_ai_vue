@@ -116,7 +116,7 @@ const getSessionPath = sessionId => {
   <div class="w-full">
     <!-- 标题栏 -->
     <div class="flex items-center space-x-2 px-2 py-1">
-      <i-mdi-history class="w-5 h-5" />
+      <LineMdCompassTwotoneLoop />
       <span class="text-md font-bold">历史消息</span>
     </div>
 
@@ -151,21 +151,17 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <i-mdi-dots-horizontal class="w-4 h-4" />
+                    <IcBaselineMoreHoriz />
                   </div>
                   <ul
                     tabindex="0"
                     class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
                   >
                     <li>
-                      <a class="text-black">
-                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
-                      >
+                      <a class="text-black"> <LineMdEdit />修改名称</a>
                     </li>
                     <li>
-                      <a class="text-red-500">
-                        <i-mdi-delete-outline class="w-5 h-5" />删除
-                      </a>
+                      <a class="text-red-500"> <LineMdTrash />删除 </a>
                     </li>
                   </ul>
                 </div>
@@ -200,21 +196,17 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <i-mdi-dots-horizontal class="w-4 h-4" />
+                    <IcBaselineMoreHoriz />
                   </div>
                   <ul
                     tabindex="0"
                     class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
                   >
                     <li>
-                      <a class="text-black">
-                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
-                      >
+                      <a class="text-black"> <LineMdEdit />修改名称</a>
                     </li>
                     <li>
-                      <a class="text-red-500">
-                        <i-mdi-delete-outline class="w-5 h-5" />删除
-                      </a>
+                      <a class="text-red-500"> <LineMdTrash />删除 </a>
                     </li>
                   </ul>
                 </div>
@@ -248,21 +240,17 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <i-mdi-dots-horizontal class="w-4 h-4" />
+                    <IcBaselineMoreHoriz />
                   </div>
                   <ul
                     tabindex="0"
                     class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
                   >
                     <li>
-                      <a class="text-black">
-                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
-                      >
+                      <a class="text-black"> <LineMdEdit />修改名称</a>
                     </li>
                     <li>
-                      <a class="text-red-500">
-                        <i-mdi-delete-outline class="w-5 h-5" />删除
-                      </a>
+                      <a class="text-red-500"> <LineMdTrash />删除 </a>
                     </li>
                   </ul>
                 </div>
@@ -296,21 +284,17 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <i-mdi-dots-horizontal class="w-4 h-4" />
+                    <IcBaselineMoreHoriz />
                   </div>
                   <ul
                     tabindex="0"
                     class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
                   >
                     <li>
-                      <a class="text-black">
-                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
-                      >
+                      <a class="text-black"> <LineMdEdit />修改名称</a>
                     </li>
                     <li>
-                      <a class="text-red-500">
-                        <i-mdi-delete-outline class="w-5 h-5" />删除
-                      </a>
+                      <a class="text-red-500"> <LineMdTrash />删除 </a>
                     </li>
                   </ul>
                 </div>
@@ -344,21 +328,17 @@ const getSessionPath = sessionId => {
                     role="button"
                     class="btn-ghost opacity-70 hover:opacity-100 rounded-full p-1 transition-all"
                   >
-                    <i-mdi-dots-horizontal class="w-4 h-4" />
+                    <IcBaselineMoreHoriz />
                   </div>
                   <ul
                     tabindex="0"
                     class="dropdown-content menu bg-base-100 rounded-box z-[1] w-40 p-2 shadow-sm"
                   >
                     <li>
-                      <a class="text-black">
-                        <i-mdi-pencil-outline class="w-5 h-5" />修改名称</a
-                      >
+                      <a class="text-black"> <LineMdEdit />修改名称</a>
                     </li>
                     <li>
-                      <a class="text-red-500">
-                        <i-mdi-delete-outline class="w-5 h-5" />删除
-                      </a>
+                      <a class="text-red-500"> <LineMdTrash />删除 </a>
                     </li>
                   </ul>
                 </div>

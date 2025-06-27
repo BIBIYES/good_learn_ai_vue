@@ -1,1 +1,1 @@
-在本项目中，使用 `unplugin-icons` 插件时，必须使用 `LineMd` 图标集，并采用 PascalCase 的组件格式，例如 `<LineMdAccount />`。这种格式是自动导入插件正常工作所必需的，不应使用 `i-` 前缀或其他的图标集。
+在本项目中，使用 `unplugin-icons` 插件时，必须使用 `LineMd` 图标集，并采用 PascalCase 的组件格式，例如 `<LineMdAccount />`。这种格式是自动导入插件正常工作所必需的。**请不要为这些图标组件设置 `class` 属性，使用默认样式即可。**

@@ -7,7 +7,6 @@ import {
   updateTeacherCourse,
 } from '@/api/course'
 import message from '@/plugin/message'
-import { School, Add } from '@icon-park/vue-next'
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
 const router = useRouter()
 const loading = ref(true)

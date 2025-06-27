@@ -247,9 +247,9 @@ onMounted(() => {
             class="btn btn-ghost btn-sm btn-circle"
             @click="router.back()"
           >
-            <LineMdArrowLeft class="w-5 h-5" />
+            <LineMdArrowLeft />
           </button>
-          <i-mdi-file-question-outline class="w-9 h-9" />
+          <LineMdQuestionCircle />
           <span class="bank-name">{{ bankName }}</span>
           <div v-if="!loading && total > 0" class="total-count-badge">
             总计：<span class="total-count-number">{{ total }}</span> 题
@@ -259,17 +259,17 @@ onMounted(() => {
       <template #module>
         <div class="module-actions">
           <button class="btn-liquid-glass" @click="openModal('create')">
-            <i-mdi-plus class="w-4 h-4" />
+            <LineMdPlus />
             <span class="btn-text-desktop">添加题目</span>
             <span class="btn-text-mobile">添加</span>
           </button>
           <button class="btn-liquid-glass" @click="openModal('batchAdd')">
-            <i-mdi-plus class="w-4 h-4" />
+            <LineMdPlus />
             <span class="btn-text-desktop-md">批量添加题目</span>
             <span class="btn-text-mobile-md">批量添加</span>
           </button>
           <button class="btn-liquid-glass" disabled title="功能开发中">
-            <i-mdi-file-question-outline class="w-4 h-4" />
+            <LineMdQuestionCircle />
             <span class="btn-text-desktop-md">导出题目(开发中)</span>
             <span class="btn-text-mobile-md">导出(开发中)</span>
           </button>
@@ -277,7 +277,7 @@ onMounted(() => {
             class="btn-liquid-glass ai-btn"
             @click="openModal('aiGenerate')"
           >
-            <i-mdi-flash class="w-4 h-4" />
+            <LineMdFlash />
             <span class="btn-text-desktop-md">AI创建题目</span>
             <span class="btn-text-mobile-md">AI创建</span>
           </button>
@@ -286,7 +286,7 @@ onMounted(() => {
             :disabled="selectedQuestions.length === 0"
             @click="handleBatchDeleteQuestions"
           >
-            <i-mdi-delete-outline class="w-4 h-4" />
+            <LineMdTrash />
             <span class="btn-text-desktop-lg">批量删除题目</span>
             <span class="btn-text-mobile-lg">批量删除</span>
           </button>
@@ -389,14 +389,14 @@ onMounted(() => {
                   >
                     <li>
                       <a @click="openModal('edit', question)"
-                        ><i-mdi-pencil-outline class="w-3.5 h-3.5" />编辑</a
+                        ><LineMdEdit />编辑</a
                       >
                     </li>
                     <li>
                       <a
                         class="text-error"
                         @click="openModal('delete', question)"
-                        ><i-mdi-delete-outline class="w-3.5 h-3.5" />删除</a
+                        ><LineMdTrash />删除</a
                       >
                     </li>
                     <li>
@@ -449,14 +449,14 @@ onMounted(() => {
                   class="btn-liquid-glass edit xs"
                   @click="openModal('edit', question)"
                 >
-                  <i-mdi-pencil-outline class="w-3.5 h-3.5" />
+                  <LineMdEdit />
                   <span class="btn-text-desktop">编辑</span>
                 </button>
                 <button
                   class="btn-liquid-glass error xs"
                   @click="openModal('delete', question)"
                 >
-                  <i-mdi-delete-outline class="w-3.5 h-3.5" />
+                  <LineMdTrash />
                   <span class="btn-text-desktop">删除</span>
                 </button>
                 <button
@@ -551,14 +551,14 @@ onMounted(() => {
                       title="编辑题目"
                       @click="openModal('edit', question)"
                     >
-                      <i-mdi-pencil-outline class="w-3 h-3" />
+                      <LineMdEdit />
                     </button>
                     <button
                       class="btn-liquid-glass error xs"
                       title="删除题目"
                       @click="openModal('delete', question)"
                     >
-                      <i-mdi-delete-outline class="w-3 h-3" />
+                      <LineMdTrash />
                     </button>
                     <button
                       class="btn-liquid-glass xs"
