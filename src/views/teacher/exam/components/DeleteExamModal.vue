@@ -4,6 +4,10 @@ import { deleteexam } from '@/api/testApi.js'
 import message from '@/plugin/message'
 
 const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false,
+  },
   examId: {
     type: [Number, String],
     default: '',
@@ -18,8 +22,14 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['update:visible'])
+
 const deleteLoading = ref(false)
 const deleteConfirmExamName = ref('')
+
+const handleClose = () => {
+  emit('update:visible', false)
+}
 
 // 监听props变化，更新确认信息
 watch(
@@ -37,8 +47,7 @@ const confirmDelete = async () => {
     if (res.code === 200) {
       message.success('删除成功')
       // 关闭模态框
-      const modalCheckbox = document.getElementById('delete_confirm_modal')
-      if (modalCheckbox) modalCheckbox.checked = false
+      handleClose()
       // 调用父组件的成功回调
       props.onSuccess()
     } else {
@@ -54,26 +63,30 @@ const confirmDelete = async () => {
 </script>
 
 <template>
-  <input id="delete_confirm_modal" type="checkbox" class="modal-toggle" />
-  <div class="modal" role="dialog">
-    <div class="modal-box">
-      <h3 class="font-bold text-lg mb-4">确认删除</h3>
-      <p class="py-4">
-        您确定要删除试卷
-        <span class="font-bold text-error">{{ deleteConfirmExamName }}</span>
-        吗？此操作不可逆。
-      </p>
-      <div class="modal-action">
-        <label for="delete_confirm_modal" class="btn btn-ghost">取消</label>
-        <button class="btn btn-error" @click="confirmDelete">
-          <span
-            v-show="deleteLoading"
-            class="loading loading-spinner loading-md"
-          />
-          确认删除
-        </button>
-      </div>
+  <el-dialog
+    :model-value="props.visible"
+    title="确认删除"
+    width="400px"
+    align-center
+    @update:model-value="emit('update:visible', $event)"
+    @close="handleClose"
+  >
+    <div class="py-4">
+      您确定要删除试卷
+      <span class="font-bold text-error">{{ deleteConfirmExamName }}</span>
+      吗？此操作不可逆。
     </div>
-    <label class="modal-backdrop" for="delete_confirm_modal">Close</label>
-  </div>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="handleClose">取消</el-button>
+        <el-button
+          type="danger"
+          :loading="deleteLoading"
+          @click="confirmDelete"
+        >
+          确认删除
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>

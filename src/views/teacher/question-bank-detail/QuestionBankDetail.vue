@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getQuestionBankById } from '@/api/questionApi.js'
 import message from '@/plugin/message'
@@ -29,8 +29,8 @@ const total = ref(0)
 const filterDifficulty = ref('')
 const filterTitle = ref('')
 
-// 统一管理所有模态框状态
-const modals = ref({
+// 统一管理所有模态框状态 - 使用reactive代替ref
+const modals = reactive({
   create: false,
   edit: false,
   delete: false,
@@ -41,7 +41,7 @@ const modals = ref({
 })
 
 // 编辑题目数据
-const editQuestion = ref({
+const editQuestion = reactive({
   questionId: '',
   bankId: bankId.value,
   content: '',
@@ -53,7 +53,7 @@ const editQuestion = ref({
 const questionToDelete = ref(null)
 
 // 查看详情数据
-const detailQuestion = ref({})
+const detailQuestion = reactive({})
 
 // 获取题目列表
 const fetchQuestions = async (page = 1) => {
@@ -145,36 +145,38 @@ const normalizeDifficulty = difficulty => {
 
 // 统一的模态框控制函数
 const openModal = (type, data = null) => {
-  modals.value[type] = true
+  modals[type] = true
   if (type === 'edit' && data) {
-    editQuestion.value = {
-      questionId: data.questionId,
-      bankId: data.bankId,
-      content: data.content,
-      title: data.title,
-      difficulty: normalizeDifficulty(data.difficulty),
-      status: data.status,
-    }
+    // 对于reactive对象，需要直接赋值各属性而不是整体替换
+    editQuestion.questionId = data.questionId
+    editQuestion.bankId = data.bankId
+    editQuestion.content = data.content
+    editQuestion.title = data.title
+    editQuestion.difficulty = normalizeDifficulty(data.difficulty)
+    editQuestion.status = data.status
   }
   if (type === 'delete' && data) {
     questionToDelete.value = data
   }
   if (type === 'detail' && data) {
-    detailQuestion.value = { ...data }
+    // 对于reactive对象，同样需要逐个属性赋值
+    Object.assign(detailQuestion, data)
   }
 }
 
 const closeModal = type => {
-  modals.value[type] = false
+  modals[type] = false
   // 清理相关数据
-  if (type === 'edit') editQuestion.value = {}
+  if (type === 'edit') {
+    editQuestion.questionId = ''
+    editQuestion.content = ''
+    editQuestion.title = ''
+    editQuestion.difficulty = '1'
+    editQuestion.status = true
+  }
   if (type === 'delete') questionToDelete.value = null
-  if (type === 'detail') detailQuestion.value = {}
-}
-
-// 监听dialog的close事件
-const handleDialogClose = type => {
-  closeModal(type)
+  if (type === 'detail')
+    Object.keys(detailQuestion).forEach(key => delete detailQuestion[key])
 }
 
 // 全选/取消全选
@@ -605,149 +607,96 @@ onMounted(() => {
     </div>
 
     <!-- 添加题目模态框 -->
-    <dialog
-      id="create-question-modal"
-      class="modal"
-      :open="modals.create"
-      @close="handleDialogClose('create')"
+    <el-dialog
+      v-model="modals.create"
+      title="添加题目"
+      width="800px"
+      destroy-on-close
+      @closed="closeModal('create')"
     >
-      <div class="modal-box max-w-3xl">
-        <CreateQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('create')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <CreateQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
+    </el-dialog>
 
     <!-- AI创建题目模态框 -->
-    <dialog
-      id="ai-generate-modal"
-      class="modal"
-      :open="modals.aiGenerate"
-      @close="handleDialogClose('aiGenerate')"
+    <el-dialog
+      v-model="modals.aiGenerate"
+      title="题目生成器"
+      destroy-on-close
+      align-center
+      @closed="closeModal('aiGenerate')"
     >
-      <div class="modal-box max-w-none w-auto">
-        <h3 class="modal-title">题目生成器</h3>
-        <AIQuestionGenerate
-          :bank-id="bankId"
-          @success="handleAIGenerateSuccess"
-        />
-      </div>
-
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('aiGenerate')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <AIQuestionGenerate
+        :bank-id="bankId"
+        @success="handleAIGenerateSuccess"
+      />
+    </el-dialog>
 
     <!-- 批量添加题目模态框 -->
-    <dialog
-      id="batch-add-question-modal"
-      class="modal"
-      :open="modals.batchAdd"
-      @close="handleDialogClose('batchAdd')"
+    <el-dialog
+      v-model="modals.batchAdd"
+      title="批量添加题目"
+      width="800px"
+      destroy-on-close
+      @closed="closeModal('batchAdd')"
     >
-      <div class="modal-box max-w-3xl">
-        <BatchAddQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('batchAdd')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <BatchAddQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
+    </el-dialog>
 
     <!-- 编辑题目模态框 -->
-    <dialog
-      id="edit-question-modal"
-      class="modal"
-      :open="modals.edit"
-      @close="handleDialogClose('edit')"
+    <el-dialog
+      v-model="modals.edit"
+      title="编辑题目"
+      width="800px"
+      destroy-on-close
+      align-center
+      @closed="closeModal('edit')"
     >
-      <div class="modal-box max-w-3xl">
-        <EditQuestionModal
-          :question-data="editQuestion"
-          @success="handleDataRefresh"
-        />
-      </div>
-      <form method="dialog" class="modal-backdrop" @click="closeModal('edit')">
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <EditQuestionModal
+        :question-data="editQuestion"
+        @success="handleDataRefresh"
+      />
+    </el-dialog>
 
     <!-- 删除确认模态框 -->
-    <dialog
-      id="delete-question-modal"
-      class="modal"
-      :open="modals.delete"
-      @close="handleDialogClose('delete')"
+    <el-dialog
+      v-model="modals.delete"
+      title="删除题目"
+      width="500px"
+      destroy-on-close
+      align-center
+      @closed="closeModal('delete')"
     >
-      <div class="modal-box max-w-md">
-        <h3 class="modal-title">删除题目</h3>
-        <DeleteQuestionModal
-          :question="questionToDelete"
-          @success="handleDataRefresh"
-        />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('delete')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <DeleteQuestionModal
+        :question="questionToDelete"
+        @success="handleDataRefresh"
+      />
+    </el-dialog>
 
     <!-- 详情模态框 -->
-    <dialog
-      id="question-detail-modal"
-      class="modal"
-      :open="modals.detail"
-      @close="handleDialogClose('detail')"
+    <el-dialog
+      v-model="modals.detail"
+      title="题目详情"
+      width="800px"
+      destroy-on-close
+      align-center
+      @closed="closeModal('detail')"
     >
-      <div class="modal-box max-w-3xl">
-        <QuestionDetailModal :question="detailQuestion" />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('detail')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <QuestionDetailModal :question="detailQuestion" />
+    </el-dialog>
 
     <!-- 批量删除题目模态框 -->
-    <dialog
-      id="batch-delete-question-modal"
-      class="modal"
-      :open="modals.batchDelete"
-      @close="handleDialogClose('batchDelete')"
+    <el-dialog
+      v-model="modals.batchDelete"
+      title="批量删除题目"
+      width="500px"
+      destroy-on-close
+      @closed="closeModal('batchDelete')"
     >
-      <div class="modal-box max-w-md">
-        <h3 class="modal-title">批量删除题目</h3>
-        <BatchDeleteQuestionModal
-          :selected-questions="selectedQuestions"
-          @success="handleBatchDeleteSuccess"
-        />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('batchDelete')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <BatchDeleteQuestionModal
+        :selected-questions="selectedQuestions"
+        @success="handleBatchDeleteSuccess"
+      />
+    </el-dialog>
   </div>
 </template>
 

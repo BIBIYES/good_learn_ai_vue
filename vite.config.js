@@ -36,7 +36,7 @@ export default defineConfig({
       resolvers: [
         IconsResolver({
           prefix: '', // 设置为 '' 表示你可以直接使用 <HeroiconsOutlineTrash /> 而不是 <IconHeroiconsOutlineTrash />
-          enabledCollections: ['ep', 'material-symbols', 'line-md'], // 启用 Element Plus、Google Material Icons 和 Material Line Icons
+          enabledCollections: ['line-md', 'ic'], // 启用 Element Plus、Google Material Icons 和 Material Line Icons
         }),
         ElementPlusResolver({
           importStyle: false, // 不导入样式，使用全局导入的样式

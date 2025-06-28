@@ -44,15 +44,6 @@ const handleConfirm = async () => {
     loading.value = false
   }
 }
-
-// 关闭模态框
-const handleClose = () => {
-  const modal = document.getElementById('delete-question-modal')
-  if (modal) {
-    modal.close()
-  }
-  emit('close')
-}
 </script>
 
 <template>
@@ -65,12 +56,6 @@ const handleClose = () => {
       吗？此操作不可逆。
     </p>
     <div class="flex justify-end gap-2">
-      <button
-        class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-        @click="handleClose"
-      >
-        取消
-      </button>
       <button
         class="btn-liquid-glass error"
         :disabled="loading"

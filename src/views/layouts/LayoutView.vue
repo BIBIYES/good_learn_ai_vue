@@ -97,7 +97,8 @@ onMounted(() => {
 }
 .good-main-container {
   width: 100%;
-  height: 100%;
+  height: 100vh;
+  overflow-x: auto;
 }
 .sidebar {
   padding: 1rem;

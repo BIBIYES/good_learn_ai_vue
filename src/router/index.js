@@ -105,6 +105,12 @@ const router = createRouter({
           name: 'teacher-exam',
           component: () => import('@/views/teacher/exam/ExamView.vue'),
         },
+        {
+          path: 'exam/:examId',
+          name: 'teacher-exam-detail',
+          component: () =>
+            import('@/views/teacher/exam-detail/ExamDetailView.vue'),
+        },
       ],
     },
     // 学生

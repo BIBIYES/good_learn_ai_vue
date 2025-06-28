@@ -1,9 +1,13 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { updateexam } from '@/api/testApi.js'
-import message from '@/plugin/message'
+import { ElMessage } from 'element-plus'
 
 const props = defineProps({
+  visible: {
+    type: Boolean,
+    default: false,
+  },
   examId: {
     type: [Number, String],
     default: '',
@@ -22,9 +26,15 @@ const props = defineProps({
   },
 })
 
+const emit = defineEmits(['update:visible'])
+
 const updateLoading = ref(false)
 const editExamName = ref('')
 const editdescription = ref('')
+
+const handleClose = () => {
+  emit('update:visible', false)
+}
 
 // 监听props变化，更新表单数据
 watch(
@@ -40,7 +50,7 @@ watch(
 
 const handleUpdate = async () => {
   if (!editExamName.value) {
-    message.warning('请输入试卷名称')
+    ElMessage.warning('请输入试卷名称')
     return
   }
   updateLoading.value = true
@@ -50,19 +60,20 @@ const handleUpdate = async () => {
       examName: editExamName.value,
       description: editdescription.value,
     })
+    console.log(res)
+
     if (res.code === 200) {
-      message.success('更新成功')
+      ElMessage.success('更新成功')
       // 关闭模态框
-      const modalCheckbox = document.getElementById('edit_exam_modal')
-      if (modalCheckbox) modalCheckbox.checked = false
+      handleClose()
       // 调用父组件的成功回调
       props.onSuccess()
     } else {
-      message.error(res.message || '更新失败')
+      ElMessage.error(res.message || '更新失败')
     }
   } catch (error) {
     console.error('更新试卷错误:', error)
-    message.error('更新试卷时发生错误')
+    ElMessage.error('更新试卷时发生错误')
   } finally {
     updateLoading.value = false
   }
@@ -70,44 +81,41 @@ const handleUpdate = async () => {
 </script>
 
 <template>
-  <input id="edit_exam_modal" type="checkbox" class="modal-toggle" />
-  <div class="modal" role="dialog">
-    <div class="modal-box">
-      <h3 class="font-bold text-lg mb-4">编辑试卷</h3>
-      <div class="form-control mb-2">
-        <label class="label">
-          <span class="label-text"
-            >试卷名称<span class="text-error">*</span></span
-          >
-        </label>
-        <input
+  <el-dialog
+    :model-value="props.visible"
+    title="编辑试卷"
+    width="500px"
+    align-center
+    @update:model-value="emit('update:visible', $event)"
+    @close="handleClose"
+  >
+    <el-form label-position="top">
+      <el-form-item label="试卷名称" required>
+        <el-input
           v-model="editExamName"
-          type="text"
           placeholder="例如：计算机网络期末考试"
-          class="input input-bordered w-full"
         />
-      </div>
-      <div class="form-control mb-4 flex flex-col">
-        <label class="label">
-          <span class="label-text">试卷描述</span>
-        </label>
-        <textarea
+      </el-form-item>
+      <el-form-item label="试卷描述">
+        <el-input
           v-model="editdescription"
-          class="textarea textarea-bordered h-24"
+          type="textarea"
+          :rows="4"
           placeholder="输入试卷的简要描述"
         />
-      </div>
-      <div class="modal-action">
-        <label for="edit_exam_modal" class="btn btn-ghost">取消</label>
-        <button class="btn btn-primary" @click="handleUpdate">
-          <span
-            v-show="updateLoading"
-            class="loading loading-spinner loading-md"
-          />
+      </el-form-item>
+    </el-form>
+    <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="handleClose">取消</el-button>
+        <el-button
+          type="primary"
+          :loading="updateLoading"
+          @click="handleUpdate"
+        >
           确认更新
-        </button>
-      </div>
-    </div>
-    <label class="modal-backdrop" for="edit_exam_modal">Close</label>
-  </div>
+        </el-button>
+      </span>
+    </template>
+  </el-dialog>
 </template>
