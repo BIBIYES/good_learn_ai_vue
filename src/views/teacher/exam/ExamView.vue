@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { getexam } from '@/api/test'
+import { getexam } from '@/api/testApi.js'
 import message from '@/plugin/message'
 import CreateExamModal from './components/CreateExamModal.vue'
 import EditExamModal from './components/EditExamModal.vue'
@@ -128,12 +128,12 @@ onMounted(() => {
   <div class="flex flex-col h-full p-4">
     <TitleBar>
       <template #title>
-        <DocumentFolder theme="outline" size="38" />
+        <LineMdClipboardCheckTwotone />
         <span>我的试卷</span>
       </template>
       <template #module>
         <label for="create_exam_modal" class="btn btn-primary btn-sm md:btn-md">
-          <Add theme="outline" size="18" />
+          <LineMdPlus />
           创建试卷
         </label>
       </template>

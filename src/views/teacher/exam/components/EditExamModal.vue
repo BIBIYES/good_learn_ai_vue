@@ -1,6 +1,6 @@
 <script setup>
 import { ref, watch } from 'vue'
-import { updateexam } from '@/api/test'
+import { updateexam } from '@/api/testApi.js'
 import message from '@/plugin/message'
 
 const props = defineProps({

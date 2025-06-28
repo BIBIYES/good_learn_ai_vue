@@ -1,8 +1,8 @@
 <script setup>
-import AIStreamClient from '@/plugin/AIStreamClient'
+import AiStreamClient from '@/plugin/aiStreamClient.js'
 import { ref, computed } from 'vue'
 import { marked } from 'marked'
-import { batchQuestions } from '@/api/question'
+import { batchQuestions } from '@/api/questionApi.js'
 import message from '@/plugin/message'
 import AIGeneratedQuestionPreview from './AIGeneratedQuestionPreview.vue'
 import gsap from 'gsap'
@@ -134,7 +134,7 @@ const handleSubmit = () => {
   selectedQuestions.value = [] // 重置选中
 
   // 发送消息并处理流式响应
-  const ai = AIStreamClient.init({
+  const ai = AiStreamClient.init({
     baseUrl: '/api/v1/question/ai-create-stream',
   })
   ai.send(JSON.stringify({ question: prompt.value }), {

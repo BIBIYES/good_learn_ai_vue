@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import MarkdownEditor from '@/components/common/MarkdownEditor.vue'
-import { updateQuestion } from '@/api/question'
+import { updateQuestion } from '@/api/questionApi.js'
 import message from '@/plugin/message'
 
 const props = defineProps({

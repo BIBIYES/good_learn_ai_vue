@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { addexam } from '@/api/test'
+import { addexam } from '@/api/testApi.js'
 import message from '@/plugin/message'
 
 const props = defineProps({

@@ -8,7 +8,7 @@ const route = useRoute()
       <li class="">
         <router-link
           to="/s/home"
-          :class="{ 'menu-active': route.name === 'student-home-page' }"
+          :class="{ 'menu-active': route.name === 'student-home-components' }"
         >
           <LineMdHomeMdAltTwotone />
           <a href="#" class="">首页</a>
@@ -25,20 +25,13 @@ const route = useRoute()
       </li>
       <li>
         <router-link
-          to="/s/my-course"
-          :class="{ 'menu-active': route.path.startsWith('/s/my-course') }"
+          to="/s/course"
+          :class="{
+            'menu-active': route.path.startsWith('/s/course'),
+          }"
         >
           <LineMdPencilAltTwotone />
           <a href="#">我的课程</a>
-        </router-link>
-      </li>
-      <li>
-        <router-link
-          to="/s/my-test-paper"
-          :class="{ 'menu-active': route.name === 'student-test-paper' }"
-        >
-          <LineMdCheckList3 />
-          <a href="#">未设置的按钮</a>
         </router-link>
       </li>
     </ul>

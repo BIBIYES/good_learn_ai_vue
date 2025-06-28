@@ -12,7 +12,7 @@ import Components from 'unplugin-vue-components/vite'
 import Icons from 'unplugin-icons/vite'
 // 图标解析器
 import IconsResolver from 'unplugin-icons/resolver'
-
+import { ElementPlusResolver } from 'unplugin-vue-components/resolvers'
 // https://vite.dev/config/
 
 export default defineConfig({
@@ -28,6 +28,7 @@ export default defineConfig({
         filepath: './.eslintrc-auto-import.json', // 生成 ESLint 兼容的全局变量配置文件
         globalsPropValue: true, // 将自动导入的 API 作为全局变量
       },
+      resolvers: [ElementPlusResolver()],
     }),
     Components({
       dts: false, // 指定类型声明文件的路径
@@ -36,10 +37,11 @@ export default defineConfig({
         IconsResolver({
           prefix: '', // 设置为 '' 表示你可以直接使用 <HeroiconsOutlineTrash /> 而不是 <IconHeroiconsOutlineTrash />
         }),
+        ElementPlusResolver(),
       ],
     }),
     Icons({
-      autoInstall: true, // 没有这个参数的话，第一次用图标会报错找不到
+      autoInstall: false, // 没有这个参数的话，第一次用图标会报错找不到
     }),
   ],
   // 自动导入组件
@@ -56,6 +58,13 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        additionalData: `@use "@/styles/element/index.scss" as *;`,
+      },
     },
   },
 })

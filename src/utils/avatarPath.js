@@ -1,4 +1,4 @@
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStores.js'
 
 /**
  * 此方法会获取用户的信息来返回头像路径

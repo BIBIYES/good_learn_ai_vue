@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getQuestionBankById } from '@/api/question'
+import { getQuestionBankById } from '@/api/questionApi.js'
 import message from '@/plugin/message'
 
 import DgLoadingText from '@/components/common/GdLoadingText.vue'

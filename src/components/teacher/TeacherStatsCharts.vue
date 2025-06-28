@@ -49,7 +49,7 @@ let activityChartInstance = null
 let assignmentChartInstance = null
 
 const initCharts = () => {
-  // Course Distribution Chart (Pie)
+  // course-detail Distribution Chart (Pie)
   if (courseChartRef.value && !courseChartInstance) {
     courseChartInstance = echarts.init(courseChartRef.value)
   }
@@ -216,7 +216,7 @@ onUnmounted(() => {
 
 <template>
   <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-6">
-    <!-- Course Distribution Chart -->
+    <!-- course-detail Distribution Chart -->
     <div class="chart-container bg-base-100 shadow rounded-lg p-4">
       <div ref="courseChartRef" style="width: 100%; height: 300px" />
     </div>

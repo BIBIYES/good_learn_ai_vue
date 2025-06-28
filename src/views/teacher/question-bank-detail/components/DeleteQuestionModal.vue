@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { deleteQuestion } from '@/api/question'
+import { deleteQuestion } from '@/api/questionApi.js'
 import message from '@/plugin/message'
 
 const props = defineProps({

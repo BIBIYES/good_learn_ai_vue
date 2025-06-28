@@ -1,6 +1,4 @@
 <script setup>
-import { Edit, Delete } from '@icon-park/vue-next'
-
 defineProps({
   questions: {
     type: Array,
@@ -12,7 +10,7 @@ defineProps({
   },
 })
 
-const emit = defineEmits(['edit', 'delete', 'page-change', 'size-change'])
+const emit = defineEmits(['edit', 'delete', 'components-change', 'size-change'])
 
 // 格式化日期
 const formatDate = dateString => {

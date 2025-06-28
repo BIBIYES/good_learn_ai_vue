@@ -9,7 +9,7 @@ const route = useRoute()
       <li class="">
         <router-link
           to="/t/home"
-          :class="{ 'menu-active': route.name === 'teacher-home-page' }"
+          :class="{ 'menu-active': route.name === 'teacher-home-components' }"
         >
           <LineMdHomeMdAltTwotone />
           <a href="#">首页</a>
@@ -27,7 +27,7 @@ const route = useRoute()
       <li class="">
         <router-link
           to="/t/course"
-          :class="{ 'menu-active': route.name === 'teacher-course' }"
+          :class="{ 'menu-active': route.name === 'teacher-course-detail' }"
         >
           <LineMdPencilAltTwotone />
           <a href="#">我的课程</a>

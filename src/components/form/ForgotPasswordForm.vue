@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue'
-import { getVerificationCodes, forGetPassword } from '@/api/user'
+import { getVerificationCodes, forGetPassword } from '@/api/userApi.js'
 import message from '@/plugin/message'
 import { useRouter } from 'vue-router'
 
