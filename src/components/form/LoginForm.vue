@@ -30,8 +30,6 @@ const handleLogin = async () => {
     } else {
       ElMessage.error({
         message: res.message,
-        duration: 0,
-        position: 'top-center',
       })
     }
   } finally {

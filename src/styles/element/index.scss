@@ -2,7 +2,25 @@
 @forward 'element-plus/theme-chalk/src/common/var.scss' with (
   $colors: (
     'primary': (
-      'base': green,
+      'base': rgb(125, 196, 150),
+    ),
+    'error': (
+      'base': red,
     ),
   )
 );
+@use '@/styles/element/var.scss' as *;
+
+// 通知复写
+.el-message {
+  width: 80%;
+  background: none !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 20px !important;
+}
+
+.el-pagination {
+  padding: 10px;
+  border-radius: $border-radius-xl;
+  background-color: var(--el-bg-color-page);
+}

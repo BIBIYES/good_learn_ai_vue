@@ -5,9 +5,6 @@
 html {
   scroll-behavior: smooth; /* 实现平滑滚动 */
   font-family: 'Poppins', 'Noto Sans SC', sans-serif;
-  scrollbar-gutter: stable; /* 保持滚动条占用宽度 */
-}
-
-* {
-  --color-primary: rgb(131, 205, 157);
+  /* 保持滚动条占用宽度 */
+  /* scrollbar-gutter: stable; */
 }

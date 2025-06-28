@@ -12,6 +12,7 @@
     "prepare": "husky"
   },
   "dependencies": {
+    "@element-plus/icons-vue": "^2.3.1",
     "@tailwindcss/vite": "^4.0.3",
     "animate.css": "^4.1.1",
     "axios": "^1.8.4",
@@ -33,10 +34,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.24.0",
-    "@iconify-json/el": "^1.2.1",
     "@iconify-json/ic": "^1.2.2",
     "@iconify-json/line-md": "^1.2.8",
-    "@iconify-json/si": "^1.2.3",
     "@vitejs/plugin-vue": "^5.2.1",
     "daisyui": "^5.0.0-beta.6",
     "eslint": "^9.24.0",
@@ -46,7 +45,6 @@
     "globals": "^16.0.0",
     "husky": "^9.1.7",
     "prettier": "^3.5.3",
-    "sass": "^1.89.2",
     "sass-embedded": "^1.89.2",
     "unplugin-auto-import": "^19.0.0",
     "unplugin-icons": "^22.1.0",

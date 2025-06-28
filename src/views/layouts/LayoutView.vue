@@ -48,12 +48,10 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="app flex h-screen overflow-hidden">
+  <div class="good-container">
     <!-- 侧边导航栏 -->
-    <div
-      class="sidebar p-4 flex-col justify-between items-center hidden sm:flex transition-all duration-300 w-75"
-    >
-      <nav class="flex flex-col items-center space-y-4">
+    <div class="sidebar">
+      <nav class="sidebar-nav">
         <!-- 网站Logo -->
         <div class="my-logo">
           <MyLogo />
@@ -67,31 +65,59 @@ onMounted(() => {
         </div>
       </nav>
       <!-- 页面底部导航链接 -->
-      <footer
-        class="flex flex-col items-center space-y-4 animate__animated animate__fadeInUpBig"
-      >
+      <footer class="sidebar-footer">
         <!-- 主题切换按钮 -->
-        <button class="btn btn-md w-30" @click="toggleTheme">
+        <button class="theme-btn btn" @click="toggleTheme">
           <LineMdMoonTwotoneAltLoop v-if="isDarkMode" />
           <LineMdSunnyOutlineLoop v-else />
           {{ isDarkMode ? '亮色模式' : '暗色模式' }}
         </button>
 
-        <button class="btn btn-md w-30" @click="navigateToGithub()">
+        <button class="github-btn btn" @click="navigateToGithub()">
           <LineMdGithubTwotone />Github
         </button>
         <router-link to="/about">
-          <button class="btn btn-md w-30">
-            <LineMdPersonTwotone />关于我们
-          </button>
+          <button class="about-btn btn"><LineMdPersonTwotone />关于我们</button>
         </router-link>
       </footer>
     </div>
     <!-- 主内容区域 -->
-    <div class="main flex-1 bg-base-100 rounded-r-md">
+    <div class="good-main-container">
       <RouterView />
     </div>
   </div>
 </template>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.good-container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+.good-main-container {
+  width: 100%;
+  height: 100%;
+}
+.sidebar {
+  padding: 1rem;
+  height: 100%;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  .sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    button {
+      min-width: 50%;
+      padding: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+}
+</style>

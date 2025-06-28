@@ -277,7 +277,6 @@ onMounted(() => {
             class="btn-liquid-glass ai-btn"
             @click="openModal('aiGenerate')"
           >
-            <LineMdFlash />
             <span class="btn-text-desktop-md">AI创建题目</span>
             <span class="btn-text-mobile-md">AI创建</span>
           </button>

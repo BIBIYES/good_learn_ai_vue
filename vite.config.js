@@ -36,12 +36,16 @@ export default defineConfig({
       resolvers: [
         IconsResolver({
           prefix: '', // 设置为 '' 表示你可以直接使用 <HeroiconsOutlineTrash /> 而不是 <IconHeroiconsOutlineTrash />
+          enabledCollections: ['ep', 'material-symbols', 'line-md'], // 启用 Element Plus、Google Material Icons 和 Material Line Icons
         }),
-        ElementPlusResolver(),
+        ElementPlusResolver({
+          importStyle: false, // 不导入样式，使用全局导入的样式
+        }),
       ],
     }),
     Icons({
-      autoInstall: false, // 没有这个参数的话，第一次用图标会报错找不到
+      autoInstall: false, // 自动安装使用的图标集合
+      compiler: 'vue3', // 编译为 Vue 3 组件
     }),
   ],
   // 自动导入组件
@@ -58,13 +62,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url)),
-    },
-  },
-  css: {
-    preprocessorOptions: {
-      scss: {
-        additionalData: `@use "@/styles/element/index.scss" as *;`,
-      },
     },
   },
 })

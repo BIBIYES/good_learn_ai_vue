@@ -4,7 +4,7 @@ import { useRouter } from 'vue-router'
 // 导入GSAP动画库
 import { gsap } from 'gsap'
 import { ref, onMounted, onUnmounted, watch } from 'vue'
-import { ElButton } from 'element-plus'
+
 // 获取router实例
 const router = useRouter()
 
@@ -235,7 +235,6 @@ onUnmounted(() => {
           >
             登录
           </button>
-          <el-button type="primary"></el-button>
           <button
             class="tab-btn flex-1 py-3 px-6 text-center font-medium transition-all"
             :class="{ 'tab-active': $route.path === '/register' }"
