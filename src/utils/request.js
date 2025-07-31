@@ -1,6 +1,6 @@
 import axios from 'axios'
 import message from '@/plugin/message'
-import { useUserStore } from '@/stores/user'
+import { useUserStore } from '@/stores/userStores.js'
 import router from '@/router'
 
 const request = axios.create({
@@ -31,11 +31,6 @@ request.interceptors.response.use(
     // 2xx 范围内的状态码都会触发该函数。
     // 对响应数据做点什么
     console.log(response.data)
-
-    if (response.data.code != 200) {
-      message.error(response.data.message)
-    }
-
     return response.data
   },
   function (error) {

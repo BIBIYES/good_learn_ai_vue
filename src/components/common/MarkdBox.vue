@@ -88,6 +88,9 @@ onMounted(() => {
   </div>
 </template>
 <style>
+.markdown-body {
+  border-radius: 10px;
+}
 .code-block-wrapper {
   position: relative;
   margin: 1em 0;

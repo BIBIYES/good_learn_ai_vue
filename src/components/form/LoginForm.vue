@@ -1,9 +1,8 @@
 <script setup>
 import { ref } from 'vue'
-import { login } from '@/api/user'
-import { useUserStore } from '@/stores/user'
-import message from '@/plugin/message'
-
+import { login } from '@/api/userApi.js'
+import { useUserStore } from '@/stores/userStores.js'
+import { ElMessage } from 'element-plus'
 const router = useRouter()
 const user = useUserStore()
 const loginInfo = ref({
@@ -12,23 +11,30 @@ const loginInfo = ref({
 })
 const handleLogin = async () => {
   btnLoading.value = true
-  const res = await login(loginInfo.value)
-  if (res.code == 200) {
-    console.log('登录成功')
-    message.success(res.message)
-    user.setUserInfo(res.data)
-    btnLoading.value = false
-    if (res.data.role == 'student') {
-      console.log('学生登录')
+  try {
+    const res = await login(loginInfo.value)
+    if (res.code == 200) {
+      console.log('登录成功')
+      ElMessage.success(res.message)
+      user.setUserInfo(res.data)
+      btnLoading.value = false
+      if (res.data.role == 'student') {
+        console.log('学生登录')
 
-      router.push('/s/home')
-    } else if (res.data.role == 'teacher') {
-      console.log('老师登录')
+        router.push('/s/home')
+      } else if (res.data.role == 'teacher') {
+        console.log('老师登录')
 
-      router.push('/t/home')
+        router.push('/t/home')
+      }
+    } else {
+      ElMessage.error({
+        message: res.message,
+      })
     }
+  } finally {
+    btnLoading.value = false
   }
-  console.log(res)
 }
 
 const btnLoading = ref(false)

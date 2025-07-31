@@ -9,9 +9,6 @@ const props = defineProps({
   },
 })
 
-const emit = defineEmits(['close'])
-
-// 详情数据
 const detailQuestion = ref({})
 
 // 监听question变化
@@ -62,40 +59,11 @@ const formatDate = dateString => {
     return dateString
   }
 }
-
-// 关闭模态框
-const handleClose = () => {
-  // 使用dialog关闭方法
-  const modal = document.getElementById('question-detail-modal')
-  if (modal) {
-    modal.close()
-  }
-  emit('close')
-}
 </script>
 
 <template>
-  <div class="flex flex-col">
-    <div class="flex items-center justify-between mb-4">
-      <h3 class="font-bold text-xl">题目详情</h3>
-      <button
-        class="btn btn-sm btn-circle text-gray-500 hover:text-gray-700 hover:bg-gray-100"
-        @click="handleClose"
-      >
-        ✕
-      </button>
-    </div>
+  <div class="flex flex-col h-[calc(100vh-200px)] overflow-y-auto">
     <div class="divide-y divide-gray-100">
-      <div class="py-3 flex">
-        <div class="font-medium text-gray-500 w-24">题目ID</div>
-        <div class="text-gray-800">
-          {{ detailQuestion.questionId || '-' }}
-        </div>
-      </div>
-      <div class="py-3 flex">
-        <div class="font-medium text-gray-500 w-24">题库ID</div>
-        <div class="text-gray-800">{{ detailQuestion.bankId || '-' }}</div>
-      </div>
       <div class="py-3 flex">
         <div class="font-medium text-gray-500 w-24">标题</div>
         <div class="text-gray-800">{{ detailQuestion.title || '-' }}</div>
@@ -121,17 +89,6 @@ const handleClose = () => {
         </div>
       </div>
       <div class="py-3 flex">
-        <div class="font-medium text-gray-500 w-24">状态</div>
-        <div class="text-gray-800">
-          <div
-            class="badge-liquid-glass"
-            :class="detailQuestion.status ? 'success' : 'disabled'"
-          >
-            {{ detailQuestion.status ? '已启用' : '未启用' }}
-          </div>
-        </div>
-      </div>
-      <div class="py-3 flex">
         <div class="font-medium text-gray-500 w-24">创建时间</div>
         <div class="text-gray-800">
           {{ formatDate(detailQuestion.createdAt) }}
@@ -143,9 +100,6 @@ const handleClose = () => {
           {{ formatDate(detailQuestion.updatedAt) }}
         </div>
       </div>
-    </div>
-    <div class="mt-6 flex justify-end">
-      <button class="btn-liquid-glass" @click="handleClose">关闭</button>
     </div>
   </div>
 </template>

@@ -1,0 +1,10 @@
+@import 'tailwindcss';
+@plugin "daisyui" {
+  themes: all;
+}
+html {
+  scroll-behavior: smooth; /* 实现平滑滚动 */
+  font-family: 'Poppins', 'Noto Sans SC', sans-serif;
+  /* 保持滚动条占用宽度 */
+  /* scrollbar-gutter: stable; */
+}

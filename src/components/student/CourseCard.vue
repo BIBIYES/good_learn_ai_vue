@@ -3,7 +3,7 @@
     class="course-card-container"
     @click="
       router.push({
-        name: 'student-course-detail',
+        name: 'student-course-detail-detail',
         params: { courseId: String(courseInfo.courseId) },
       })
     "
@@ -106,7 +106,6 @@
 </template>
 
 <script setup>
-import { Trophy, Peoples } from '@icon-park/vue-next'
 import { useRouter } from 'vue-router'
 import { computed } from 'vue'
 

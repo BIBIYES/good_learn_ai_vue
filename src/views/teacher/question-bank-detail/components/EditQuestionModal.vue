@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue'
 import MarkdownEditor from '@/components/common/MarkdownEditor.vue'
-import { updateQuestion } from '@/api/question'
+import { updateQuestion } from '@/api/questionApi.js'
 import message from '@/plugin/message'
 
 const props = defineProps({
@@ -86,8 +86,6 @@ const handleClose = () => {
 
 <template>
   <div>
-    <h3 class="font-bold text-xl mb-4">编辑题目</h3>
-
     <div class="form-control mb-4">
       <label class="label">
         <span class="label-text font-medium"
@@ -174,12 +172,6 @@ const handleClose = () => {
     </div>
 
     <div class="flex justify-end gap-2 mt-6">
-      <button
-        class="btn-liquid-glass bg-gray-50 hover:bg-gray-100 text-gray-700"
-        @click="handleClose"
-      >
-        取消
-      </button>
       <button
         class="btn-liquid-glass wechat-green"
         :disabled="loading"

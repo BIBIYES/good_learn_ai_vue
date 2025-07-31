@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import { getCourseList } from '@/api/course'
+import { getCourseList } from '@/api/courseApi.js'
 import { onMounted, ref } from 'vue'
 
 const studentList = ref([])

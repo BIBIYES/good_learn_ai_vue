@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 import * as echarts from 'echarts'
-import { Time, Book, Trophy } from '@icon-park/vue-next'
 
 // 接收父组件传递的数据
 const props = defineProps({
@@ -268,7 +267,7 @@ onBeforeUnmount(() => {
       class="chart-card bg-base-100 shadow rounded-lg p-4 hover:shadow-md transition-all"
     >
       <div class="flex items-center justify-center mb-2">
-        <Time theme="outline" size="20" class="text-primary mr-2" />
+        <IcBaselineAccessAlarm />
         <h3 class="text-base font-medium">本周学习时间分布</h3>
       </div>
       <div ref="weeklyChartRef" class="chart-container h-64" />
@@ -278,7 +277,7 @@ onBeforeUnmount(() => {
       class="chart-card bg-base-100 shadow rounded-lg p-4 hover:shadow-md transition-all"
     >
       <div class="flex items-center justify-center mb-2">
-        <Book theme="outline" size="20" class="text-secondary mr-2" />
+        <IcBaselineMenuBook />
         <h3 class="text-base font-medium">课程完成率</h3>
       </div>
       <div ref="courseChartRef" class="chart-container h-64" />
@@ -288,7 +287,7 @@ onBeforeUnmount(() => {
       class="chart-card bg-base-100 shadow rounded-lg p-4 hover:shadow-md transition-all"
     >
       <div class="flex items-center justify-center mb-2">
-        <Trophy theme="outline" size="20" class="text-accent mr-2" />
+        <IcBaselineTimelapse />
         <h3 class="text-base font-medium">学科成绩分布</h3>
       </div>
       <div ref="subjectChartRef" class="chart-container h-64" />

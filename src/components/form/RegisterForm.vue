@@ -1,6 +1,6 @@
 <script setup>
-import { getSchools } from '@/api/schools'
-import { getVerificationCodes, register } from '@/api/user'
+import { getSchools } from '@/api/schoolsApi.js'
+import { getVerificationCodes, register } from '@/api/userApi.js'
 import message from '@/plugin/message'
 
 const router = useRouter()

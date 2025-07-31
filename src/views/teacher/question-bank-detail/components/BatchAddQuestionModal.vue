@@ -1,12 +1,12 @@
 <script setup>
 import { ref } from 'vue'
-import { FileQuestion } from '@icon-park/vue-next'
+
 import {
   generateQuestionTemplate,
   parseExcelToQuestions,
   isExcelFile,
 } from '@/utils/excelUtils'
-import { batchQuestions } from '@/api/question'
+import { batchQuestions } from '@/api/questionApi.js'
 import message from '@/plugin/message'
 
 const props = defineProps({

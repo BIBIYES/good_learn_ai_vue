@@ -1,0 +1,5 @@
+// 引入自定义变量
+@use './element/index.scss' as *;
+
+// 引入 Element Plus 组件样式
+@use 'element-plus/theme-chalk/src/index.scss' as *;

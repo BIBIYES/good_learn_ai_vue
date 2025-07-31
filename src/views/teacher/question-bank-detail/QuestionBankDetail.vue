@@ -1,16 +1,9 @@
 <script setup>
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { getQuestionBankById } from '@/api/question'
+import { getQuestionBankById } from '@/api/questionApi.js'
 import message from '@/plugin/message'
-import {
-  FileQuestion,
-  Add,
-  ArrowLeft,
-  Edit,
-  Delete,
-  Lightning,
-} from '@icon-park/vue-next'
+
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
 
 // 导入模态框组件
@@ -36,19 +29,19 @@ const total = ref(0)
 const filterDifficulty = ref('')
 const filterTitle = ref('')
 
-// 统一管理所有模态框状态
-const modals = ref({
+// 统一管理所有模态框状态 - 使用reactive代替ref
+const modals = reactive({
   create: false,
   edit: false,
   delete: false,
   detail: false,
   batchAdd: false,
   batchDelete: false,
-  aiDrawer: false,
+  aiGenerate: false,
 })
 
 // 编辑题目数据
-const editQuestion = ref({
+const editQuestion = reactive({
   questionId: '',
   bankId: bankId.value,
   content: '',
@@ -60,7 +53,7 @@ const editQuestion = ref({
 const questionToDelete = ref(null)
 
 // 查看详情数据
-const detailQuestion = ref({})
+const detailQuestion = reactive({})
 
 // 获取题目列表
 const fetchQuestions = async (page = 1) => {
@@ -152,36 +145,38 @@ const normalizeDifficulty = difficulty => {
 
 // 统一的模态框控制函数
 const openModal = (type, data = null) => {
-  modals.value[type] = true
+  modals[type] = true
   if (type === 'edit' && data) {
-    editQuestion.value = {
-      questionId: data.questionId,
-      bankId: data.bankId,
-      content: data.content,
-      title: data.title,
-      difficulty: normalizeDifficulty(data.difficulty),
-      status: data.status,
-    }
+    // 对于reactive对象，需要直接赋值各属性而不是整体替换
+    editQuestion.questionId = data.questionId
+    editQuestion.bankId = data.bankId
+    editQuestion.content = data.content
+    editQuestion.title = data.title
+    editQuestion.difficulty = normalizeDifficulty(data.difficulty)
+    editQuestion.status = data.status
   }
   if (type === 'delete' && data) {
     questionToDelete.value = data
   }
   if (type === 'detail' && data) {
-    detailQuestion.value = { ...data }
+    // 对于reactive对象，同样需要逐个属性赋值
+    Object.assign(detailQuestion, data)
   }
 }
 
 const closeModal = type => {
-  modals.value[type] = false
+  modals[type] = false
   // 清理相关数据
-  if (type === 'edit') editQuestion.value = {}
+  if (type === 'edit') {
+    editQuestion.questionId = ''
+    editQuestion.content = ''
+    editQuestion.title = ''
+    editQuestion.difficulty = '1'
+    editQuestion.status = true
+  }
   if (type === 'delete') questionToDelete.value = null
-  if (type === 'detail') detailQuestion.value = {}
-}
-
-// 监听dialog的close事件
-const handleDialogClose = type => {
-  closeModal(type)
+  if (type === 'detail')
+    Object.keys(detailQuestion).forEach(key => delete detailQuestion[key])
 }
 
 // 全选/取消全选
@@ -224,6 +219,12 @@ const handleDataRefresh = () => {
   fetchQuestions(currentPage.value)
 }
 
+// AI生成成功后的处理
+const handleAIGenerateSuccess = () => {
+  handleDataRefresh()
+  closeModal('aiGenerate')
+}
+
 // 批量删除成功后的处理
 const handleBatchDeleteSuccess = () => {
   selectedQuestions.value = []
@@ -240,109 +241,91 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="flex flex-col h-full p-4 bg-white relative">
-    <TitleBar class="p-4 mb-4">
+  <div class="question-bank-detail-page">
+    <TitleBar class="page-title-bar">
       <template #title>
-        <div class="flex flex-wrap items-center gap-2">
+        <div class="title-content">
           <button
             class="btn btn-ghost btn-sm btn-circle"
             @click="router.back()"
           >
-            <ArrowLeft theme="outline" size="20" />
+            <LineMdArrowLeft />
           </button>
-          <FileQuestion theme="outline" size="38" />
-          <span class="font-semibold">{{ bankName }}</span>
+          <LineMdQuestionCircle />
+          <span class="bank-name">{{ bankName }}</span>
           <div v-if="!loading && total > 0" class="total-count-badge">
             总计：<span class="total-count-number">{{ total }}</span> 题
           </div>
         </div>
       </template>
       <template #module>
-        <div class="flex flex-wrap gap-2 mt-2 md:mt-0">
+        <div class="module-actions">
           <button class="btn-liquid-glass" @click="openModal('create')">
-            <Add theme="outline" size="16" />
-            <span class="hidden sm:inline">添加题目</span>
-            <span class="sm:hidden">添加</span>
+            <LineMdPlus />
+            <span class="btn-text-desktop">添加题目</span>
+            <span class="btn-text-mobile">添加</span>
           </button>
           <button class="btn-liquid-glass" @click="openModal('batchAdd')">
-            <Add theme="outline" size="16" />
-            <span class="hidden md:inline">批量添加题目</span>
-            <span class="md:hidden">批量添加</span>
+            <LineMdPlus />
+            <span class="btn-text-desktop-md">批量添加题目</span>
+            <span class="btn-text-mobile-md">批量添加</span>
           </button>
           <button class="btn-liquid-glass" disabled title="功能开发中">
-            <FileQuestion theme="outline" size="16" />
-            <span class="hidden md:inline">导出题目(开发中)</span>
-            <span class="md:hidden">导出(开发中)</span>
+            <LineMdQuestionCircle />
+            <span class="btn-text-desktop-md">导出题目(开发中)</span>
+            <span class="btn-text-mobile-md">导出(开发中)</span>
           </button>
           <button
             class="btn-liquid-glass ai-btn"
-            @click="modals.aiDrawer = true"
+            @click="openModal('aiGenerate')"
           >
-            <Lightning theme="outline" size="16" />
-            <span class="hidden md:inline">AI创建题目</span>
-            <span class="md:hidden">AI创建</span>
+            <span class="btn-text-desktop-md">AI创建题目</span>
+            <span class="btn-text-mobile-md">AI创建</span>
           </button>
           <button
             class="btn-liquid-glass error"
             :disabled="selectedQuestions.length === 0"
             @click="handleBatchDeleteQuestions"
           >
-            <Delete theme="outline" size="16" />
-            <span class="hidden lg:inline">批量删除题目</span>
-            <span class="lg:hidden">批量删除</span>
+            <LineMdTrash />
+            <span class="btn-text-desktop-lg">批量删除题目</span>
+            <span class="btn-text-mobile-lg">批量删除</span>
           </button>
         </div>
       </template>
     </TitleBar>
 
     <!-- Main content area -->
-    <div class="flex-1 overflow-y-auto p-4 md:p-6">
+    <div class="main-content">
       <!-- Filter box -->
-      <div class="flex flex-wrap gap-4 p-4 mb-4">
-        <div
-          class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]"
-        >
+      <div class="filter-box">
+        <div class="filter-item">
           <label class="label">
-            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]"
-              >难度筛选</span
-            >
+            <span class="filter-label">难度筛选</span>
           </label>
-          <select
-            v-model="filterDifficulty"
-            class="select w-full bg-[rgba(255,255,255,0.7)] backdrop-blur-sm border border-[rgba(140,220,160,0.3)] focus:border-[rgba(100,200,130,0.5)] focus:ring-2 focus:ring-[rgba(100,200,130,0.2)] transition-all duration-300"
-          >
+          <select v-model="filterDifficulty" class="select filter-select">
             <option value="">全部</option>
             <option value="easy">简单</option>
             <option value="medium">中等</option>
             <option value="hard">困难</option>
           </select>
         </div>
-        <div
-          class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]"
-        >
+        <div class="filter-item">
           <label class="label">
-            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]"
-              >标题搜索</span
-            >
+            <span class="filter-label">标题搜索</span>
           </label>
           <input
             v-model="filterTitle"
             type="text"
             placeholder="输入标题关键词"
-            class="input w-full bg-[rgba(255,255,255,0.7)] backdrop-blur-sm border border-[rgba(140,220,160,0.3)] focus:border-[rgba(100,200,130,0.5)] focus:ring-2 focus:ring-[rgba(100,200,130,0.2)] transition-all duration-300"
+            class="input filter-input"
           />
         </div>
-        <div
-          class="form-control flex-1 min-w-[200px] p-3 rounded-lg bg-gradient-to-br from-[rgba(248,255,250,0.15)] to-[rgba(245,253,248,0.08)] backdrop-blur-md border border-[rgba(140,220,160,0.25)]"
-        >
+        <div class="filter-item">
           <label class="label">
-            <span class="label-text font-medium text-[rgba(60,180,110,0.8)]"
-              >状态筛选</span
-            >
+            <span class="filter-label">状态筛选</span>
           </label>
-          <select
-            class="select w-full bg-[rgba(255,255,255,0.7)] backdrop-blur-sm border border-[rgba(140,220,160,0.3)] focus:border-[rgba(100,200,130,0.5)] focus:ring-2 focus:ring-[rgba(100,200,130,0.2)] transition-all duration-300"
-          >
+          <select class="select filter-select">
             <option value="">全部</option>
             <option value="true">已启用</option>
             <option value="false">未启用</option>
@@ -351,32 +334,27 @@ onMounted(() => {
       </div>
 
       <!-- Loading State -->
-      <div v-if="loading" class="w-full overflow-x-auto">
-        <div
-          class="bg-gradient-to-br from-[rgba(248,255,250,0.3)] to-[rgba(245,253,248,0.2)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.6)] shadow-sm p-8"
-        >
-          <div class="flex justify-center items-center py-12">
+      <div v-if="loading" class="loading-container">
+        <div class="loading-box">
+          <div class="loading-content">
             <DgLoadingText text="正在获取题目列表...."></DgLoadingText>
           </div>
         </div>
       </div>
 
       <!-- Questions Table -->
-      <div
-        v-else
-        class="overflow-x-auto w-full animate__animated animate__fadeIn"
-      >
+      <div v-else class="questions-container">
         <!-- 移动端卡片视图 -->
-        <div class="block lg:hidden">
-          <div class="grid grid-cols-1 gap-4">
+        <div class="mobile-view">
+          <div class="mobile-cards-grid">
             <div
               v-for="question in questions"
               :key="question.questionId"
-              class="bg-gradient-to-br from-[rgba(248,255,250,0.3)] to-[rgba(245,253,248,0.2)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.6)] shadow-sm p-4 hover:shadow-md transition-shadow duration-200"
+              class="question-card"
             >
               <!-- 卡片头部：ID和操作按钮 -->
-              <div class="flex justify-between items-start mb-3">
-                <div class="flex items-center gap-3">
+              <div class="card-header">
+                <div class="card-id-section">
                   <input
                     v-model="selectedQuestions"
                     type="checkbox"
@@ -384,9 +362,7 @@ onMounted(() => {
                     :value="question.questionId"
                     :disabled="!selectedQuestions"
                   />
-                  <span class="text-sm text-gray-600 font-medium"
-                    >ID: {{ question.questionId }}</span
-                  >
+                  <span class="question-id">ID: {{ question.questionId }}</span>
                 </div>
                 <div class="dropdown dropdown-end">
                   <div
@@ -398,7 +374,7 @@ onMounted(() => {
                       xmlns="http://www.w3.org/2000/svg"
                       fill="none"
                       viewBox="0 0 24 24"
-                      class="w-4 h-4 stroke-current"
+                      class="card-actions-icon"
                     >
                       <path
                         stroke-linecap="round"
@@ -414,14 +390,14 @@ onMounted(() => {
                   >
                     <li>
                       <a @click="openModal('edit', question)"
-                        ><Edit theme="outline" size="14" />编辑</a
+                        ><LineMdEdit />编辑</a
                       >
                     </li>
                     <li>
                       <a
                         class="text-error"
                         @click="openModal('delete', question)"
-                        ><Delete theme="outline" size="14" />删除</a
+                        ><LineMdTrash />删除</a
                       >
                     </li>
                     <li>
@@ -432,21 +408,21 @@ onMounted(() => {
               </div>
 
               <!-- 题目标题 -->
-              <div class="mb-3">
-                <h3 class="font-bold text-lg text-gray-900 truncate">
+              <div class="card-title-section">
+                <h3 class="question-title">
                   {{ question.title || '无标题' }}
                 </h3>
               </div>
 
               <!-- 题目内容 -->
-              <div class="mb-4">
-                <p class="text-sm text-gray-600 line-clamp-2 leading-relaxed">
+              <div class="card-content-section">
+                <p class="question-content">
                   {{ question.content }}
                 </p>
               </div>
 
               <!-- 状态和难度标签 -->
-              <div class="flex flex-wrap gap-2 mb-4">
+              <div class="card-tags-section">
                 <div
                   class="badge-liquid-glass"
                   :class="getDifficultyStyle(question.difficulty)"
@@ -464,32 +440,32 @@ onMounted(() => {
               </div>
 
               <!-- 创建时间 -->
-              <div class="text-xs text-gray-500 mb-4 font-medium">
+              <div class="card-time-section">
                 创建时间: {{ formatDate(question.createdAt) }}
               </div>
 
               <!-- 操作按钮 -->
-              <div class="flex flex-wrap gap-2">
+              <div class="card-actions-section">
                 <button
                   class="btn-liquid-glass edit xs"
                   @click="openModal('edit', question)"
                 >
-                  <Edit theme="outline" size="14" />
-                  <span class="hidden sm:inline">编辑</span>
+                  <LineMdEdit />
+                  <span class="btn-text-desktop">编辑</span>
                 </button>
                 <button
                   class="btn-liquid-glass error xs"
                   @click="openModal('delete', question)"
                 >
-                  <Delete theme="outline" size="14" />
-                  <span class="hidden sm:inline">删除</span>
+                  <LineMdTrash />
+                  <span class="btn-text-desktop">删除</span>
                 </button>
                 <button
                   class="btn-liquid-glass xs"
                   @click="openModal('detail', question)"
                 >
-                  <span class="hidden sm:inline">详情</span>
-                  <span class="sm:hidden">查看</span>
+                  <span class="btn-text-desktop">详情</span>
+                  <span class="btn-text-mobile">查看</span>
                 </button>
               </div>
             </div>
@@ -497,16 +473,12 @@ onMounted(() => {
         </div>
 
         <!-- 桌面端表格视图 -->
-        <div
-          class="overflow-x-auto bg-gradient-to-br from-[rgba(248,255,250,0.3)] to-[rgba(245,253,248,0.2)] backdrop-blur-md rounded-lg border border-[rgba(255,255,255,0.6)] shadow-sm hidden lg:block"
-        >
+        <div class="desktop-view">
           <table class="table w-full">
             <!-- Table head -->
             <thead>
-              <tr
-                class="bg-[rgba(250, 255, 252, 0.4), rgba(248, 253, 250, 0.3)]"
-              >
-                <th class="w-12">
+              <tr class="table-header-row">
+                <th class="checkbox-cell">
                   <input
                     type="checkbox"
                     class="checkbox checkbox-neutral"
@@ -514,13 +486,13 @@ onMounted(() => {
                     @change="toggleSelectAll"
                   />
                 </th>
-                <th class="w-20 font-semibold">ID</th>
-                <th class="w-48 font-semibold">题目标题</th>
-                <th class="min-w-64 font-semibold">题目内容</th>
-                <th class="w-24 font-semibold text-center">难度</th>
-                <th class="w-24 font-semibold text-center">状态</th>
-                <th class="w-32 font-semibold">创建时间</th>
-                <th class="w-48 font-semibold text-center">操作</th>
+                <th class="id-cell">ID</th>
+                <th class="title-cell">题目标题</th>
+                <th class="content-cell">题目内容</th>
+                <th class="difficulty-cell">难度</th>
+                <th class="status-cell">状态</th>
+                <th class="time-cell">创建时间</th>
+                <th class="actions-cell">操作</th>
               </tr>
             </thead>
             <tbody>
@@ -528,7 +500,7 @@ onMounted(() => {
               <tr
                 v-for="question in questions"
                 :key="question.questionId"
-                class="hover:bg-[rgba(245, 255, 250, 0.3), rgba(240, 253, 245, 0.2)] transition-colors duration-200"
+                class="table-body-row"
               >
                 <td>
                   <input
@@ -539,16 +511,16 @@ onMounted(() => {
                     :disabled="!selectedQuestions"
                   />
                 </td>
-                <td class="whitespace-nowrap text-sm font-medium">
+                <td class="question-id-text">
                   {{ question.questionId }}
                 </td>
                 <td class="max-w-48">
-                  <div class="truncate font-medium" :title="question.title">
+                  <div class="truncate-text" :title="question.title">
                     {{ question.title || '无标题' }}
                   </div>
                 </td>
                 <td class="max-w-64">
-                  <div class="truncate" :title="question.content">
+                  <div class="truncate-text" :title="question.content">
                     {{ question.content }}
                   </div>
                 </td>
@@ -562,7 +534,7 @@ onMounted(() => {
                     }}
                   </div>
                 </td>
-                <td class="text-center">
+                <td>
                   <div
                     class="badge-liquid-glass mx-auto"
                     :class="question.status ? 'success' : 'disabled'"
@@ -570,24 +542,24 @@ onMounted(() => {
                     {{ question.status ? '已启用' : '未启用' }}
                   </div>
                 </td>
-                <td class="whitespace-nowrap text-sm font-medium">
+                <td class="time-text">
                   {{ formatDate(question.createdAt) }}
                 </td>
                 <td class="whitespace-nowrap">
-                  <div class="flex items-center justify-center gap-2">
+                  <div class="table-actions">
                     <button
                       class="btn-liquid-glass edit xs"
                       title="编辑题目"
                       @click="openModal('edit', question)"
                     >
-                      <Edit theme="outline" size="12" />
+                      <LineMdEdit />
                     </button>
                     <button
                       class="btn-liquid-glass error xs"
                       title="删除题目"
                       @click="openModal('delete', question)"
                     >
-                      <Delete theme="outline" size="12" />
+                      <LineMdTrash />
                     </button>
                     <button
                       class="btn-liquid-glass xs"
@@ -606,8 +578,8 @@ onMounted(() => {
     </div>
 
     <!-- Pagination section -->
-    <div v-if="!loading" class="mt-auto py-6 flex justify-center items-center">
-      <div class="flex gap-2 pagination-container">
+    <div v-if="!loading" class="pagination-section">
+      <div class="pagination-container">
         <button
           class="pagination-btn"
           :disabled="currentPage === 1"
@@ -634,179 +606,482 @@ onMounted(() => {
       </div>
     </div>
 
-    <!-- Modals -->
     <!-- 添加题目模态框 -->
-    <dialog
-      id="create-question-modal"
-      class="modal"
-      :open="modals.create"
-      @close="handleDialogClose('create')"
+    <el-dialog
+      v-model="modals.create"
+      title="添加题目"
+      width="800px"
+      destroy-on-close
+      @closed="closeModal('create')"
     >
-      <div class="modal-box max-w-3xl">
-        <h3 class="font-bold text-lg mb-4">添加题目</h3>
-        <CreateQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('create')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <CreateQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
+    </el-dialog>
 
-    <!-- AI创建题目抽屉 (daisyUI) -->
-    <div class="drawer drawer-end z-40">
-      <input
-        id="ai-drawer"
-        v-model="modals.aiDrawer"
-        type="checkbox"
-        class="drawer-toggle"
+    <!-- AI创建题目模态框 -->
+    <el-dialog
+      v-model="modals.aiGenerate"
+      title="题目生成器"
+      destroy-on-close
+      align-center
+      @closed="closeModal('aiGenerate')"
+    >
+      <AIQuestionGenerate
+        :bank-id="bankId"
+        @success="handleAIGenerateSuccess"
       />
-      <div class="drawer-side">
-        <label
-          for="ai-drawer"
-          class="drawer-overlay"
-          @click="modals.aiDrawer = false"
-        ></label>
-        <div
-          class="p-6 w-full max-w-md min-h-full bg-base-100 text-base-content flex flex-col"
-        >
-          <div class="flex justify-between items-center mb-4">
-            <h3 class="font-bold text-lg">题目生成器</h3>
-            <button
-              class="btn btn-sm btn-circle"
-              @click="modals.aiDrawer = false"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-          <div class="">
-            <AIQuestionGenerate :bank-id="bankId" />
-          </div>
-        </div>
-      </div>
-    </div>
+    </el-dialog>
 
     <!-- 批量添加题目模态框 -->
-    <dialog
-      id="batch-add-question-modal"
-      class="modal"
-      :open="modals.batchAdd"
-      @close="handleDialogClose('batchAdd')"
+    <el-dialog
+      v-model="modals.batchAdd"
+      title="批量添加题目"
+      width="800px"
+      destroy-on-close
+      @closed="closeModal('batchAdd')"
     >
-      <div class="modal-box max-w-3xl">
-        <BatchAddQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('batchAdd')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <BatchAddQuestionModal :bank-id="bankId" @success="handleDataRefresh" />
+    </el-dialog>
 
     <!-- 编辑题目模态框 -->
-    <dialog
-      id="edit-question-modal"
-      class="modal"
-      :open="modals.edit"
-      @close="handleDialogClose('edit')"
+    <el-dialog
+      v-model="modals.edit"
+      title="编辑题目"
+      width="800px"
+      destroy-on-close
+      align-center
+      @closed="closeModal('edit')"
     >
-      <div class="modal-box max-w-3xl">
-        <h3 class="font-bold text-lg mb-4">编辑题目</h3>
-        <EditQuestionModal
-          :question-data="editQuestion"
-          @success="handleDataRefresh"
-        />
-      </div>
-      <form method="dialog" class="modal-backdrop" @click="closeModal('edit')">
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <EditQuestionModal
+        :question-data="editQuestion"
+        @success="handleDataRefresh"
+      />
+    </el-dialog>
 
     <!-- 删除确认模态框 -->
-    <dialog
-      id="delete-question-modal"
-      class="modal"
-      :open="modals.delete"
-      @close="handleDialogClose('delete')"
+    <el-dialog
+      v-model="modals.delete"
+      title="删除题目"
+      width="500px"
+      destroy-on-close
+      align-center
+      @closed="closeModal('delete')"
     >
-      <div class="modal-box max-w-md">
-        <h3 class="font-bold text-lg mb-4">删除题目</h3>
-        <DeleteQuestionModal
-          :question="questionToDelete"
-          @success="handleDataRefresh"
-        />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('delete')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <DeleteQuestionModal
+        :question="questionToDelete"
+        @success="handleDataRefresh"
+      />
+    </el-dialog>
 
     <!-- 详情模态框 -->
-    <dialog
-      id="question-detail-modal"
-      class="modal"
-      :open="modals.detail"
-      @close="handleDialogClose('detail')"
+    <el-dialog
+      v-model="modals.detail"
+      title="题目详情"
+      width="800px"
+      destroy-on-close
+      align-center
+      @closed="closeModal('detail')"
     >
-      <div class="modal-box max-w-3xl">
-        <QuestionDetailModal :question="detailQuestion" />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('detail')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <QuestionDetailModal :question="detailQuestion" />
+    </el-dialog>
 
     <!-- 批量删除题目模态框 -->
-    <dialog
-      id="batch-delete-question-modal"
-      class="modal"
-      :open="modals.batchDelete"
-      @close="handleDialogClose('batchDelete')"
+    <el-dialog
+      v-model="modals.batchDelete"
+      title="批量删除题目"
+      width="500px"
+      destroy-on-close
+      @closed="closeModal('batchDelete')"
     >
-      <div class="modal-box max-w-md">
-        <h3 class="font-bold text-lg mb-4">批量删除题目</h3>
-        <BatchDeleteQuestionModal
-          :selected-questions="selectedQuestions"
-          @success="handleBatchDeleteSuccess"
-        />
-      </div>
-      <form
-        method="dialog"
-        class="modal-backdrop"
-        @click="closeModal('batchDelete')"
-      >
-        <button>关闭</button>
-      </form>
-    </dialog>
+      <BatchDeleteQuestionModal
+        :selected-questions="selectedQuestions"
+        @success="handleBatchDeleteSuccess"
+      />
+    </el-dialog>
   </div>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
+// 颜色变量定义
+$primary-color: #22c55e;
+$primary-color-dark: #15803d;
+$text-color: #374151;
+$border-color: rgba(140, 220, 160, 0.3);
+$border-focus-color: rgba(100, 200, 130, 0.5);
+$ring-focus-color: rgba(100, 200, 130, 0.2);
+
+.modal-box {
+  max-height: 90vh;
+}
+// 页面整体样式，服务于题库详情主页面
+.question-bank-detail-page {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 1rem;
+  background-color: #fff;
+  position: relative;
+}
+
+// 顶部标题栏样式，服务于TitleBar组件
+.page-title-bar {
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  .title-content {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+
+    .bank-name {
+      font-weight: 600;
+    }
+  }
+
+  .module-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+
+    @media (min-width: 768px) {
+      margin-top: 0;
+    }
+  }
+
+  .btn-text-desktop {
+    display: none;
+    @media (min-width: 640px) {
+      display: inline;
+    }
+  }
+  .btn-text-mobile {
+    @media (min-width: 640px) {
+      display: none;
+    }
+  }
+  .btn-text-desktop-md {
+    display: none;
+    @media (min-width: 768px) {
+      display: inline;
+    }
+  }
+  .btn-text-mobile-md {
+    @media (min-width: 768px) {
+      display: none;
+    }
+  }
+  .btn-text-desktop-lg {
+    display: none;
+    @media (min-width: 1024px) {
+      display: inline;
+    }
+  }
+  .btn-text-mobile-lg {
+    @media (min-width: 1024px) {
+      display: none;
+    }
+  }
+}
+
+// 主内容区样式，服务于main-content区域
+.main-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 1rem;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem;
+  }
+}
+
+// 筛选框区域样式，服务于filter-box
+.filter-box {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1rem;
+  margin-bottom: 1rem;
+
+  .filter-item {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    background-image: linear-gradient(
+      to bottom right,
+      rgba(248, 255, 250, 0.15),
+      rgba(245, 253, 248, 0.08)
+    );
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(140, 220, 160, 0.25);
+  }
+
+  .filter-label {
+    font-weight: 500;
+    color: rgba(60, 180, 110, 0.8);
+  }
+
+  .filter-select,
+  .filter-input {
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(4px);
+    border: 1px solid $border-color;
+    transition: all 0.3s;
+
+    &:focus {
+      border-color: $border-focus-color;
+      box-shadow: 0 0 0 2px $ring-focus-color;
+      outline: none;
+    }
+  }
+}
+
+// 加载状态样式，服务于loading-container
+.loading-container {
+  width: 100%;
+  overflow-x: auto;
+
+  .loading-box {
+    background-image: linear-gradient(
+      to bottom right,
+      rgba(248, 255, 250, 0.3),
+      rgba(245, 253, 248, 0.2)
+    );
+    backdrop-filter: blur(16px);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    padding: 2rem;
+  }
+
+  .loading-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+  }
+}
+
+// 题目列表容器样式，服务于questions-container
+.questions-container {
+  width: 100%;
+  overflow-x: auto;
+  animation: fadeIn 0.5s; // Assuming animate.css is available
+}
+
+// 移动端卡片视图样式，服务于mobile-view
+.mobile-view {
+  display: block;
+
+  @media (min-width: 1024px) {
+    display: none;
+  }
+
+  .mobile-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+    gap: 1rem;
+  }
+
+  .question-card {
+    background-image: linear-gradient(
+      to bottom right,
+      rgba(248, 255, 250, 0.3),
+      rgba(245, 253, 248, 0.2)
+    );
+    backdrop-filter: blur(16px);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    padding: 1rem;
+    transition: box-shadow 0.2s;
+
+    &:hover {
+      box-shadow:
+        0 4px 6px -1px rgba(0, 0, 0, 0.1),
+        0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-id-section {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .question-id {
+    font-size: 0.875rem;
+    color: #4b5563;
+    font-weight: 500;
+  }
+
+  .card-actions-icon {
+    width: 1rem;
+    height: 1rem;
+    stroke: currentColor;
+  }
+
+  .card-title-section {
+    margin-bottom: 0.75rem;
+    .question-title {
+      font-weight: 700;
+      font-size: 1.125rem;
+      color: #111827;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+
+  .card-content-section {
+    margin-bottom: 1rem;
+    .question-content {
+      font-size: 0.875rem;
+      color: #4b5563;
+      line-height: 1.625;
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  }
+
+  .card-tags-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-time-section {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+    font-weight: 500;
+  }
+
+  .card-actions-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+}
+
+// 桌面端表格视图样式，服务于desktop-view
+.desktop-view {
+  overflow-x: auto;
+  background-image: linear-gradient(
+    to bottom right,
+    rgba(248, 255, 250, 0.3),
+    rgba(245, 253, 248, 0.2)
+  );
+  backdrop-filter: blur(16px);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  display: none;
+
+  @media (min-width: 1024px) {
+    display: block;
+  }
+
+  .table-header-row {
+    background: rgba(250, 255, 252, 0.4), rgba(248, 253, 250, 0.3);
+  }
+
+  th {
+    font-weight: 600;
+  }
+  .checkbox-cell {
+    width: 3rem;
+  }
+  .id-cell {
+    width: 5rem;
+  }
+  .title-cell {
+    width: 12rem;
+  }
+  .content-cell {
+    min-width: 16rem;
+  }
+  .difficulty-cell,
+  .status-cell {
+    width: 6rem;
+    text-align: center;
+  }
+  .time-cell {
+    width: 8rem;
+  }
+  .actions-cell {
+    width: 12rem;
+    text-align: center;
+  }
+
+  .table-body-row {
+    transition: background-color 0.2s;
+    &:hover {
+      background: rgba(245, 255, 250, 0.3), rgba(240, 253, 245, 0.2);
+    }
+    td:nth-child(5),
+    td:nth-child(6) {
+      text-align: center;
+    }
+  }
+
+  .question-id-text,
+  .time-text {
+    white-space: nowrap;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .truncate-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: 500;
+  }
+
+  .table-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+  }
+}
+
+// 分页器区域样式，服务于pagination-section
+.pagination-section {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .pagination-container {
+    display: flex;
+    gap: 0.5rem;
+  }
+}
+
+// 模态框标题样式，服务于modal-title
+.modal-title {
+  font-weight: 700;
+  font-size: 1.125rem;
+  margin-bottom: 1rem;
+}
+
+// 文本截断样式，服务于truncate
 .truncate {
   max-width: 100%;
   white-space: nowrap;
@@ -814,30 +1089,13 @@ onMounted(() => {
   text-overflow: ellipsis;
 }
 
-.rating .mask-star-2 {
-  cursor: pointer;
-}
-
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-
-@media (max-width: 1024px) {
-  .table {
-    display: none;
-  }
-}
-
-/* 合并徽章样式 */
+// 通用徽章样式，服务于badge
 .badge {
   white-space: nowrap;
   font-size: 0.75rem;
 }
 
-/* 合并按钮响应式样式 */
+// 响应式按钮样式，服务于.btn-sm和.btn-xs
 @media (max-width: 480px) {
   .btn-sm {
     padding: 0.25rem 0.5rem;
@@ -850,6 +1108,7 @@ onMounted(() => {
   }
 }
 
+// 按钮基础样式，服务于.btn
 .btn {
   flex-shrink: 0;
 }
@@ -869,7 +1128,7 @@ onMounted(() => {
   }
 }
 
-/* 合并液态玻璃按钮基础样式 */
+// 液态玻璃按钮基础样式，服务于.btn-liquid-glass
 .btn-liquid-glass {
   padding: 0.5rem 1rem;
   border-radius: 0.75rem;
@@ -916,7 +1175,7 @@ onMounted(() => {
   transform: translateY(0);
 }
 
-/* 液态玻璃按钮变体 */
+// 液态玻璃按钮变体样式，服务于.info、.ai-btn、.error等
 .btn-liquid-glass.info,
 .btn-liquid-glass.ai-btn {
   background: linear-gradient(
@@ -1005,6 +1264,7 @@ onMounted(() => {
     inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
+// 液态玻璃徽章样式，服务于badge-liquid-glass
 .badge-liquid-glass {
   padding: 0.25rem 0.75rem;
   font-size: 0.75rem;
@@ -1071,6 +1331,7 @@ onMounted(() => {
     inset 0 1px 1px rgba(255, 255, 255, 0.5);
 }
 
+// 玻璃面板样式，服务于glass-panel
 .glass-panel {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
@@ -1078,6 +1339,7 @@ onMounted(() => {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
+// 玻璃卡片样式，服务于glass-card
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
   backdrop-filter: blur(10px);
@@ -1092,12 +1354,14 @@ onMounted(() => {
   transform: translateY(-2px);
 }
 
+// 玻璃输入框样式，服务于glass-input-border
 .glass-input-border {
   border: 1px solid rgba(255, 255, 255, 0.8);
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(5px);
 }
 
+// 玻璃上传按钮样式，服务于glass-upload
 .glass-upload {
   background: rgba(255, 255, 255, 0.5);
   backdrop-filter: blur(5px);
@@ -1109,6 +1373,7 @@ onMounted(() => {
   border-color: rgba(59, 130, 246, 0.5);
 }
 
+// 表格样式，服务于.table
 .table {
   background: transparent;
   width: 100%;
@@ -1170,7 +1435,7 @@ onMounted(() => {
   border-bottom: none;
 }
 
-/* 题目总数徽章 */
+// 题目总数徽章样式，服务于total-count-badge
 .total-count-badge {
   padding: 0.25rem 0.75rem;
   border-radius: 9999px;
@@ -1185,7 +1450,7 @@ onMounted(() => {
   color: rgb(21, 128, 61);
 }
 
-/* 自定义星级评分样式 */
+// 自定义星级评分样式，服务于custom-rating
 .custom-rating .mask-star-2 {
   cursor: pointer;
   width: 2rem;
@@ -1221,6 +1486,7 @@ onMounted(() => {
   background-color: #ef4444;
 }
 
+// 自定义开关样式，服务于custom-toggle
 .custom-toggle {
   height: 1.5rem;
   width: 3rem;
@@ -1258,7 +1524,7 @@ onMounted(() => {
   }
 }
 
-/* 分页器样式 */
+// 分页按钮样式，服务于pagination-btn
 .pagination-btn {
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
@@ -1322,6 +1588,7 @@ onMounted(() => {
   border-bottom-right-radius: 0.5rem;
 }
 
+// 富文本编辑器样式，服务于:deep(.w-e-toolbar)等
 :deep(.rich-text-editor) {
   border-radius: 0.5rem;
   overflow: hidden;
@@ -1346,6 +1613,7 @@ onMounted(() => {
   background: rgba(59, 130, 246, 0.1) !important;
 }
 
+// 编辑按钮专用样式，服务于.btn-liquid-glass.edit
 .btn-liquid-glass.edit {
   background: linear-gradient(
     145deg,
@@ -1381,7 +1649,7 @@ onMounted(() => {
     inset 0 1px 1px rgba(255, 255, 255, 0.2);
 }
 
-/* AI按钮专用样式，优先级更高 */
+// AI按钮专用样式，服务于.btn-liquid-glass.ai-btn
 .btn-liquid-glass.ai-btn {
   background: linear-gradient(
     145deg,
@@ -1426,7 +1694,7 @@ onMounted(() => {
     inset 0 1px 1px rgba(255, 255, 255, 0.3);
 }
 
-/* 微信风格绿色按钮 */
+// 微信风格绿色按钮样式，服务于.btn-liquid-glass.wechat-green
 .btn-liquid-glass.wechat-green {
   background: #07c160;
   color: white;
@@ -1451,6 +1719,7 @@ onMounted(() => {
   transform: none;
 }
 
+// 微信风格绿色浅色按钮样式，服务于.btn-liquid-glass.wechat-green-light
 .btn-liquid-glass.wechat-green-light {
   background: rgba(7, 193, 96, 0.1);
   color: #07c160;
@@ -1469,30 +1738,7 @@ onMounted(() => {
   box-shadow: 0 1px 3px rgba(7, 193, 96, 0.1);
 }
 
-/* 该样式影响了模态框先禁用 */
-/* .modal-backdrop {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0);
-  z-index: 1001;
-}
-
-@keyframes modalPop {
-  0% {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  70% {
-    opacity: 1;
-  }
-  100% {
-    transform: scale(1);
-  }
-} */
-
+// 模态框动画和滚动条样式，服务于.animate-modal-pop、.modal-container
 .animate-modal-pop > div:last-child {
   animation: modalPop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
   margin: auto;

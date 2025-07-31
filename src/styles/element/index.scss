@@ -1,0 +1,55 @@
+/* just override what you need */
+@forward 'element-plus/theme-chalk/src/common/var.scss' with (
+  $colors: (
+    'primary': (
+      'base': rgb(125, 196, 150),
+    ),
+    'error': (
+      'base': red,
+    ),
+    'success': (
+      'base': green,
+    ),
+  )
+);
+@use '@/styles/element/var.scss' as *;
+
+// 通知复写
+.el-message {
+  width: 80%;
+  background: none !important;
+  backdrop-filter: blur(10px) !important;
+  border-radius: 20px !important;
+  &:hover {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1) !important;
+  }
+}
+
+.el-pagination {
+  padding: 10px;
+  border-radius: $border-radius-xl;
+  background-color: var(--el-bg-color-page);
+}
+
+.el-table {
+  border-radius: $border-radius-xl;
+}
+
+// 模态框
+.el-dialog {
+  border-radius: $border-radius-xl !important;
+}
+.el-dialog__close {
+  padding: 2px !important;
+  background-color: var(--el-bg-color-page) !important;
+  border-radius: $border-radius-full !important;
+}
+// 模态框遮罩
+.el-overlay {
+  background: none !important;
+  backdrop-filter: blur(2px) !important;
+}
+// 复写按钮
+.el-button {
+  border-radius: $border-radius-xl !important;
+}

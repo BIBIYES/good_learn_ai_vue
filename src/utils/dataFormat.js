@@ -36,3 +36,15 @@ export const formatDateObject = date => {
 // const dateInfo = formatDateObject('2025-04-14T19:01:00')
 // console.log(dateInfo.dateTime) // 输出: "2025-04-14 19:01"
 // console.log(dateInfo.weekDay)  // 输出: "星期一"
+
+import dayjs from 'dayjs'
+
+/**
+ * @description 使用 dayjs 格式化日期时间
+ * @param {string | Date} date - 日期
+ * @param {string} [format='YYYY-MM-DD HH:mm'] - 格式
+ * @returns {string} - 格式化后的日期时间字符串
+ */
+export const formatDateTime = (date, format = 'YYYY-MM-DD HH:mm') => {
+  return dayjs(date).format(format)
+}
