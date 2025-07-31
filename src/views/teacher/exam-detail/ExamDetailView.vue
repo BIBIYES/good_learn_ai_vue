@@ -1,34 +1,48 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRoute } from 'vue-router'
 import { getExamQuestion, deleteExamQuestion } from '@/api/exam/examApi.js'
 import message from '@/plugin/message'
 import { difficultyMap, getDifficultyType } from '@/constants/difficulty'
+import { formatDateTime } from '@/utils/dataFormat.js'
+import QuestionSelect from '@/components/teacher/QuestionSelect.vue'
 
 const route = useRoute()
 const examId = route.params.examId
 const questions = ref([])
-const currentPage = ref(1)
-const totalPages = ref(1)
-const totalItems = ref(0)
-const pageSize = ref(10) // 默认页面大小设为10
-const loading = ref(true) // 加载状态用于骨架效果
+
+const pagination = reactive({
+  currentPage: 1,
+  totalPages: 1,
+  totalItems: 0,
+  pageSize: 10,
+})
+
+const loadings = reactive({
+  table: false,
+})
+
+const dialogStats = reactive({
+  selectQuestionDialog: {
+    visible: false,
+  },
+})
 
 // 获取试卷题目列表
 const fetchQuestions = async (page = 1) => {
-  loading.value = true
+  loadings.table = true
   try {
     const res = await getExamQuestion({
       current: page,
-      pageSize: pageSize.value,
+      pageSize: pagination.pageSize,
       examId: examId,
     })
 
     if (res.code === 200) {
       questions.value = res.data.records || []
-      totalPages.value = res.data.pages || 1
-      totalItems.value = res.data.total || 0
-      currentPage.value = res.data.current || 1
+      pagination.totalPages = res.data.pages || 1
+      pagination.totalItems = res.data.total || 0
+      pagination.currentPage = res.data.current || 1
     } else {
       message.error(res.message || '获取试卷题目失败')
     }
@@ -36,7 +50,7 @@ const fetchQuestions = async (page = 1) => {
     console.error('获取试卷题目错误:', error)
     message.error('获取试卷题目时发生错误')
   } finally {
-    loading.value = false
+    loadings.table = false
   }
 }
 
@@ -46,7 +60,11 @@ const handleDeleteQuestion = async questionId => {
     const res = await deleteExamQuestion(questionId)
     if (res.code === 200) {
       message.success('删除题目成功')
-      fetchQuestions(currentPage.value) // 重新加载数据
+      if (questions.value.length === 1 && pagination.currentPage > 1) {
+        fetchQuestions(pagination.currentPage - 1)
+      } else {
+        fetchQuestions(pagination.currentPage)
+      }
     } else {
       message.error(res.message || '删除题目失败')
     }
@@ -58,32 +76,15 @@ const handleDeleteQuestion = async questionId => {
 
 // 处理分页改变
 const handleCurrentChange = page => {
-  if (page >= 1 && page <= totalPages.value) {
+  if (page >= 1 && page <= pagination.totalPages) {
     fetchQuestions(page)
   }
 }
 
 // 处理页面大小改变
 const handleSizeChange = size => {
-  pageSize.value = size
+  pagination.pageSize = size
   fetchQuestions(1)
-}
-
-// 格式化日期
-const formatDate = dateString => {
-  try {
-    const date = new Date(dateString)
-    return date.toLocaleString('zh-CN', {
-      year: 'numeric',
-      month: '2-digit',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-    })
-  } catch (e) {
-    console.log(e)
-    return dateString
-  }
 }
 
 onMounted(() => {
@@ -92,6 +93,15 @@ onMounted(() => {
 </script>
 
 <template>
+  <el-dialog
+    v-model="dialogStats.selectQuestionDialog.visible"
+    title="题目选择器"
+    width="80%"
+    destroy-on-close
+    align-center
+  >
+    <QuestionSelect />
+  </el-dialog>
   <div class="w-full p-4 flex flex-col space-y-3 justify-between h-full">
     <div class="flex-1 flex flex-col space-y-3 h-full">
       <TitleBar>
@@ -106,7 +116,11 @@ onMounted(() => {
               返回试卷列表
             </el-button>
           </router-link>
-          <el-button type="primary" size="default">
+          <el-button
+            type="primary"
+            size="default"
+            @click="dialogStats.selectQuestionDialog.visible = true"
+          >
             <LineMdEdit />
             编辑试卷
           </el-button>
@@ -114,7 +128,7 @@ onMounted(() => {
       </TitleBar>
 
       <el-table
-        v-loading="loading"
+        v-loading="loadings.table"
         element-loading-text="正在获取试卷题目"
         :data="questions"
         stripe
@@ -139,7 +153,7 @@ onMounted(() => {
         </el-table-column>
         <el-table-column label="创建时间" width="160">
           <template #default="{ row }">
-            {{ formatDate(row.createdAt) }}
+            {{ formatDateTime(row.createdAt) }}
           </template>
         </el-table-column>
         <el-table-column label="操作" width="150" fixed="right">
@@ -168,11 +182,11 @@ onMounted(() => {
 
     <div class="flex justify-end">
       <el-pagination
-        v-model:current-page="currentPage"
-        v-model:page-size="pageSize"
+        v-model:current-page="pagination.currentPage"
+        v-model:page-size="pagination.pageSize"
         :page-sizes="[5, 10, 20, 50]"
         layout="sizes, prev, pager, next, jumper, total"
-        :total="totalItems"
+        :total="pagination.totalItems"
         background
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"

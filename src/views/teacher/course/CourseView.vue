@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import {
   getTeacherCourse,
@@ -7,26 +7,37 @@ import {
   updateTeacherCourse,
 } from '@/api/courseApi.js'
 import message from '@/plugin/message.js'
-import DgLoadingText from '@/components/common/GdLoadingText.vue'
 const router = useRouter()
-const loading = ref(true)
-const showCreateModal = ref(false)
-const showEditModal = ref(false)
+
 const createLoading = ref(false)
 const editLoading = ref(false)
 
-// 添加分页相关状态
+const dialogs = reactive({
+  create: {
+    visible: false,
+  },
+  edit: {
+    visible: false,
+  },
+})
+
+// 课程列表
 const courses = ref([])
-const currentPage = ref(1)
-const totalPages = ref(1)
-const pageSize = ref(9)
+// 分页和加载状态
+const pagination = reactive({
+  loading: true,
+  currentPage: 1,
+  totalPages: 1,
+  pageSize: 9,
+  total: 0,
+})
 const pageSizeOptions = [6, 9, 12, 15]
-const total = ref(0)
 
 const newCourse = ref({
   className: '',
   description: '',
   coursePassword: '',
+  status: true,
 })
 
 const editForm = ref({
@@ -39,35 +50,35 @@ const editForm = ref({
 })
 
 const handleGetCourses = async (page = 1) => {
-  loading.value = true
+  pagination.loading = true
   try {
-    const res = await getTeacherCourse(page, pageSize.value)
+    const res = await getTeacherCourse(page, pagination.pageSize)
     if (res.code === 200) {
       courses.value = res.data.records.map(course => ({
         ...course,
         monitorName: course.monitorName || '无', // 如果 monitorName 为空，显示 '无'
       }))
-      total.value = res.data.total
-      totalPages.value = Math.ceil(res.data.total / pageSize.value)
-      currentPage.value = page
+      pagination.total = res.data.total
+      pagination.totalPages = Math.ceil(res.data.total / pagination.pageSize)
+      pagination.currentPage = page
     }
   } catch (err) {
     console.error('获取课程列表失败', err.message)
     message.error('获取课程列表失败')
   } finally {
-    loading.value = false
+    pagination.loading = false
   }
 }
 
 const handlePageSizeChange = size => {
-  pageSize.value = size
-  currentPage.value = 1
+  pagination.pageSize = size
+  pagination.currentPage = 1
   handleGetCourses(1)
 }
 
 const handlePageChange = page => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page
+  if (page >= 1 && page <= pagination.totalPages) {
+    pagination.currentPage = page
     handleGetCourses(page)
   }
 }
@@ -91,8 +102,13 @@ const handleCreateCourse = async () => {
     })
     if (res.code === 200) {
       message.success('创建成功')
-      showCreateModal.value = false
-      newCourse.value = { className: '', description: '', coursePassword: '' }
+      dialogs.create.visible = false
+      newCourse.value = {
+        className: '',
+        description: '',
+        coursePassword: '',
+        status: true,
+      }
       handleGetCourses(1)
     }
   } catch (err) {
@@ -104,7 +120,7 @@ const handleCreateCourse = async () => {
 
 const openEditModal = course => {
   editForm.value = { ...course }
-  showEditModal.value = true
+  dialogs.edit.visible = true
 }
 const handleEditCourse = async () => {
   editLoading.value = true
@@ -119,8 +135,8 @@ const handleEditCourse = async () => {
     })
     if (res.code === 200) {
       message.success('编辑成功')
-      showEditModal.value = false
-      handleGetCourses(currentPage.value)
+      dialogs.edit.visible = false
+      handleGetCourses(pagination.currentPage)
     }
   } catch (err) {
     message.error(err.message)
@@ -135,42 +151,39 @@ onMounted(() => {
 </script>
 <template>
   <div class="flex flex-col h-full p-4">
-    <!-- Header with title and create button -->
     <TitleBar>
       <template #title>
         <LineMdPencilAltTwotone />
         <span>我的课程</span>
       </template>
       <template #module>
-        <button
-          class="btn btn-primary btn-sm md:btn-md"
-          @click="showCreateModal = true"
-        >
-          <LineMdPlus />
+        <el-button type="primary" @click="dialogs.create.visible = true">
+          <template #icon>
+            <LineMdPlus />
+          </template>
           创建课程
-        </button>
+        </el-button>
       </template>
     </TitleBar>
 
     <!-- Main content area -->
-    <div class="flex-1 overflow-y-auto p-4 md:p-4">
-      <!-- Loading State - Simple Spinner -->
-      <div
-        v-if="loading"
-        class="w-full h-full flex justify-center items-center"
-      >
-        <DgLoadingText text="正在获取课程列表...."></DgLoadingText>
-      </div>
-
+    <div
+      v-loading="pagination.loading"
+      element-loading-text="正在获取课程列表...."
+      class="flex-1 overflow-y-auto p-4 md:p-4"
+    >
       <!-- Empty State -->
       <div
-        v-else-if="courses.length === 0"
+        v-if="!pagination.loading && courses.length === 0"
         class="flex flex-col items-center justify-center h-64"
       >
         <div class="text-center">
           <School theme="outline" size="48" class="text-base-content/30 mb-4" />
           <p class="text-base-content/70 text-lg">暂无课程，快去创建一个吧！</p>
-          <button class="btn btn-primary mt-4" @click="showCreateModal = true">
+          <button
+            class="btn btn-primary mt-4"
+            @click="dialogs.create.visible = true"
+          >
             <Add theme="outline" size="18" class="mr-1" />
             创建第一个课程
           </button>
@@ -270,147 +283,128 @@ onMounted(() => {
     </div>
 
     <!-- Pagination section -->
-    <div class="mt-auto border-t border-base-200 p-4 bg-base-100">
-      <div
-        v-if="!loading && courses.length > 0"
-        class="flex flex-wrap justify-center gap-5 items-center"
-      >
-        <div class="btn btn-sm">
-          <div aria-label="status" class="status status-primary" />
-          <span>总计课程数：</span>{{ total }}
-        </div>
-
-        <!-- 页面大小选择器 -->
-        <div class="flex items-center gap-2">
-          <span class="text-sm">每页显示：</span>
-          <select
-            v-model="pageSize"
-            class="select select-bordered select-sm w-24"
-            @change="handlePageSizeChange(pageSize)"
-          >
-            <option v-for="size in pageSizeOptions" :key="size" :value="size">
-              {{ size }} 条
-            </option>
-          </select>
-        </div>
-
-        <div v-if="totalPages > 0" class="join">
-          <button
-            class="join-item btn btn-sm"
-            :disabled="currentPage === 1"
-            @click="handlePageChange(currentPage - 1)"
-          >
-            «
-          </button>
-          <button
-            v-for="page in totalPages"
-            :key="page"
-            class="join-item btn btn-sm"
-            :class="{ 'btn-active': currentPage === page }"
-            @click="handlePageChange(page)"
-          >
-            {{ page }}
-          </button>
-          <button
-            class="join-item btn btn-sm"
-            :disabled="currentPage === totalPages"
-            @click="handlePageChange(currentPage + 1)"
-          >
-            »
-          </button>
-        </div>
-      </div>
+    <div class="flex justify-end">
+      <el-pagination
+        v-model:current-page="pagination.currentPage"
+        v-model:page-size="pagination.pageSize"
+        :page-sizes="pageSizeOptions"
+        :total="pagination.total"
+        layout="total, sizes, prev, pager, next, jumper"
+        background
+        @size-change="handlePageSizeChange"
+        @current-change="handlePageChange"
+      />
     </div>
 
     <!-- 新建课程弹窗 -->
-    <dialog class="modal" :open="showCreateModal">
-      <form method="dialog" class="modal-box w-96 rounded-xl shadow-lg">
-        <h3 class="font-bold text-lg mb-4">新建课程</h3>
-        <div class="form-control mb-2">
-          <label class="label">课程名称<span class="text-error">*</span></label>
-          <input
-            v-model="newCourse.className"
-            class="input input-bordered"
-            placeholder="请输入课程名称"
-          />
-        </div>
-        <div class="form-control mb-2">
-          <label class="label">课程密码<span class="text-error">*</span></label>
-          <input
-            v-model="newCourse.coursePassword"
-            class="input input-bordered"
-            type="password"
-            placeholder="请输入课程密码"
-          />
-        </div>
-        <div class="form-control mb-2">
-          <label class="label">课程介绍</label>
-          <textarea
-            v-model="newCourse.description"
-            class="textarea textarea-bordered h-24"
-            placeholder="请输入课程介绍"
-          />
-        </div>
-        <div class="modal-action">
-          <button
-            class="btn btn-ghost"
-            @click.prevent="showCreateModal = false"
-          >
+    <el-dialog
+      v-model="dialogs.create.visible"
+      title="新建课程"
+      width="500px"
+      align-center
+    >
+      <div class="form-control mb-2">
+        <label class="label">课程名称<span class="text-error">*</span></label>
+        <input
+          v-model="newCourse.className"
+          class="input input-bordered w-full"
+          placeholder="请输入课程名称"
+        />
+      </div>
+      <div class="form-control mb-2">
+        <label class="label">课程密码<span class="text-error">*</span></label>
+        <input
+          v-model="newCourse.coursePassword"
+          class="input input-bordered w-full"
+          type="password"
+          placeholder="请输入课程密码"
+        />
+      </div>
+      <div class="form-control mb-2">
+        <label class="label">课程介绍</label>
+        <textarea
+          v-model="newCourse.description"
+          class="textarea textarea-bordered h-24 w-full"
+          placeholder="请输入课程介绍"
+        />
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogs.create.visible = false">
+            <template #icon>
+              <LineMdClose />
+            </template>
             取消
-          </button>
-          <button class="btn btn-primary" @click.prevent="handleCreateCourse">
-            <span
-              v-if="createLoading"
-              class="loading loading-spinner loading-sm"
-            ></span>
+          </el-button>
+          <el-button
+            type="primary"
+            :loading="createLoading"
+            @click="handleCreateCourse"
+          >
+            <template #icon>
+              <LineMdEditTwotone />
+            </template>
             确认创建
-          </button>
-        </div>
-      </form>
-    </dialog>
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
 
     <!-- 编辑课程弹窗 -->
-    <dialog class="modal" :open="showEditModal">
-      <form method="dialog" class="modal-box w-96 rounded-xl shadow-lg">
-        <h3 class="font-bold text-lg mb-4">编辑课程</h3>
-        <div class="form-control mb-2">
-          <label class="label">课程名称<span class="text-error">*</span></label>
-          <input v-model="editForm.className" class="input input-bordered" />
-        </div>
-        <div class="form-control mb-2">
-          <label class="label">课程介绍</label>
-          <textarea
-            v-model="editForm.description"
-            class="textarea textarea-bordered h-24"
-          />
-        </div>
-        <div class="form-control mb-2">
-          <label class="label">课程密码</label>
-          <input
-            v-model="editForm.coursePassword"
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control mb-2">
-          <label class="label">状态</label>
-          <select v-model="editForm.status" class="select select-bordered">
-            <option :value="true">启用</option>
-            <option :value="false">停用</option>
-          </select>
-        </div>
-        <div class="modal-action">
-          <button class="btn btn-ghost" @click.prevent="showEditModal = false">
+    <el-dialog
+      v-model="dialogs.edit.visible"
+      title="编辑课程"
+      width="500px"
+      align-center
+    >
+      <div class="form-control mb-2">
+        <label class="label">课程名称<span class="text-error">*</span></label>
+        <input
+          v-model="editForm.className"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control mb-2">
+        <label class="label">课程介绍</label>
+        <textarea
+          v-model="editForm.description"
+          class="textarea textarea-bordered h-24 w-full"
+        />
+      </div>
+      <div class="form-control mb-2">
+        <label class="label">课程密码</label>
+        <input
+          v-model="editForm.coursePassword"
+          class="input input-bordered w-full"
+        />
+      </div>
+      <div class="form-control mb-2">
+        <label class="label">状态</label>
+        <select v-model="editForm.status" class="select select-bordered w-full">
+          <option :value="true">启用</option>
+          <option :value="false">停用</option>
+        </select>
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button :icon="LineMdClose" @click="dialogs.edit.visible = false">
+            <template #icon>
+              <LineMdClose />
+            </template>
             取消
-          </button>
-          <button class="btn btn-primary" @click.prevent="handleEditCourse">
-            <span
-              v-if="editLoading"
-              class="loading loading-spinner loading-sm"
-            ></span>
+          </el-button>
+          <el-button
+            type="primary"
+            :loading="editLoading"
+            @click="handleEditCourse"
+          >
+            <template #icon>
+              <LineMdEditTwotone />
+            </template>
             确认保存
-          </button>
-        </div>
-      </form>
-    </dialog>
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>

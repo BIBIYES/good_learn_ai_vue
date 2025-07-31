@@ -11,18 +11,18 @@ const router = createRouter({
     {
       path: '/profile',
       name: 'profile',
-      component: () => import('../views/ProfileView.vue'),
+      component: () => import('../views/public/ProfileView.vue'),
       meta: { requiresAuth: true },
     },
     {
       path: '/test',
       name: 'test',
-      component: () => import('../views/TestView.vue'),
+      component: () => import('../views/public/TestView.vue'),
     },
     {
       path: '/login',
       name: 'login-parent', // 保持这个特殊命名，因为是父路由
-      component: () => import('../views/LoginView.vue'),
+      component: () => import('../views/public/LoginView.vue'),
       meta: { requiresAuth: false },
       children: [
         {
@@ -183,7 +183,7 @@ const router = createRouter({
     {
       path: '/about',
       name: 'about-components',
-      component: () => import('../views/AboutMeView.vue'),
+      component: () => import('../views/public/AboutMeView.vue'),
     },
   ],
 })

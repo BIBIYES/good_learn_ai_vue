@@ -3,7 +3,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useRouter } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import { getEmailAvatarPath } from '@/utils/avatarPath'
+import { getEmailAvatarPath } from '@/utils/avatarPath.js'
 gsap.registerPlugin(ScrollTrigger)
 
 const router = useRouter()
@@ -669,7 +669,7 @@ const animation = () => {
               <figure class="team-member-img">
                 <img
                   class="w-full grayscale transition-all duration-300"
-                  src="@/assets/author/lzh.png"
+                  src="../../assets/author/lzh.png"
                   alt="Shoes"
                 />
               </figure>
@@ -686,7 +686,7 @@ const animation = () => {
             >
               <figure class="team-member-img">
                 <img
-                  src="@/assets/author/lh.PNG"
+                  src="../../assets/author/lh.png"
                   alt="Shoes"
                   class="w-full grayscale transition-all duration-300"
                 />
@@ -704,7 +704,7 @@ const animation = () => {
             >
               <figure class="team-member-img">
                 <img
-                  src="@/assets/author/ckl.PNG"
+                  src="../../assets/author/ckl.png"
                   alt="Shoes"
                   class="w-full grayscale transition-all duration-300"
                 />
@@ -722,7 +722,7 @@ const animation = () => {
             >
               <figure class="team-member-img">
                 <img
-                  src="@/assets/author/zzx.PNG"
+                  src="../../assets/author/zzx.png"
                   alt="Shoes"
                   class="w-full grayscale transition-all duration-300"
                 />
@@ -740,7 +740,7 @@ const animation = () => {
             >
               <figure class="team-member-img">
                 <img
-                  src="@/assets/author/wfn.PNG"
+                  src="../../assets/author/wfn.png"
                   alt="Shoes"
                   class="w-full grayscale transition-all duration-300"
                 />
@@ -758,7 +758,7 @@ const animation = () => {
             >
               <figure class="team-member-img">
                 <img
-                  src="@/assets/author/wsq.PNG"
+                  src="../../assets/author/wsq.png"
                   alt="Shoes"
                   class="w-full grayscale transition-all duration-300"
                 />

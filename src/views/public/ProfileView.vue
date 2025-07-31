@@ -1,9 +1,9 @@
 <script setup>
 import { ref } from 'vue'
 import { useUserStore } from '@/stores/userStores.js'
-import { getAvatarPath } from '@/utils/avatarPath'
+import { getAvatarPath } from '@/utils/avatarPath.js'
 import { changePassword } from '@/api/userApi.js'
-import message from '@/plugin/message'
+import message from '@/plugin/message.js'
 
 const user = useUserStore()
 const userProfile = ref({

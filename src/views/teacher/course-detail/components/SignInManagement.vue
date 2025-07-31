@@ -2,124 +2,125 @@
   <div class="w-full">
     <div class="flex justify-between items-center mb-6">
       <h2 class="text-xl font-bold">签到管理</h2>
-      <button class="btn btn-primary" @click="showCreateSignInModal = true">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="h-5 w-5 mr-1"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-        >
-          <path
-            stroke-linecap="round"
-            stroke-linejoin="round"
-            stroke-width="2"
-            d="M12 4v16m8-8H4"
-          />
-        </svg>
+      <el-button type="primary" @click="dialogs.create.visible = true">
+        <template #icon>
+          <LineMdPlus />
+        </template>
         发布签到
-      </button>
-    </div>
-
-    <!-- 加载中 -->
-    <div v-if="loading" class="flex justify-center py-12">
-      <DgLoadingText text="正在加载签到数据..." />
+      </el-button>
     </div>
 
     <!-- 签到列表 -->
-    <div v-else-if="signInList.length === 0" class="text-center py-12">
-      <div class="text-4xl mb-4">📝</div>
-      <p class="text-base-content/70">暂无签到记录，点击上方按钮发布新签到</p>
-    </div>
+    <el-table
+      v-loading="loading"
+      element-loading-text="正在加载签到数据..."
+      :data="signInList"
+      style="width: 100%"
+      border
+      stripe
+    >
+      <el-table-column prop="title" label="签到类型" width="150" />
+      <el-table-column label="状态" width="120">
+        <template #default="{ row }">
+          <el-tag :type="getStatusTagType(row.status)" effect="light">
+            {{ getStatusText(row.status) }}
+          </el-tag>
+        </template>
+      </el-table-column>
+      <el-table-column prop="startTime" label="开始时间" width="180">
+        <template #default="{ row }">
+          {{ formatDateTime(row.startTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column prop="endTime" label="结束时间" width="180">
+        <template #default="{ row }">
+          {{ formatDateTime(row.endTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="操作" fixed="right" width="200">
+        <template #default="{ row }">
+          <el-button size="small" type="info" @click="viewSignInDetail(row)">
+            <template #icon>
+              <IcOutlineRemoveRedEye />
+            </template>
+            查看详情
+          </el-button>
+          <el-button
+            size="small"
+            type="primary"
+            :disabled="row.status === 'ended'"
+            @click="toggleSignInStatus(row)"
+          >
+            <template #icon> </template>
+            {{ row.status === 'active' ? '结束' : '开始' }}
+          </el-button>
+        </template>
+      </el-table-column>
+    </el-table>
 
-    <div v-else class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-      <div
-        v-for="(item, index) in signInList"
-        :key="index"
-        class="card bg-base-100 shadow-md hover:shadow-lg transition-all duration-300 animate__animated animate__fadeIn"
-      >
-        <div class="card-body">
-          <div class="flex justify-between items-center">
-            <h3 class="card-title">{{ item.title }}</h3>
-            <GdTag :color="getStatusBadgeClass(item.status)">
-              {{ getStatusText(item.status) }}
-            </GdTag>
-          </div>
-          <p>开始时间: {{ formatDateTime(item.startTime) }}</p>
-          <p>结束时间: {{ formatDateTime(item.endTime) }}</p>
-          <div class="card-actions justify-end mt-2">
-            <button
-              class="btn btn-sm btn-outline"
-              @click="viewSignInDetail(item)"
-            >
-              查看详情
-            </button>
-            <button
-              class="btn btn-sm btn-primary"
-              :disabled="item.status === 'ended'"
-              @click="toggleSignInStatus(item)"
-            >
-              🔚 {{ item.status === 'active' ? '结束签到' : '开始签到' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- 空数据状态 -->
+    <el-empty
+      v-if="!loading && signInList.length === 0"
+      description="暂无签到记录，点击上方按钮发布新签到"
+    >
+      <el-button type="primary" @click="dialogs.create.visible = true">
+        <template #icon>
+          <LineMdPlus />
+        </template>
+        发布签到
+      </el-button>
+    </el-empty>
 
     <!-- 创建签到模态框 -->
-    <dialog class="modal" :open="showCreateSignInModal">
-      <div class="modal-box w-11/12 max-w-md">
-        <h3 class="font-bold text-lg mb-4">发布新签到</h3>
-        <CreateSignInForm
-          :course-id="courseId"
-          @close="showCreateSignInModal = false"
-          @created="handleSignInCreated"
-        />
-      </div>
-      <form method="dialog" class="modal-backdrop">
-        <button @click="showCreateSignInModal = false">关闭</button>
-      </form>
-    </dialog>
+    <el-dialog
+      v-model="dialogs.create.visible"
+      title="发布新签到"
+      width="500px"
+      align-center
+      destroy-on-close
+    >
+      <CreateSignInForm
+        :course-id="courseId"
+        @close="dialogs.create.visible = false"
+        @created="handleSignInCreated"
+      />
+    </el-dialog>
 
     <!-- 确认停止签到模态框 -->
-    <dialog class="modal" :open="showConfirmStopModal">
-      <div class="modal-box w-11/12 max-w-md">
-        <h3 class="font-bold text-lg mb-4">确认停止签到</h3>
+    <el-dialog
+      v-model="dialogs.confirm.visible"
+      title="确认停止签到"
+      width="400px"
+      align-center
+    >
+      <div>
         <p>您确定要停止当前签到吗？该操作不可撤销。</p>
         <p class="mt-2 text-sm text-base-content/70">
           停止签到后，学生将无法再进行签到。
         </p>
-        <div class="modal-action mt-4 flex">
-          <button class="btn btn-outline" @click="showConfirmStopModal = false">
-            取消
-          </button>
-          <button
-            class="btn btn-primary"
-            :disabled="stopLoading"
+      </div>
+      <template #footer>
+        <span class="dialog-footer">
+          <el-button @click="dialogs.confirm.visible = false">取消</el-button>
+          <el-button
+            type="primary"
+            :loading="stopLoading"
             @click="confirmStopSignIn"
           >
-            <span
-              v-if="stopLoading"
-              class="loading loading-spinner loading-sm mr-2"
-            ></span>
-            <span class="mr-1">✋</span>确认停止
-          </button>
-        </div>
-      </div>
-      <form method="dialog" class="modal-backdrop">
-        <button @click="showConfirmStopModal = false">关闭</button>
-      </form>
-    </dialog>
+            确认停止
+          </el-button>
+        </span>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, reactive } from 'vue'
 import message from '@/plugin/message'
 import CreateSignInForm from './CreateSignInForm.vue'
 import { getSignInInfo, stopSignIn } from '@/api/courseApi.js'
-import GdTag from '@/components/common/GdTag.vue'
-import DgLoadingText from '@/components/common/GdLoadingText.vue'
+import { formatDateTime } from '@/utils/dataFormat.js'
 
 const props = defineProps({
   courseId: {
@@ -129,8 +130,15 @@ const props = defineProps({
 })
 
 // 状态
-const showCreateSignInModal = ref(false)
-const showConfirmStopModal = ref(false)
+const dialogs = reactive({
+  create: {
+    visible: false,
+  },
+  confirm: {
+    visible: false,
+  },
+})
+
 const signInList = ref([])
 const loading = ref(false)
 const stopLoading = ref(false)
@@ -186,7 +194,7 @@ const toggleSignInStatus = item => {
   if (item.status === 'active') {
     // 如果是停止签到，显示确认对话框
     currentItem.value = item
-    showConfirmStopModal.value = true
+    dialogs.confirm.visible = true
   } else if (item.status === 'pending') {
     // 如果是开始签到，直接开始（这部分逻辑可能需要调整）
     item.status = 'active'
@@ -213,30 +221,29 @@ const confirmStopSignIn = async () => {
     message.error('停止签到失败')
   } finally {
     stopLoading.value = false
-    showConfirmStopModal.value = false
+    dialogs.confirm.visible = false
     currentItem.value = null
   }
 }
 
 // 处理新建签到
-const handleSignInCreated = newSignIn => {
-  signInList.value.unshift(newSignIn)
-  showCreateSignInModal.value = false
+const handleSignInCreated = () => {
+  dialogs.create.visible = false
   message.success('签到创建成功')
   fetchSignInList() // 重新获取最新的签到列表
 }
 
-// 辅助函数
-const getStatusBadgeClass = status => {
+// 获取状态对应的 Element Plus 标签类型
+const getStatusTagType = status => {
   switch (status) {
     case 'active':
       return 'success'
     case 'pending':
       return 'warning'
     case 'ended':
-      return 'error'
-    default:
       return 'info'
+    default:
+      return ''
   }
 }
 
@@ -251,20 +258,6 @@ const getStatusText = status => {
     default:
       return '未知'
   }
-}
-
-const formatDateTime = date => {
-  if (!date) return '未设置'
-  if (typeof date === 'string') {
-    date = new Date(date)
-  }
-  return date.toLocaleString('zh-CN', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-    hour: '2-digit',
-    minute: '2-digit',
-  })
 }
 
 onMounted(() => {

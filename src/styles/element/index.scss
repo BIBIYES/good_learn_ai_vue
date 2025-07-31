@@ -7,6 +7,9 @@
     'error': (
       'base': red,
     ),
+    'success': (
+      'base': green,
+    ),
   )
 );
 @use '@/styles/element/var.scss' as *;
@@ -46,7 +49,6 @@
   background: none !important;
   backdrop-filter: blur(2px) !important;
 }
-
 // 复写按钮
 .el-button {
   border-radius: $border-radius-xl !important;
