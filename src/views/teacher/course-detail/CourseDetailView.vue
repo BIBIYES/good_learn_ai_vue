@@ -71,20 +71,24 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-2">
-                  <span class="font-medium text-base-content">🪪 课程ID:</span>
+                  <span class="font-medium text-base-content">
+                    <i class="fa-solid fa-id-card"></i>
+                    课程ID:
+                  </span>
                   <span class="text-base-content">{{ courseId }}</span>
                 </div>
                 <div class="flex items-center gap-2">
-                  <span class="font-medium text-base-content"
-                    >📝 课程描述:</span
-                  >
+                  <span class="font-medium text-base-content">
+                    <i class="fa-solid fa-pen-to-square"></i>
+                    课程描述:
+                  </span>
                   <span class="text-base-content">{{
                     courseInfo.description || '暂无描述'
                   }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-base-content"
-                    >🚦 课程状态:</span
+                    ><i class="fa-solid fa-traffic-light"></i> 课程状态:</span
                   >
                   <GdTag :color="courseInfo.status ? 'primary' : 'error'">
                     {{ courseInfo.status ? '已启用' : '已停用' }}
@@ -92,7 +96,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-base-content"
-                    >🔑 课程密码:</span
+                    ><i class="fa-solid fa-key"></i> 课程密码:</span
                   >
                   <div class="flex items-center gap-2">
                     <span class="text-base-content">{{
@@ -129,7 +133,7 @@
               <div class="flex flex-col gap-2">
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-base-content"
-                    >📅 创建时间:</span
+                    ><i class="fa-solid fa-calendar-days"></i> 创建时间:</span
                   >
                   <span class="text-base-content">{{
                     formatDateTime(courseInfo.createdAt)
@@ -137,7 +141,7 @@
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-base-content"
-                    >🔄 最后更新:</span
+                    ><i class="fa-solid fa-rotate"></i> 最后更新:</span
                   >
                   <span class="text-base-content">{{
                     formatDateTime(courseInfo.updatedAt)
@@ -145,14 +149,16 @@
                 </div>
 
                 <div class="flex items-center gap-2">
-                  <span class="font-medium text-base-content">👤 班长ID:</span>
+                  <span class="font-medium text-base-content"
+                    ><i class="fa-solid fa-user"></i> 班长ID:</span
+                  >
                   <span class="text-base-content">{{
                     courseInfo.monitorId || '未设置'
                   }}</span>
                 </div>
                 <div class="flex items-center gap-2">
                   <span class="font-medium text-base-content"
-                    >👥 学生人数:</span
+                    ><i class="fa-solid fa-users"></i> 学生人数:</span
                   >
                   <span class="text-base-content"
                     >{{ courseInfo.totalStudents || 0 }} 人</span
@@ -195,10 +201,10 @@
           <a
             role="tab"
             class="tab"
-            :class="{ 'tab-active': activeTab === 'sign-in' }"
-            @click="activeTab = 'sign-in'"
+            :class="{ 'tab-active': activeTab === 'classes' }"
+            @click="activeTab = 'classes'"
           >
-            签到管理
+            班级管理
           </a>
           <a
             role="tab"
@@ -301,8 +307,8 @@ import {
 } from '@/api/courseApi.js'
 import message from '@/plugin/message'
 import GdTag from '@/components/common/GdTag.vue'
-import SignInManagement from './components/SignInManagement.vue'
 import HomeworkManagement from './components/HomeworkManagement.vue'
+import ClassManagement from './components/ClassManagement.vue'
 import GdStack from '@/components/common/GdStack.vue'
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
 import LoadingState from '@/components/common/LoadingState.vue'
@@ -316,7 +322,7 @@ const courseId = computed(() => route.params.courseId)
 
 // 页面状态
 const loading = ref(true)
-const activeTab = ref('sign-in') // 默认显示签到管理
+const activeTab = ref('classes') // 默认显示班级管理
 const showPassword = ref(false) // 密码显示控制
 
 // 编辑课程相关状态
@@ -344,12 +350,12 @@ const courseStudentList = ref([]) // 课程学生列表
 // 当前组件
 const currentTabComponent = computed(() => {
   switch (activeTab.value) {
-    case 'sign-in':
-      return SignInManagement
+    case 'classes':
+      return ClassManagement
     case 'homework':
       return HomeworkManagement
     default:
-      return SignInManagement
+      return ClassManagement
   }
 })
 

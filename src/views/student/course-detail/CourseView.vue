@@ -11,13 +11,23 @@ const studentStore = useStudentStore()
 const courseInfo = ref(null)
 
 const getCourseInfo = () => {
-  courseInfo.value = studentStore.getStudentCourse(route.params.courseId)
-  console.log(courseInfo.value)
+  const classId = route.query.classId
+  if (classId) {
+    courseInfo.value = studentStore.studentCourse.find(
+      item => Number(item.classId) === Number(classId),
+    )
+  }
+  if (!courseInfo.value) {
+    courseInfo.value = studentStore.getStudentCourse(route.params.courseId)
+  }
 }
 
 // 导航到子路由
 const navigateTo = path => {
-  router.push(`/s/my-course/${route.params.courseId}/${path}`)
+  router.push({
+    path: `/s/my-course/${route.params.courseId}/${path}`,
+    query: route.query.classId ? { classId: route.query.classId } : undefined,
+  })
 }
 
 // 返回上一页
@@ -160,30 +170,7 @@ onMounted(() => {
           <li class="flex-1">
             <a
               class="flex justify-center items-center gap-2"
-              :class="{ 'menu-active': route.name === 'sign-in' }"
-              @click="navigateTo('sign-in')"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
-                />
-              </svg>
-              签到
-            </a>
-          </li>
-          <li class="flex-1">
-            <a
-              class="flex justify-center items-center gap-2"
-              :class="{ active: route.name === 'work' }"
+              :class="{ active: route.name === 'student-course-detail-work' }"
               @click="navigateTo('work')"
             >
               <svg

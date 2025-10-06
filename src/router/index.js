@@ -136,17 +136,9 @@ const router = createRouter({
           component: () =>
             import('@/views/student/course-detail/CourseView.vue'),
           redirect: to => {
-            return `/s/my-course/${to.params.courseId}/sign-in`
+            return `/s/my-course/${to.params.courseId}/work`
           },
           children: [
-            {
-              path: 'sign-in',
-              name: 'student-course-detail-signin',
-              component: () =>
-                import(
-                  '@/views/student/course-detail/components/CourseSignInView.vue'
-                ),
-            },
             {
               path: 'work',
               name: 'student-course-detail-work',

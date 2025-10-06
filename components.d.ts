@@ -25,7 +25,6 @@ declare module 'vue' {
     Modal: typeof import('./src/components/common/Modal.vue')['default']
     MyLogo: typeof import('./src/components/common/MyLogo.vue')['default']
     Pagination: typeof import('./src/components/common/Pagination.vue')['default']
-    PinInput: typeof import('./src/components/common/PinInput.vue')['default']
     QuestionForm: typeof import('./src/components/teacher/QuestionForm.vue')['default']
     QuestionList: typeof import('./src/components/teacher/QuestionList.vue')['default']
     RegisterForm: typeof import('./src/components/form/RegisterForm.vue')['default']

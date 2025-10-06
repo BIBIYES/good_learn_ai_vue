@@ -3,6 +3,7 @@ import { ref, reactive, onMounted, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getQuestionBankById } from '@/api/questionApi.js'
 import message from '@/plugin/message'
+import { utils, writeFileXLSX } from 'xlsx'
 
 import DgLoadingText from '@/components/common/GdLoadingText.vue'
 
@@ -28,6 +29,7 @@ const pageSize = ref(5)
 const total = ref(0)
 const filterDifficulty = ref('')
 const filterTitle = ref('')
+const exportLoading = ref(false)
 
 // 统一管理所有模态框状态 - 使用reactive代替ref
 const modals = reactive({
@@ -207,6 +209,71 @@ const handleBatchDeleteQuestions = () => {
   openModal('batchDelete')
 }
 
+const handleExportQuestions = async () => {
+  exportLoading.value = true
+  try {
+    const size = 100
+    let page = 1
+    let totalPageCount = 1
+    const collected = []
+
+    do {
+      const res = await getQuestionBankById(
+        size,
+        page,
+        bankId.value,
+        filterDifficulty.value || '',
+        filterTitle.value || '',
+      )
+
+      if (res.code !== 200 || !res.data) {
+        message.error(res.message || '导出题目失败')
+        exportLoading.value = false
+        return
+      }
+
+      const records = Array.isArray(res.data.records) ? res.data.records : []
+      collected.push(...records)
+      totalPageCount = res.data.pages || 1
+      page += 1
+    } while (page <= totalPageCount)
+
+    if (collected.length === 0) {
+      message.info('暂无题目可导出')
+      exportLoading.value = false
+      return
+    }
+
+    const rows = collected.map((question, index) => ({
+      序号: index + 1,
+      题目标题: question.title || '',
+      题目内容: question.content || '',
+      参考答案: question.answer || '',
+      难度: difficultyMap[question.difficulty] || question.difficulty || '',
+      状态: question.status ? '启用' : '停用',
+      创建时间: formatDate(question.createdAt),
+      更新时间: formatDate(question.updatedAt),
+    }))
+
+    const worksheet = utils.json_to_sheet(rows)
+    const workbook = utils.book_new()
+    const sheetName = (bankName.value || '题目列表').slice(0, 30)
+    utils.book_append_sheet(workbook, worksheet, sheetName || 'Sheet1')
+
+    const sanitize = value =>
+      (value || '题库').replace(/[\\/:*?"<>|]/g, '_').trim() || '题库'
+    const filename = `${sanitize(bankName.value)}-题目导出.xlsx`
+
+    writeFileXLSX(workbook, filename)
+    message.success('题目导出成功')
+  } catch (error) {
+    console.error('导出题目失败', error)
+    message.error(error.message || '导出题目失败')
+  } finally {
+    exportLoading.value = false
+  }
+}
+
 const selectedQuestions = ref([])
 
 // 监听筛选条件变化
@@ -270,10 +337,18 @@ onMounted(() => {
             <span class="btn-text-desktop-md">批量添加题目</span>
             <span class="btn-text-mobile-md">批量添加</span>
           </button>
-          <button class="btn-liquid-glass" disabled title="功能开发中">
-            <LineMdQuestionCircle />
-            <span class="btn-text-desktop-md">导出题目(开发中)</span>
-            <span class="btn-text-mobile-md">导出(开发中)</span>
+          <button
+            class="btn-liquid-glass"
+            :disabled="exportLoading"
+            @click="handleExportQuestions"
+          >
+            <span
+              v-if="exportLoading"
+              class="loading loading-spinner loading-sm"
+            ></span>
+            <i v-else class="fa-solid fa-file-export"></i>
+            <span class="btn-text-desktop-md">导出题目</span>
+            <span class="btn-text-mobile-md">导出</span>
           </button>
           <button
             class="btn-liquid-glass ai-btn"

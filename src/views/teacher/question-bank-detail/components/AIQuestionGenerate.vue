@@ -359,7 +359,7 @@ const handleSubmit = () => {
   </div>
 </template>
 <style scoped lang="scss">
-@import '@/styles/AIGenerateStyles.scss';
+@import '../../../../styles/AIGenerateStyles.scss';
 
 // 组件根元素，服务于AIQuestionGenerate主容器
 .ai-question-generator {
